@@ -29,8 +29,8 @@ FormatCheck::FormatCheck(){
 /*
  *  Checks if file is in a compatible format
  */
-string FormatCheck::CheckFormat(char fileLoc[], bool amino){
-	indata.open(fileLoc);
+string FormatCheck::CheckFormat(string filename, bool amino){
+	indata.open(filename);
 	aa = amino;
 	//cout << "QualAlarm3" << endl;
 	if(!indata) { // file couldn't be opened
