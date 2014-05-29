@@ -9,6 +9,12 @@
 /* Begin PBXBuildFile section */
 		3EDBD2461936B75A00593941 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3EDBD2451936B75A00593941 /* main.cpp */; };
 		3EDBD2481936B75A00593941 /* PrinSeq.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3EDBD2471936B75A00593941 /* PrinSeq.1 */; };
+		3EDBD24F1936B8DD00593941 /* libboost_filesystem.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EDBD24E1936B8DD00593941 /* libboost_filesystem.dylib */; };
+		3EDBD2511936B8F500593941 /* libboost_system.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EDBD2501936B8F500593941 /* libboost_system.dylib */; };
+		3EDBD2531936B90E00593941 /* libboost_program_options.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EDBD2521936B90E00593941 /* libboost_program_options.dylib */; };
+		3EDBD2561936BA9800593941 /* Fasta.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3EDBD2541936BA9800593941 /* Fasta.cpp */; };
+		3EDBD25919379B4A00593941 /* FormatCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3EDBD25719379B4A00593941 /* FormatCheck.cpp */; };
+		3EDBD25B1937A05400593941 /* libboost_regex-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EDBD25A1937A05400593941 /* libboost_regex-mt.dylib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,6 +34,14 @@
 		3EDBD2421936B75A00593941 /* PrinSeq */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PrinSeq; sourceTree = BUILT_PRODUCTS_DIR; };
 		3EDBD2451936B75A00593941 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		3EDBD2471936B75A00593941 /* PrinSeq.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = PrinSeq.1; sourceTree = "<group>"; };
+		3EDBD24E1936B8DD00593941 /* libboost_filesystem.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_filesystem.dylib; path = ../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_filesystem.dylib; sourceTree = "<group>"; };
+		3EDBD2501936B8F500593941 /* libboost_system.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_system.dylib; path = ../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_system.dylib; sourceTree = "<group>"; };
+		3EDBD2521936B90E00593941 /* libboost_program_options.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libboost_program_options.dylib; path = ../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_program_options.dylib; sourceTree = "<group>"; };
+		3EDBD2541936BA9800593941 /* Fasta.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fasta.cpp; sourceTree = "<group>"; };
+		3EDBD2551936BA9800593941 /* Fasta.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fasta.h; sourceTree = "<group>"; };
+		3EDBD25719379B4A00593941 /* FormatCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormatCheck.cpp; sourceTree = "<group>"; };
+		3EDBD25819379B4A00593941 /* FormatCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormatCheck.h; sourceTree = "<group>"; };
+		3EDBD25A1937A05400593941 /* libboost_regex-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_regex-mt.dylib"; path = "../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_regex-mt.dylib"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,6 +49,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3EDBD25B1937A05400593941 /* libboost_regex-mt.dylib in Frameworks */,
+				3EDBD2531936B90E00593941 /* libboost_program_options.dylib in Frameworks */,
+				3EDBD2511936B8F500593941 /* libboost_system.dylib in Frameworks */,
+				3EDBD24F1936B8DD00593941 /* libboost_filesystem.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -44,6 +62,10 @@
 		3EDBD2391936B75A00593941 = {
 			isa = PBXGroup;
 			children = (
+				3EDBD25A1937A05400593941 /* libboost_regex-mt.dylib */,
+				3EDBD2521936B90E00593941 /* libboost_program_options.dylib */,
+				3EDBD2501936B8F500593941 /* libboost_system.dylib */,
+				3EDBD24E1936B8DD00593941 /* libboost_filesystem.dylib */,
 				3EDBD2441936B75A00593941 /* PrinSeq */,
 				3EDBD2431936B75A00593941 /* Products */,
 			);
@@ -62,6 +84,10 @@
 			children = (
 				3EDBD2451936B75A00593941 /* main.cpp */,
 				3EDBD2471936B75A00593941 /* PrinSeq.1 */,
+				3EDBD2541936BA9800593941 /* Fasta.cpp */,
+				3EDBD2551936BA9800593941 /* Fasta.h */,
+				3EDBD25719379B4A00593941 /* FormatCheck.cpp */,
+				3EDBD25819379B4A00593941 /* FormatCheck.h */,
 			);
 			path = PrinSeq;
 			sourceTree = "<group>";
@@ -118,6 +144,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				3EDBD2461936B75A00593941 /* main.cpp in Sources */,
+				3EDBD25919379B4A00593941 /* FormatCheck.cpp in Sources */,
+				3EDBD2561936BA9800593941 /* Fasta.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,6 +225,11 @@
 		3EDBD24C1936B75A00593941 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/boost/1.55.0_1/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -204,6 +237,11 @@
 		3EDBD24D1936B75A00593941 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = /usr/local/include;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					/usr/local/Cellar/boost/1.55.0_1/lib,
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
