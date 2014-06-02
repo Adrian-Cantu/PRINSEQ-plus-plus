@@ -187,9 +187,9 @@ int Fasta::GetSeqCount(){
 }
 void Fasta::Stats_All(){
     indata.open(fileName);
-    //cout << filename << endl;
+   
 	//aa = amino;
-	//cout << "QualAlarm3" << endl;
+	
 	if(!indata) { // file couldn't be opened
 		string error = "File could not be opened";
 		return ;
