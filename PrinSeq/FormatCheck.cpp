@@ -31,7 +31,7 @@ FormatCheck::FormatCheck(){
  */
 string FormatCheck::CheckFormat(string filename, bool amino){
 	indata.open(filename);
-    cout << filename << endl;
+    cout << "Format Check File Name: " << filename << endl;
 	aa = amino;
 	//cout << "QualAlarm3" << endl;
 	if(!indata) { // file couldn't be opened
@@ -46,6 +46,7 @@ string FormatCheck::CheckFormat(string filename, bool amino){
 	for (int count = 3; count > 0; count--) {
 		indata.getline(name, 256);
 		s = name;
+        //trim(s);
 		//cout << "Qual Alarm4" << endl;
 		while(s == "" && (indata.peek() != EOF)){  //skips blank lines
 			indata.getline(name,256);

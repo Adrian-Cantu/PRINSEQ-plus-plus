@@ -12,38 +12,25 @@
 #include <iostream>
 #include<fstream>
 #include <boost/regex.hpp>
-//#include<vector>
+#include <boost/algorithm/string.hpp>
+
+using namespace boost;
 using std::string;
-//using std::vector;
 using std::fstream;
 using std::ifstream;
+
 class FormatCheck{
 	
 public:
 	FormatCheck();
 	string CheckFormat(string filename, bool amino);
-	//int CountFASeq();
-	//int CountFABase();
-	//int CountQualSeq();
-	//int CountQualBase();
-	//int CountFQSeq();
-	//int CountFQBase();
-	//float meanLength();
 	void SetAmino(bool amino);
-	//bool FillList(char fileLoc[]);
-	//bool FillFAList(char fileLoc[]);
-	//bool FillQual(char fileLoc[]);
-	//void WriteFasta();
-	//void WriteQual();
-	//void WriteFastq();
-	
+
 private:
 	int fasta;
 	int fastq;
 	int qual;
-	//vector<string>::iterator i;
-	//vector<string> qualList;
-	//vector<string> seqList;
+
 	char name[256];
 	int opt;
 	string format;

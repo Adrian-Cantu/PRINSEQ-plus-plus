@@ -36,6 +36,15 @@ public:
     int DefaultOuputType(string name);
     void WriteGood(string filename, bool amino);
     void WriteBad(string filename, bool amino);
+    void SetOutputFormat(int format);
+    void AddSeqCount();
+    void AddBaseCount(int size);
+    int GetBaseCount();
+    int GetSeqCount();
+    void Stats_All();
+    bool ValExp(string s);
+    
+    
    
     //int CountFASeq(char fileLoc[], bool amino);
     //int CountFABase();
@@ -48,14 +57,14 @@ private:
     bool aa;  //amino acid flag
     int* base;
     int seqCount;
-    int numbase;
+    int baseCount;
     int outFormat;
     int argc;
     //char *fileLoc[];
     string fileName;
     string bOutFN;
     string gOutFN;
-    
+    ifstream indata;
     FormatCheck Cff;
 };
 

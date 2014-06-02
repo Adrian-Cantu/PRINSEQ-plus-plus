@@ -11,16 +11,16 @@ using namespace std;
 Fasta::Fasta(){
     
     aa = 0;  //amino acid flag
-    base = &numbase;
+    //base = &numbase;
     seqCount = 0;
-    outFormat = 0;
+    outFormat = 1;
     fileName = "none";
     srand((unsigned)time(0));
 }
 
 Fasta::Fasta(int count, char *fileLoc[]){
     aa = 0;  //amino acid flag
-    base = &numbase;
+    //base = &numbase;
     seqCount = 0;
     outFormat = 0;
     fileName = "none";
@@ -60,7 +60,7 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         // Input is amino acid (protein) sequences instead of nucleic acid (DNA or RNA) sequences. Allowed amino
         // acid characters: ABCDEFGHIKLMNOPQRSTUVWYZXabcdefghiklmmopqrstuvwyzx*- and allowed nucleic acid
         // characters: ACGTURYKMSWBDHVNXacgturykmswbdhvnx-
-        
+        //
         // The following options are ignored for -aa: stats_dinuc,stats_tag,stats_ns,dna_rna
         
         
@@ -72,7 +72,7 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         // out_good null" to prevent the program from generating the output file(s) for data passing all
         // filters. Use "-out_good stdout" to write data passing all filters to STDOUT (only for FASTA or FASTQ
         // output files).
-        
+        //
         // Example: use "file_passed" to generate the output file file_passed.fasta in the current directory
         
         ("out_bad", po::value<string>(), "Bad output filename")
@@ -83,9 +83,9 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         // null" to prevent the program from generating the output file(s) for data not passing any filter. Use
         // "-out_bad stdout" to write data not passing any filter to STDOUT (only for FASTA or FASTQ output
         // files).
-        
+        //
         // Example: use "file_filtered" to generate the output file file_filtered.fasta in the current directory
-        
+        //
         // Example: "-out_good stdout -out_bad null" will write data passing filters to STDOUT and data not
         // passing any filter will be ignored
         
@@ -93,9 +93,13 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         ("out_format", po::value<int>(), "Format of output file")
         // To change the output format, use one of the following options. If not defined, the output format will
         // be the same as the input format.
-        
+        //
         // 1 (FASTA only), 2 (FASTA and QUAL), 3 (FASTQ), 4 (FASTQ and FASTA), or 5 (FASTQ, FASTA and QUAL)
+        
+        ("stats_all", "GOutputs all available summary statistics.")
         ;
+        
+        
         
         po::variables_map vm; // Holds all options from cmd line
         po::store(po::parse_command_line(argc, fileLoc, desc), vm); // stores options in vm
@@ -110,8 +114,9 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         }// Sets AA value if specified, otherwise 0.
         
         if (vm.count("fasta")) {
-            string test = Cff.CheckFormat(vm["fasta"].as<string>(), aa);
-            if (test.compare("uknown") == 0){
+            fileName = vm["fasta"].as<string>();
+            string fileType = Cff.CheckFormat(vm["fasta"].as<string>(), aa);
+            if (fileType.compare("uknown") == 0){
                 cout << "Could not find input file " << '"' << vm["fasta"].as<string>() << '"'<< endl;
                 return;
             }
@@ -129,9 +134,15 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
             WriteBad(vm["out_bad"].as<string>(), aa);
         }
         
+        if (vm.count("stats_all")) {
+            cout << "Fasta Class File Name: " << fileName << endl;
+            cout << "test stats all." << endl;
+            Stats_All();
+        }
+        
 
     }
-    catch(exception& e) {
+    catch(std::exception& e) {
         cerr << "error: " << e.what() << "\n";
     }
     catch(...) {
@@ -148,8 +159,56 @@ string Fasta::RandFN(){
 
 void Fasta::WriteGood(string filename, bool amino){
     
+    gOutFN = filename+ ".fasta";
+    cout << gOutFN << endl;
 }
 void Fasta::WriteBad(string filename, bool amino){
     
+    bOutFN = filename + ".fasta";
+    cout << bOutFN << endl;
+}
+
+void Fasta::SetOutputFormat(int format){
+    outFormat = format;
+    cout << outFormat << endl;
+}
+
+void Fasta::AddSeqCount(){
+    seqCount++;
+}
+void Fasta::AddBaseCount(int size){
+    baseCount += size;
+}
+int Fasta::GetBaseCount(){
+    return baseCount;
+}
+int Fasta::GetSeqCount(){
+    return seqCount;
+}
+void Fasta::Stats_All(){
+    indata.open(fileName);
+    //cout << filename << endl;
+	//aa = amino;
+	//cout << "QualAlarm3" << endl;
+	if(!indata) { // file couldn't be opened
+		string error = "File could not be opened";
+		return ;
+	}
+    
+    string lineA;
+    while (getline(indata, lineA)) {
+        if (ValExp(lineA)) {
+            AddSeqCount();
+        }
+        else // need to add valid sequence checks
+            AddBaseCount(lineA.size());
+    }
+    cout << "Sequence Count: " << seqCount << endl;
+    cout << "Base Count: " << baseCount << endl;
+}
+
+bool Fasta::ValExp(string s){
+    static const regex e1("^>(\\S+)\\s*(.*)$");
+    return regex_match(s,e1);
 }
 
