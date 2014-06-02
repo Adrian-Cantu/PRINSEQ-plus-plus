@@ -31,6 +31,7 @@ FormatCheck::FormatCheck(){
  */
 string FormatCheck::CheckFormat(string filename, bool amino){
 	indata.open(filename);
+    cout << filename << endl;
 	aa = amino;
 	//cout << "QualAlarm3" << endl;
 	if(!indata) { // file couldn't be opened

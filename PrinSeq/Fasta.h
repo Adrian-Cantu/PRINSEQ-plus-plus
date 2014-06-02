@@ -30,6 +30,13 @@ class Fasta{
 public:
     Fasta();
     Fasta(int argc, char *fileLoc[]);
+    void ParseOptions(int count, char *fileLoc[]);
+    
+    string RandFN();
+    int DefaultOuputType(string name);
+    void WriteGood(string filename, bool amino);
+    void WriteBad(string filename, bool amino);
+   
     //int CountFASeq(char fileLoc[], bool amino);
     //int CountFABase();
     //float meanLength();
@@ -42,6 +49,13 @@ private:
     int* base;
     int seqCount;
     int numbase;
+    int outFormat;
+    int argc;
+    //char *fileLoc[];
+    string fileName;
+    string bOutFN;
+    string gOutFN;
+    
     FormatCheck Cff;
 };
 
