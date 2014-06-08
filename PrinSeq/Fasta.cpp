@@ -96,6 +96,11 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         //
         // 1 (FASTA only), 2 (FASTA and QUAL), 3 (FASTQ), 4 (FASTQ and FASTA), or 5 (FASTQ, FASTA and QUAL)
         
+        /***** Filter Options *****/
+        ("min_len", po::value<int>(), "TBA")
+        // Filter sequence sorter than min_len
+        
+        
         ("stats_all", "GOutputs all available summary statistics.")
         ;
         
