@@ -99,8 +99,7 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         /***** Filter Options *****/
         ("min_len", po::value<int>(), "TBA")
         // Filter sequence sorter than min_len
-        
-        
+
         ("stats_all", "GOutputs all available summary statistics.")
         ;
         
