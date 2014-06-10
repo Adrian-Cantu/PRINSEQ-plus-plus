@@ -39,8 +39,10 @@ public:
     void SetOutputFormat(int format);
     void AddSeqCount();
     void AddBaseCount(int size);
+    void ProcessData();
     int GetBaseCount();
     int GetSeqCount();
+    void ProcessFile(char *fileLoc[]);
     void Stats_All();
     bool ValExp(string s);
     
@@ -55,16 +57,33 @@ public:
     
 private:
     bool aa;  //amino acid flag
-    int* base;
+    //int* base;
     int seqCount;
     int baseCount;
     int outFormat;
     int argc;
+    int seqNum;
+    int trimLeft;
+    int trimRight;
+    int trimQualLeft;
+    int trimQualRight;
+    int trimTailLeft;
+    int trimTailRight;
+    int trimNSLeft;
+    int trimNSRight;
+    int trimToLen;
+    int minLen;
+    int maxLen;
+    
+    bool good;
+    
     //char *fileLoc[];
     string fileName;
     string bOutFN;
     string gOutFN;
     ifstream indata;
+    ofstream OutGFile;
+    ofstream OutBFile;
     FormatCheck Cff;
 };
 

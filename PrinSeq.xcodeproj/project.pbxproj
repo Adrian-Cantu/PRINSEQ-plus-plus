@@ -15,6 +15,7 @@
 		3EDBD2561936BA9800593941 /* Fasta.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3EDBD2541936BA9800593941 /* Fasta.cpp */; };
 		3EDBD25919379B4A00593941 /* FormatCheck.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3EDBD25719379B4A00593941 /* FormatCheck.cpp */; };
 		3EDBD25B1937A05400593941 /* libboost_regex-mt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 3EDBD25A1937A05400593941 /* libboost_regex-mt.dylib */; };
+		3EECA691194647F1009A0292 /* Qual.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3EECA68F194647F1009A0292 /* Qual.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -42,6 +43,8 @@
 		3EDBD25719379B4A00593941 /* FormatCheck.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormatCheck.cpp; sourceTree = "<group>"; };
 		3EDBD25819379B4A00593941 /* FormatCheck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormatCheck.h; sourceTree = "<group>"; };
 		3EDBD25A1937A05400593941 /* libboost_regex-mt.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libboost_regex-mt.dylib"; path = "../../../../../usr/local/Cellar/boost/1.55.0_1/lib/libboost_regex-mt.dylib"; sourceTree = "<group>"; };
+		3EECA68F194647F1009A0292 /* Qual.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Qual.cpp; sourceTree = "<group>"; };
+		3EECA690194647F1009A0292 /* Qual.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Qual.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +91,8 @@
 				3EDBD2551936BA9800593941 /* Fasta.h */,
 				3EDBD25719379B4A00593941 /* FormatCheck.cpp */,
 				3EDBD25819379B4A00593941 /* FormatCheck.h */,
+				3EECA68F194647F1009A0292 /* Qual.cpp */,
+				3EECA690194647F1009A0292 /* Qual.h */,
 			);
 			path = PrinSeq;
 			sourceTree = "<group>";
@@ -143,6 +148,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3EECA691194647F1009A0292 /* Qual.cpp in Sources */,
 				3EDBD2461936B75A00593941 /* main.cpp in Sources */,
 				3EDBD25919379B4A00593941 /* FormatCheck.cpp in Sources */,
 				3EDBD2561936BA9800593941 /* Fasta.cpp in Sources */,
@@ -265,6 +271,7 @@
 				3EDBD24D1936B75A00593941 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
