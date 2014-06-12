@@ -42,7 +42,7 @@ public:
     void ProcessData();
     int GetBaseCount();
     int GetSeqCount();
-    void ProcessFile(char *fileLoc[]);
+    void ProcessFile(char *fileLoc[], bool aa);
     void Stats_All();
     bool ValExp(string s);
     

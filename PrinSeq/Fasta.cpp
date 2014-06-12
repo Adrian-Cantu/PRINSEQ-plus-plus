@@ -46,12 +46,15 @@ Fasta::Fasta(int count, char *fileLoc[]){
     
     ParseOptions(count, fileLoc);
     srand((unsigned)time(0));
-    ProcessFile(fileLoc);
+    ProcessFile(fileLoc, aa);
 }
 
-void Fasta::ProcessFile(char *fileLoc[]){
+void Fasta::ProcessFile(char *fileLoc[], bool aa){
     string name = *fileLoc;
     string fileType = Cff.CheckFormat(name, aa);
+    string currentLine;
+    string label;
+    string sequence;
     if (fileType.compare("uknown") == 0){
         cout << "Could not find input file " << '"' << name << '"'<< endl;
         return;
@@ -60,8 +63,17 @@ void Fasta::ProcessFile(char *fileLoc[]){
     OutGFile.open(gOutFN);
     OutBFile.open(bOutFN);
     
-    
-
+    while (getline(indata, currentLine)) {
+        if (currentLine[0] == '>') {
+            label = currentLine;
+            currentLine.clear();
+        }
+        else
+            if (currentLine.length() < minLen) {
+                /// Need to write
+                currentLine.clear();
+            }
+    }
 }
 
 void Fasta::ParseOptions(int count, char *fileLoc[]){
