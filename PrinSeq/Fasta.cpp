@@ -60,7 +60,7 @@ void Fasta::ProcessFile(char *fileLoc[], bool aa){
         return;
     }
     indata.open(name);
-    OutGFile.open(gOutFN);
+    
     OutBFile.open(bOutFN);
     
     while (getline(indata, currentLine)) {
@@ -68,11 +68,25 @@ void Fasta::ProcessFile(char *fileLoc[], bool aa){
             label = currentLine;
             currentLine.clear();
         }
-        else
+        else{
             if (currentLine.length() < minLen) {
                 /// Need to write
+                OutBFile.open(bOutFN);
+                OutBFile << label << endl;
+                OutBFile << currentLine << endl;
+                label.clear();
                 currentLine.clear();
+                OutBFile.close();
             }
+            else{
+                OutGFile.open(gOutFN);
+                OutBFile << label << endl;
+                OutGFile << currentLine << endl;
+                label.clear();
+                currentLine.clear();
+                OutGFile.close();
+            }
+        }
     }
 }
 
