@@ -44,6 +44,8 @@ public:
     int GetSeqCount();
     void ProcessFile(char *fileLoc[], bool aa);
     void Stats_All();
+    void MinLengthFilter(string name);
+    void MaxLengthFilter(string name);
     bool ValExp(string s);
     
     
@@ -56,7 +58,7 @@ public:
     //bool ValExp(string s);
     
 private:
-    bool aa;  //amino acid flag
+    bool amino;  //amino acid flag
     //int* base;
     int seqCount;
     int baseCount;
@@ -79,12 +81,14 @@ private:
     
     //char *fileLoc[];
     string fileName;
-    string bOutFN;
-    string gOutFN;
+    string badFileName;
+    string goodFileName;
     ifstream indata;
-    ofstream OutGFile;
-    ofstream OutBFile;
+    ofstream GoodFileStream;
+    ofstream BadFileStream;
     FormatCheck Cff;
 };
+
+
 
 #endif /* defined(__PrinSeq__Fasta__) */

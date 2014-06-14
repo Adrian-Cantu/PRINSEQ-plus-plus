@@ -10,7 +10,7 @@
 using namespace std;
 Fasta::Fasta(){
     
-    aa = 0;  //amino acid flag
+    amino = 0;  //amino acid flag - boolean
     //base = &numbase;
     seqCount = 0;
     outFormat = 1;
@@ -34,34 +34,36 @@ Fasta::Fasta(){
 }
 
 Fasta::Fasta(int count, char *fileLoc[]){
-    aa = 0;  //amino acid flag
+    amino = 0;  //amino acid flag
     //base = &numbase;
     seqCount = 0;
     outFormat = 1;
     fileName = "none";
     argc = count;
     string name = fileLoc[2]; // Fix later
-    bOutFN = name + "_prinseq_bad_" + RandFN(); // Fix later
-    gOutFN = name + "_prinseq_good_" + RandFN(); // Fix later
+    badFileName = name + "_prinseq_bad_" + RandFN(); // Fix later
+    goodFileName = name + "_prinseq_good_" + RandFN(); // Fix later
     
     ParseOptions(count, fileLoc);
     srand((unsigned)time(0));
-    ProcessFile(fileLoc, aa);
+    ProcessFile(fileLoc, amino);
 }
 
-void Fasta::ProcessFile(char *fileLoc[], bool aa){
+void Fasta::ProcessFile(char *fileLoc[], bool amino){
     string name = *fileLoc;
-    string fileType = Cff.CheckFormat(name, aa);
-    string currentLine;
-    string label;
-    string sequence;
+    string fileType = Cff.CheckFormat(name, amino);
+
     if (fileType.compare("uknown") == 0){
         cout << "Could not find input file " << '"' << name << '"'<< endl;
         return;
     }
+}
+
+void Fasta::MinLengthFilter(string name){
+    string currentLine;
+    string label;
+    string sequence;
     indata.open(name);
-    
-    OutBFile.open(bOutFN);
     
     while (getline(indata, currentLine)) {
         if (currentLine[0] == '>') {
@@ -71,23 +73,26 @@ void Fasta::ProcessFile(char *fileLoc[], bool aa){
         else{
             if (currentLine.length() < minLen) {
                 /// Need to write
-                OutBFile.open(bOutFN);
-                OutBFile << label << endl;
-                OutBFile << currentLine << endl;
+                BadFileStream.open(badFileName);
+                BadFileStream << label << endl;
+                BadFileStream << currentLine << endl;
                 label.clear();
                 currentLine.clear();
-                OutBFile.close();
+                BadFileStream.close();
             }
             else{
-                OutGFile.open(gOutFN);
-                OutBFile << label << endl;
-                OutGFile << currentLine << endl;
+                GoodFileStream.open(goodFileName);
+                GoodFileStream << label << endl;
+                GoodFileStream << currentLine << endl;
                 label.clear();
                 currentLine.clear();
-                OutGFile.close();
+                GoodFileStream.close();
             }
         }
     }
+}
+void Fasta::MaxLengthFilter(string name){
+    
 }
 
 void Fasta::ParseOptions(int count, char *fileLoc[]){
@@ -112,12 +117,12 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
          // name to read from STDIN (-fasta stdin). This can be useful to process compressed files using Unix
          // pipes. */
         
-        ("aa", po::value<bool>(), "set amino acid")
+        ("amino", po::value<bool>(), "set amino acid")
         // Input is amino acid (protein) sequences instead of nucleic acid (DNA or RNA) sequences. Allowed amino
         // acid characters: ABCDEFGHIKLMNOPQRSTUVWYZXabcdefghiklmmopqrstuvwyzx*- and allowed nucleic acid
         // characters: ACGTURYKMSWBDHVNXacgturykmswbdhvnx-
         //
-        // The following options are ignored for -aa: stats_dinuc,stats_tag,stats_ns,dna_rna
+        // The following options are ignored for -amino: stats_dinuc,stats_tag,stats_ns,dna_rna
         
         
         ("out_good", po::value<string>(), "Good output filename")
@@ -246,11 +251,11 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         // (without space). If no %-sign is given, it is assumed that the
         // given number specifies the number of repeats of the pattern.
         
-        // Examples: "AAT 10" (filters out sequences containing
-        // AATAATAATAATAATAATAATAATAATAAT anywhere in the sequence), "T
+        // Examples: "aminoT 10" (filters out sequences containing
+        // aminoTaminoTaminoTaminoTaminoTaminoTaminoTaminoTaminoTaminoT anywhere in the sequence), "T
         // 70%" (filters out sequences with more than 70% Ts in the
         // sequence), "A 15" (filters out sequences containing
-        // AAAAAAAAAAAAAAA anywhere in the sequence), "AAT 10;T 70%;A 15"
+        // aminoaminoaminoaminoaminoaminoaminoA anywhere in the sequence), "aminoT 10;T 70%;A 15"
         // (apply all three filters)
         
         /***** TRIM OPTIONS *****/
@@ -356,7 +361,7 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         // (modeval), and median (median) for read length.
         
         ("stats_dinuc", "TBA")
-        // Outputs the dinucleotide odds ratio for AA/TT (aatt), AC/GT
+        // Outputs the dinucleotide odds ratio for amino/TT (aminott), AC/GT
         // (acgt), AG/CT (agct), AT (at), CA/TG (catg), CC/GG (ccgg), CG
         // (cg), GA/TC (gatc), GC (gc) and TA (ta).
         
@@ -393,13 +398,13 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         // Functions for cmd line parameters //
         ///////////////////////////////////////
         
-        if (vm.count("aa")) {
-            aa = vm["aa"].as<bool>();
-        }// Sets AA value if specified, otherwise 0.
+        if (vm.count("amino")) {
+            amino = vm["amino"].as<bool>();
+        }// Sets amino value if specified, otherwise 0.
         
         if (vm.count("fasta")) {
             fileName = vm["fasta"].as<string>();
-            string fileType = Cff.CheckFormat(vm["fasta"].as<string>(), aa);
+            string fileType = Cff.CheckFormat(vm["fasta"].as<string>(), amino);
             if (fileType.compare("uknown") == 0){
                 cout << "Could not find input file " << '"' << vm["fasta"].as<string>() << '"'<< endl;
                 return;
@@ -448,11 +453,11 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         
         //////////////////////////////////////////////////
         if (vm.count("out_good")){
-            WriteGood(vm["out_good"].as<string>(), aa);
+            WriteGood(vm["out_good"].as<string>(), amino);
         }
             
         if (vm.count("out_bad")){
-            WriteBad(vm["out_bad"].as<string>(), aa);
+            WriteBad(vm["out_bad"].as<string>(), amino);
         }
         
         if (vm.count("stats_all")) {
@@ -482,15 +487,16 @@ string Fasta::RandFN(){
     return filename;
 }
 
-void Fasta::WriteGood(string filename, bool amino){
-    
-    gOutFN = filename+ ".fasta";
-    cout << gOutFN << endl;
+void Fasta::WriteGood(string filename, bool amino)
+{
+    goodFileName = filename+ ".fasta";
+    cout << goodFileName << endl;
 }
-void Fasta::WriteBad(string filename, bool amino){
-    
-    bOutFN = filename + ".fasta";
-    cout << bOutFN << endl;
+
+void Fasta::WriteBad(string filename, bool amino)
+{
+    badFileName = filename + ".fasta";
+    cout << badFileName << endl;
 }
 
 void Fasta::SetOutputFormat(int format){
@@ -513,7 +519,7 @@ int Fasta::GetSeqCount(){
 void Fasta::Stats_All(){
     indata.open(fileName);
    
-	//aa = amino;
+	//amino = amino;
 	
 	if(!indata) { // file couldn't be opened
 		string error = "File could not be opened";
