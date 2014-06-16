@@ -130,6 +130,6 @@ string FormatCheck::CheckFormat(string filename, bool amino){
 	else if(fastq == 3) {
 		format = "fastq";
 	}
-	//cout << format << endl;
+	cout << format << endl;
 	return format;
 }

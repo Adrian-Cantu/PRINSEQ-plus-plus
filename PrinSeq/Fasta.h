@@ -74,10 +74,11 @@ private:
     int trimNSLeft;
     int trimNSRight;
     int trimToLen;
-    int minLen;
-    int maxLen;
+    int minLength;
+    int maxLength;
     
     bool good;
+    po::variables_map vm;
     
     //char *fileLoc[];
     string fileName;

@@ -28,8 +28,8 @@ Fasta::Fasta(){
     trimNSLeft = 0;
     trimNSRight = 0;
     trimToLen = 0;
-    minLen = 0;
-    maxLen = 0;
+    minLength = 0;
+    maxLength = 0;
     srand((unsigned)time(0));
 }
 
@@ -46,7 +46,7 @@ Fasta::Fasta(int count, char *fileLoc[]){
     
     ParseOptions(count, fileLoc);
     srand((unsigned)time(0));
-    ProcessFile(fileLoc, amino);
+    //ProcessFile(fileLoc, amino);
 }
 
 void Fasta::ProcessFile(char *fileLoc[], bool amino){
@@ -71,7 +71,7 @@ void Fasta::MinLengthFilter(string name){
             currentLine.clear();
         }
         else{
-            if (currentLine.length() < minLen) {
+            if (currentLine.length() < minLength) {
                 /// Need to write
                 BadFileStream.open(badFileName);
                 BadFileStream << label << endl;
@@ -390,7 +390,7 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         // Outputs all available summary statistics.
         ;
         
-        po::variables_map vm; // Holds all options from cmd line
+        //po::variables_map vm; // Holds all options from cmd line
         po::store(po::parse_command_line(argc, fileLoc, desc), vm); // stores options in vm
         po::notify(vm);
         
@@ -444,11 +444,11 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         }
         
         if (vm.count("min_len")) {
-            minLen = vm["min_len"].as<int>();
+            minLength = vm["min_len"].as<int>();
         }
         
         if (vm.count("max_len")) {
-            maxLen = vm["max_len"].as<int>();
+            maxLength = vm["max_len"].as<int>();
         }
         
         //////////////////////////////////////////////////
