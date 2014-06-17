@@ -10,6 +10,7 @@
 #define __PrinSeq__Fasta__
 
 #include <boost/program_options.hpp>
+#include <boost/program_options/parsers.hpp>
 #include <boost/regex.hpp>
 #include <iostream>
 #include <fstream>
@@ -18,6 +19,7 @@
 #include <iterator>
 #include <algorithm>
 #include "FormatCheck.h"
+#include "SequenceData.h"
 
 using std::string;
 using std::fstream;
@@ -28,25 +30,38 @@ using namespace std;
 
 class Fasta{
 public:
+    /// Constructors
     Fasta();
-    Fasta(int argc, char *fileLoc[]);
-    void ParseOptions(int count, char *fileLoc[]);
+    Fasta(int optionCount, char *OptionsArray[]);
     
+    /// Option functions
+    void DefineOptions(int optionCount, char *OptionsArray[]);
+    void ProcessOptions();
+    
+    /// Not sure
     string RandFN();
+    void ProcessData();
+    bool ValExp(string s);
+    
+    ///Output Functions
     int DefaultOuputType(string name);
-    void WriteGood(string filename, bool amino);
-    void WriteBad(string filename, bool amino);
     void SetOutputFormat(int format);
+    void WriteToGood(string filename);
+    void WriteToBad(string filename);
+    
+    /// Summary Statistics
     void AddSeqCount();
     void AddBaseCount(int size);
-    void ProcessData();
     int GetBaseCount();
     int GetSeqCount();
-    void ProcessFile(char *fileLoc[], bool aa);
+    void ProcessFile();
     void Stats_All();
+    
+    /// Filters
+    void ApplyFilters();
     void MinLengthFilter(string name);
     void MaxLengthFilter(string name);
-    bool ValExp(string s);
+    
     
     
    
@@ -58,12 +73,15 @@ public:
     //bool ValExp(string s);
     
 private:
+    
+    po::options_description desc();
+    
     bool amino;  //amino acid flag
     //int* base;
     int seqCount;
     int baseCount;
     int outFormat;
-    int argc;
+    //int argc;
     int seqNum;
     int trimLeft;
     int trimRight;
@@ -84,10 +102,13 @@ private:
     string fileName;
     string badFileName;
     string goodFileName;
-    ifstream indata;
+    ifstream fastaFile;
     ofstream GoodFileStream;
     ofstream BadFileStream;
-    FormatCheck Cff;
+    
+    FormatCheck CheckFileFormat;
+    SequenceData FastaSeq;
+    
 };
 
 

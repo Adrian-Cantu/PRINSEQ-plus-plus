@@ -17,7 +17,7 @@ Fasta::Fasta(){
     fileName = "none";
     baseCount = 0;
     outFormat = 0;
-    argc = 0;
+    //argc = 0;
     seqNum = 0;
     trimLeft = 0;
     trimRight = 0;
@@ -33,29 +33,32 @@ Fasta::Fasta(){
     srand((unsigned)time(0));
 }
 
-Fasta::Fasta(int count, char *fileLoc[]){
+Fasta::Fasta(int optionCount, char *OptionsArray[]){
+    srand((unsigned)time(0));
     amino = 0;  //amino acid flag
     //base = &numbase;
     seqCount = 0;
     outFormat = 1;
     fileName = "none";
-    argc = count;
-    string name = fileLoc[2]; // Fix later
+    //argc = optionCount;
+    string name = OptionsArray[2]; // Fix later
     badFileName = name + "_prinseq_bad_" + RandFN(); // Fix later
     goodFileName = name + "_prinseq_good_" + RandFN(); // Fix later
     
-    ParseOptions(count, fileLoc);
-    srand((unsigned)time(0));
-    //ProcessFile(fileLoc, amino);
+    DefineOptions(optionCount, OptionsArray);
 }
 
-void Fasta::ProcessFile(char *fileLoc[], bool amino){
-    string name = *fileLoc;
-    string fileType = Cff.CheckFormat(name, amino);
-
-    if (fileType.compare("uknown") == 0){
-        cout << "Could not find input file " << '"' << name << '"'<< endl;
-        return;
+void Fasta::ProcessFile(){
+    ProcessOptions();
+    string currentLine;
+    while (getline(fastaFile, currentLine)) {
+        if (currentLine[0] == '>') {
+            FastaSeq.SetID(currentLine);
+        }
+        else{
+            FastaSeq.SetDNA(currentLine);
+            ApplyFilters();
+        }
     }
 }
 
@@ -63,39 +66,14 @@ void Fasta::MinLengthFilter(string name){
     string currentLine;
     string label;
     string sequence;
-    indata.open(name);
-    
-    while (getline(indata, currentLine)) {
-        if (currentLine[0] == '>') {
-            label = currentLine;
-            currentLine.clear();
-        }
-        else{
-            if (currentLine.length() < minLength) {
-                /// Need to write
-                BadFileStream.open(badFileName);
-                BadFileStream << label << endl;
-                BadFileStream << currentLine << endl;
-                label.clear();
-                currentLine.clear();
-                BadFileStream.close();
-            }
-            else{
-                GoodFileStream.open(goodFileName);
-                GoodFileStream << label << endl;
-                GoodFileStream << currentLine << endl;
-                label.clear();
-                currentLine.clear();
-                GoodFileStream.close();
-            }
-        }
-    }
+    fastaFile.open(name);
 }
+
 void Fasta::MaxLengthFilter(string name){
     
 }
 
-void Fasta::ParseOptions(int count, char *fileLoc[]){
+void Fasta::DefineOptions(int numberOfOptions, char *OptionsArray[]){
     //////////////////////////////////////
     // Cmd Line Descriptions            //
     //////////////////////////////////////
@@ -390,94 +368,97 @@ void Fasta::ParseOptions(int count, char *fileLoc[]){
         // Outputs all available summary statistics.
         ;
         
-        //po::variables_map vm; // Holds all options from cmd line
-        po::store(po::parse_command_line(argc, fileLoc, desc), vm); // stores options in vm
+//        po::variables_map vm; // Holds all options from cmd line
+        po::store(po::parse_command_line(numberOfOptions, OptionsArray, desc), vm); // stores options in vm
         po::notify(vm);
         
-        ///////////////////////////////////////
-        // Functions for cmd line parameters //
-        ///////////////////////////////////////
-        
-        if (vm.count("amino")) {
-            amino = vm["amino"].as<bool>();
-        }// Sets amino value if specified, otherwise 0.
-        
-        if (vm.count("fasta")) {
-            fileName = vm["fasta"].as<string>();
-            string fileType = Cff.CheckFormat(vm["fasta"].as<string>(), amino);
-            if (fileType.compare("uknown") == 0){
-                cout << "Could not find input file " << '"' << vm["fasta"].as<string>() << '"'<< endl;
-                return;
-            }
-        } // Calls File Format Class: FormatCheck.cpp
-        
-        if (vm.count("seq_num")) {
-            seqNum = vm["seq_num"].as<int>();
-        }
-        
-        if (vm.count("trim_left")) {
-            trimLeft = vm["trim_left"].as<int>();
-        }
-        
-        if (vm.count("trim_right")) {
-            trimRight = vm["trim_right"].as<int>();
-        }
-        
-        if (vm.count("trim_qual_left")) {
-            trimQualLeft = vm["trim_qual_left"].as<int>();
-        }
-        
-        if (vm.count("trim_qual_right")) {
-            trimQualRight = vm["trim_qual_right"].as<int>();
-        }
-        
-        if (vm.count("trim_ns_left")) {
-            trimNSLeft = vm["trim_ns_left"].as<int>();
-        }
-        
-        if (vm.count("trim_ns_right")) {
-            trimNSRight = vm["trim_ns_right"].as<int>();
-        }
-        
-        if (vm.count("trim_to_len")) {
-            trimToLen = vm["trim_to_len"].as<int>();
-        }
-        
-        if (vm.count("min_len")) {
-            minLength = vm["min_len"].as<int>();
-        }
-        
-        if (vm.count("max_len")) {
-            maxLength = vm["max_len"].as<int>();
-        }
-        
-        //////////////////////////////////////////////////
-        if (vm.count("out_good")){
-            WriteGood(vm["out_good"].as<string>(), amino);
-        }
-            
-        if (vm.count("out_bad")){
-            WriteBad(vm["out_bad"].as<string>(), amino);
-        }
-        
-        if (vm.count("stats_all")) {
-            cout << "Fasta Class File Name: " << fileName << endl;
-            cout << "test stats all." << endl;
-            Stats_All();
-        }
-
-        if (vm.count("out_format")) {
-            outFormat = vm["out_format"].as<int>();
-        }
-        
-
-    }
+           }
     catch(std::exception& e) {
         cerr << "error: " << e.what() << "\n";
     }
     catch(...) {
         cerr << "Exception of unknown type!\n";
     }
+}
+
+void Fasta::ProcessOptions(){
+    
+    ///////////////////////////////////////
+    // Functions for cmd line parameters //
+    ///////////////////////////////////////
+    
+    if (vm.count("amino")) {
+        amino = vm["amino"].as<bool>();
+    }// Sets amino value if specified, otherwise 0.
+    
+    if (vm.count("fasta")) {
+        fileName = vm["fasta"].as<string>();
+        string fileType = CheckFileFormat.CheckFormat(fileName, amino);
+        if (fileType.compare("uknown") == 0){
+            cout << "Could not find input file " << '"' << vm["fasta"].as<string>() << '"'<< endl;
+            return;
+        }
+    } // Calls File Format Class: FormatCheck.cpp
+    
+    if (vm.count("seq_num")) {
+        seqNum = vm["seq_num"].as<int>();
+    }
+    
+    if (vm.count("trim_left")) {
+        FastaSeq.TrimSeqLeft(vm["trim_left"].as<int>());
+    }
+    
+    if (vm.count("trim_right")) {
+        FastaSeq.TrimSeqRight(vm["trim_right"].as<int>());
+    }
+    
+    if (vm.count("trim_qual_left")) {
+        trimQualLeft = vm["trim_qual_left"].as<int>();
+    }
+    
+    if (vm.count("trim_qual_right")) {
+        trimQualRight = vm["trim_qual_right"].as<int>();
+    }
+    
+    if (vm.count("trim_ns_left")) {
+        trimNSLeft = vm["trim_ns_left"].as<int>();
+    }
+    
+    if (vm.count("trim_ns_right")) {
+        trimNSRight = vm["trim_ns_right"].as<int>();
+    }
+    
+    if (vm.count("trim_to_len")) {
+        trimToLen = vm["trim_to_len"].as<int>();
+    }
+    
+    if (vm.count("min_len")) {
+        minLength = vm["min_len"].as<int>();
+    }
+    
+    if (vm.count("max_len")) {
+        maxLength = vm["max_len"].as<int>();
+    }
+    
+    //////////////////////////////////////////////////
+    if (vm.count("out_good")){
+        WriteToGood(vm["out_good"].as<string>()); /// FIX!!!!!
+    }
+    
+    if (vm.count("out_bad")){
+        WriteToBad(vm["out_bad"].as<string>()); /// FIX!!!!!
+    }
+    
+    if (vm.count("stats_all")) {
+        cout << "Fasta Class File Name: " << fileName << endl;
+        cout << "test stats all." << endl;
+        Stats_All();
+    }
+    
+    if (vm.count("out_format")) {
+        outFormat = vm["out_format"].as<int>();
+    }
+    
 }
 
 string Fasta::RandFN(){
@@ -487,13 +468,15 @@ string Fasta::RandFN(){
     return filename;
 }
 
-void Fasta::WriteGood(string filename, bool amino)
+void Fasta::WriteToGood(string filename)
 {
     goodFileName = filename+ ".fasta";
-    cout << goodFileName << endl;
+    GoodFileStream.open(goodFileName);
+    GoodFileStream << label << endl;
+    GoodFileStream << currentLine << endl;
 }
 
-void Fasta::WriteBad(string filename, bool amino)
+void Fasta::WriteToBad(string filename)
 {
     badFileName = filename + ".fasta";
     cout << badFileName << endl;
@@ -517,17 +500,17 @@ int Fasta::GetSeqCount(){
     return seqCount;
 }
 void Fasta::Stats_All(){
-    indata.open(fileName);
+    fastaFile.open(fileName);
    
 	//amino = amino;
 	
-	if(!indata) { // file couldn't be opened
+	if(!fastaFile) { // file couldn't be opened
 		string error = "File could not be opened";
 		return ;
 	}
     
     string lineA;
-    while (getline(indata, lineA)) {
+    while (getline(fastaFile, lineA)) {
         if (ValExp(lineA)) {
             AddSeqCount();
         }

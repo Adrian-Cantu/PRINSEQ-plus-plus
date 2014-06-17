@@ -17,11 +17,18 @@ using namespace std;
 int main(int argc, char* argv[])
 {
 	int optind = 1;
-    Fasta FA(argc, argv);
-//	if (strcmp(argv[optind],"-fasta") == 0)
-//	{
-//		Fasta FA(argc, argv);
-//	}
+    //Fasta FA(argc, argv);
+	if (strcmp(argv[optind],"-fasta"))
+	{
+        if (argv[optind + 1] == NULL) {
+            cout << "Option fasta requires an argument" << endl;
+            return 0;
+        }
+		Fasta FA(argc, argv);
+	}
+    
+    else
+        cout << "Error: you did not specify an input file containing the query sequences." << endl;
     
     return 0;
 }
