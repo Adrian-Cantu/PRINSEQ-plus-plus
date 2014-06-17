@@ -31,18 +31,13 @@ FormatCheck::FormatCheck(){
  */
 string FormatCheck::CheckFormat(string filename, bool amino){
 	indata.open(filename);
-    cout << "Format Check File Name: " << filename << endl;
 	aa = amino;
-	//cout << "QualAlarm3" << endl;
+    
 	if(!indata) { // file couldn't be opened
 		string error = "File could not be opened";
 		return error;
 	}
-//    while(indata.getline(name, 256)){
-//        if( /^\>\S+\s*/o){
-//            int a = 0;
-//        }
-//    }
+    
 	for (int count = 3; count > 0; count--) {
 		indata.getline(name, 256);
 		s = name;
@@ -130,6 +125,5 @@ string FormatCheck::CheckFormat(string filename, bool amino){
 	else if(fastq == 3) {
 		format = "fastq";
 	}
-	cout << format << endl;
 	return format;
 }

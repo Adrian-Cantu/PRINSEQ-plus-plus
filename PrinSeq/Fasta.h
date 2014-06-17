@@ -18,6 +18,7 @@
 #include <sstream>
 #include <iterator>
 #include <algorithm>
+#include <iomanip>
 #include "FormatCheck.h"
 #include "SequenceData.h"
 
@@ -42,7 +43,8 @@ public:
     /// Not sure
     string RandFN();
     void ProcessData();
-    bool ValExp(string s);
+    
+    bool IsSeqID(string s);
     
     ///Output Functions
     int DefaultOuputType(string name);
@@ -51,14 +53,23 @@ public:
     void WriteToBad();
     
     /// Summary Statistics
-    void AddSeqCount();
-    void AddBaseCount(long size);
+    void IncrementSeqCount();
+    void IncrementBaseCount(long size);
+    void IncrementBadSeqCount();
+    void IncrementGoodSeqCount();
+    
     long GetBaseCount();
-    int GetSeqCount();
+    long GetSeqCount();
+    long GetBadSeqCount();
+    long GetGoodSeqCount();
+    
     void ProcessFile();
+    
+    /// Print Statistics
+    void PrintStats();
     void PrintStatsInfo();
     void PrintStats_All();
-    void PrintStats();
+    
     
     /// Filters
     void ApplyFilters();
@@ -80,11 +91,8 @@ private:
     po::options_description desc();
     
     bool amino;  //amino acid flag
-    //int* base;
-    int seqCount;
-    long baseCount;
+    
     int outFormat;
-    //int argc;
     int seqNum;
     int trimLeft;
     int trimRight;
@@ -98,11 +106,14 @@ private:
     int minLength;
     int maxLength;
     
-    bool good;
+    long seqCount;
+    long baseCount;
+    long goodSeqCount;
+    long badSeqCount;
+    
     po::variables_map vm;
     
-    //char *fileLoc[];
-    string fileName;
+    string inputFileName;
     string badFileName;
     string goodFileName;
     ifstream fastaFile;

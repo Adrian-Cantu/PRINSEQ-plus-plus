@@ -27,7 +27,7 @@ void Fasta::DefineOptions(int numberOfOptions, char *OptionsArray[]){
     // Cmd Line Descriptions            //
     //////////////////////////////////////
     try {
-        
+        // Defining and adding all allowable options 
         po::options_description desc("Allowed options");
         desc.add_options()
         
@@ -86,7 +86,9 @@ void Fasta::DefineOptions(int numberOfOptions, char *OptionsArray[]){
         
         /***** FILTER OPTIONS *****/
         ("min_len", po::value<int>(), "TBA")
-        // Filter sequence shorter than min_len.    ("max_len", po::value<int>(), "TBA")
+        // Filter sequence shorter than min_len.
+        
+        ("max_len", po::value<int>(), "TBA")
         // Filter sequence longer than max_len.
         
         ("range_len", po::value<string>(), "TBA")
@@ -334,7 +336,7 @@ void Fasta::ProcessFile(){
     ProcessOptions();
     string currentLine;
     
-    fastaFile.open(fileName);
+    fastaFile.open(inputFileName);
     while (getline(fastaFile, currentLine)) {
         //cout << "CurrentLine: " << currentLine << endl;
         if (currentLine[0] == '>') {
@@ -344,13 +346,14 @@ void Fasta::ProcessFile(){
             FastaSeq.SetDNA(currentLine);
             ApplyFilters();
         }
-        if (ValExp(currentLine)) {
-            AddSeqCount();
+        if (IsSeqID(currentLine)) {
+            IncrementSeqCount();
         }
         else // need to add valid sequence checks
-            AddBaseCount(currentLine.size());
+            IncrementBaseCount(currentLine.size());
     }
     fastaFile.close();
+    PrintStats();
 }
 
 void Fasta::ProcessOptions(){
@@ -361,11 +364,11 @@ void Fasta::ProcessOptions(){
     
     if (vm.count("amino")) {
         amino = vm["amino"].as<bool>();
-    }// Sets amino value if specified, otherwise 0.
+    }
     
     if (vm.count("fasta")) {
-        fileName = vm["fasta"].as<string>();
-        string fileType = CheckFileFormat.CheckFormat(fileName, amino);
+        inputFileName = vm["fasta"].as<string>();
+        string fileType = CheckFileFormat.CheckFormat(inputFileName, amino);
         if (fileType.compare("uknown") == 0){
             cout << "Could not find input file " << '"' << vm["fasta"].as<string>() << '"'<< endl;
             return;
@@ -437,17 +440,25 @@ void Fasta::ApplyFilters(){
 }
 
 void Fasta::MinLengthFilter(){
-    if(minLength <= FastaSeq.GetSeqLength())
+    if(minLength <= FastaSeq.GetSeqLength()){
         WriteToGood();
-    else
+        IncrementGoodSeqCount();
+    }
+    else{
         WriteToBad();
+        IncrementBadSeqCount();
+    }
 }
 
 void Fasta::MaxLengthFilter(){
-    if(maxLength >= FastaSeq.GetSeqLength())
+    if(maxLength >= FastaSeq.GetSeqLength()){
         WriteToGood();
-    else
+        IncrementGoodSeqCount();
+    }
+    else{
         WriteToBad();
+        IncrementBadSeqCount();
+    }
 }
 
 string Fasta::RandFN(){
@@ -459,7 +470,7 @@ string Fasta::RandFN(){
 
 void Fasta::WriteToGood()
 {
-    GoodFileStream.open(goodFileName);
+    GoodFileStream.open(goodFileName, ios::app);
     GoodFileStream << FastaSeq.GetID() << endl;
     GoodFileStream << FastaSeq.GetDNASeq() << endl;
     GoodFileStream.close();
@@ -467,7 +478,7 @@ void Fasta::WriteToGood()
 
 void Fasta::WriteToBad()
 {
-    BadFileStream.open(badFileName);
+    BadFileStream.open(badFileName, ios::app);
     BadFileStream << FastaSeq.GetID() << endl;
     BadFileStream << FastaSeq.GetDNASeq() << endl;
     BadFileStream.close();
@@ -478,16 +489,16 @@ void Fasta::SetOutputFormat(int format){
     cout << outFormat << endl;
 }
 
-void Fasta::AddSeqCount(){
+void Fasta::IncrementSeqCount(){
     seqCount++;
 }
-void Fasta::AddBaseCount(long size){
+void Fasta::IncrementBaseCount(long size){
     baseCount += size;
 }
 long Fasta::GetBaseCount(){
     return baseCount;
 }
-int Fasta::GetSeqCount(){
+long Fasta::GetSeqCount(){
     return seqCount;
 }
 
@@ -502,47 +513,56 @@ void Fasta::PrintStats(){
 }
 
 void Fasta::PrintStatsInfo(){
-    cout << "Sequence Count: " << GetSeqCount() << endl;
-    cout << "Base Count: " << GetBaseCount() << endl;
+    double mean = double(GetBaseCount())/double(GetSeqCount());
+    cout << "Input and filter stats:" << endl;
+    cout << "\t\tInput sequences: " << GetSeqCount() << endl;
+    cout << "\t\tInput bases: " << GetBaseCount() << endl;
+    cout << "\t\tInput mean length: " << fixed << setprecision(2) << showpoint << mean << endl;
+    cout << "\t\tGood sequences: " << GetGoodSeqCount() << endl;
+    cout << "\t\tBad sequences: " << GetBadSeqCount() << endl;
+    
 }
 
 void Fasta::PrintStats_All(){
-    fastaFile.open(fileName);
-   
-	//amino = amino;
-	
-	if(!fastaFile) { // file couldn't be opened
-		string error = "File could not be opened";
-		return ;
-	}
-    
-    string lineA;
-    while (getline(fastaFile, lineA)) {
-        if (ValExp(lineA)) {
-            AddSeqCount();
-        }
-        else // need to add valid sequence checks
-            AddBaseCount(lineA.size());
-    }
-    cout << "Sequence Count: " << seqCount << endl;
-    cout << "Base Count: " << baseCount << endl;
+    double mean = double(GetBaseCount())/double(GetSeqCount());
+    cout << "Input and filter stats:" << endl;
+    cout << "\t\tInput sequences: " << GetSeqCount() << endl;
+    cout << "\t\tInput bases: " << GetBaseCount() << endl;
+    cout << "\t\tInput mean length: " << fixed << setprecision(2) << showpoint << mean << endl;
+    cout << "\t\tGood sequences: " << GetGoodSeqCount() << endl;
+    cout << "\t\tBad sequences: " << GetBadSeqCount() << endl;
 }
 
-bool Fasta::ValExp(string s){
+bool Fasta::IsSeqID(string s){
     static const regex e1("^>(\\S+)\\s*(.*)$");
     return regex_match(s,e1);
 }
 
-void Fasta::ProcessData(){
+void Fasta::IncrementBadSeqCount(){
+    badSeqCount++;
+}
 
+long Fasta::GetBadSeqCount(){
+    return badSeqCount;
+}
+
+
+void Fasta::IncrementGoodSeqCount(){
+    goodSeqCount++;
+}
+
+long Fasta::GetGoodSeqCount(){
+    return goodSeqCount;
 }
 
 void Fasta::SetDefaultValues(){
     amino = 1;
     seqCount = 0;
-    outFormat = 1;
-    fileName = "none";
     baseCount = 0;
+    badSeqCount = 0;
+    goodSeqCount = 0;
+    outFormat = 1;
+    inputFileName = "none";
     outFormat = 0;
     seqNum = 0;
     trimLeft = 0;

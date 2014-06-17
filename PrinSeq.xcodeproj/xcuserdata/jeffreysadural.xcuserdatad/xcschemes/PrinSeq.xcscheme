@@ -67,11 +67,15 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--min_len"
+            argument = "--max_len"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "25"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--stats_info"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
