@@ -9,68 +9,17 @@
 #include "Fasta.h"
 using namespace std;
 Fasta::Fasta(){
-    
-    amino = 0;  //amino acid flag - boolean
-    //base = &numbase;
-    seqCount = 0;
-    outFormat = 1;
-    fileName = "none";
-    baseCount = 0;
-    outFormat = 0;
-    //argc = 0;
-    seqNum = 0;
-    trimLeft = 0;
-    trimRight = 0;
-    trimQualLeft = 0;
-    trimQualRight = 0;
-    trimTailLeft = 0;
-    trimTailRight = 0;
-    trimNSLeft = 0;
-    trimNSRight = 0;
-    trimToLen = 0;
-    minLength = 0;
-    maxLength = 0;
-    srand((unsigned)time(0));
+    SetDefaultValues();
 }
 
 Fasta::Fasta(int optionCount, char *OptionsArray[]){
-    srand((unsigned)time(0));
-    amino = 0;  //amino acid flag
-    //base = &numbase;
-    seqCount = 0;
-    outFormat = 1;
-    fileName = "none";
-    //argc = optionCount;
-    string name = OptionsArray[2]; // Fix later
-    badFileName = name + "_prinseq_bad_" + RandFN(); // Fix later
-    goodFileName = name + "_prinseq_good_" + RandFN(); // Fix later
+    SetDefaultValues();
+    string name = OptionsArray[2]; // Retrive name from command line arguemnts
+    
+    badFileName = name + "_prinseq_bad_" + RandFN() + ".fasta"; // Fix later
+    goodFileName = name + "_prinseq_good_" + RandFN() + ".fasta"; // Fix later
     
     DefineOptions(optionCount, OptionsArray);
-}
-
-void Fasta::ProcessFile(){
-    ProcessOptions();
-    string currentLine;
-    while (getline(fastaFile, currentLine)) {
-        if (currentLine[0] == '>') {
-            FastaSeq.SetID(currentLine);
-        }
-        else{
-            FastaSeq.SetDNA(currentLine);
-            ApplyFilters();
-        }
-    }
-}
-
-void Fasta::MinLengthFilter(string name){
-    string currentLine;
-    string label;
-    string sequence;
-    fastaFile.open(name);
-}
-
-void Fasta::MaxLengthFilter(string name){
-    
 }
 
 void Fasta::DefineOptions(int numberOfOptions, char *OptionsArray[]){
@@ -368,17 +317,40 @@ void Fasta::DefineOptions(int numberOfOptions, char *OptionsArray[]){
         // Outputs all available summary statistics.
         ;
         
-//        po::variables_map vm; // Holds all options from cmd line
+        //        po::variables_map vm; // Holds all options from cmd line
         po::store(po::parse_command_line(numberOfOptions, OptionsArray, desc), vm); // stores options in vm
         po::notify(vm);
         
-           }
+    }
     catch(std::exception& e) {
         cerr << "error: " << e.what() << "\n";
     }
     catch(...) {
         cerr << "Exception of unknown type!\n";
     }
+}
+
+void Fasta::ProcessFile(){
+    ProcessOptions();
+    string currentLine;
+    
+    fastaFile.open(fileName);
+    while (getline(fastaFile, currentLine)) {
+        //cout << "CurrentLine: " << currentLine << endl;
+        if (currentLine[0] == '>') {
+            FastaSeq.SetID(currentLine);
+        }
+        else{
+            FastaSeq.SetDNA(currentLine);
+            ApplyFilters();
+        }
+        if (ValExp(currentLine)) {
+            AddSeqCount();
+        }
+        else // need to add valid sequence checks
+            AddBaseCount(currentLine.size());
+    }
+    fastaFile.close();
 }
 
 void Fasta::ProcessOptions(){
@@ -442,17 +414,11 @@ void Fasta::ProcessOptions(){
     
     //////////////////////////////////////////////////
     if (vm.count("out_good")){
-        WriteToGood(vm["out_good"].as<string>()); /// FIX!!!!!
+        goodFileName = vm["out_good"].as<string>();
     }
     
     if (vm.count("out_bad")){
-        WriteToBad(vm["out_bad"].as<string>()); /// FIX!!!!!
-    }
-    
-    if (vm.count("stats_all")) {
-        cout << "Fasta Class File Name: " << fileName << endl;
-        cout << "test stats all." << endl;
-        Stats_All();
+        badFileName = vm["out_bad"].as<string>();
     }
     
     if (vm.count("out_format")) {
@@ -461,25 +427,50 @@ void Fasta::ProcessOptions(){
     
 }
 
+void Fasta::ApplyFilters(){
+    if (minLength > 0) {
+        MinLengthFilter();
+    }
+    else if (maxLength > 0) {
+        MaxLengthFilter();
+    }
+}
+
+void Fasta::MinLengthFilter(){
+    if(minLength <= FastaSeq.GetSeqLength())
+        WriteToGood();
+    else
+        WriteToBad();
+}
+
+void Fasta::MaxLengthFilter(){
+    if(maxLength >= FastaSeq.GetSeqLength())
+        WriteToGood();
+    else
+        WriteToBad();
+}
+
 string Fasta::RandFN(){
     string filename;
-    filename = rand() % 1000;
+    filename = to_string(rand() % 10000);
     
     return filename;
 }
 
-void Fasta::WriteToGood(string filename)
+void Fasta::WriteToGood()
 {
-    goodFileName = filename+ ".fasta";
     GoodFileStream.open(goodFileName);
-    GoodFileStream << label << endl;
-    GoodFileStream << currentLine << endl;
+    GoodFileStream << FastaSeq.GetID() << endl;
+    GoodFileStream << FastaSeq.GetDNASeq() << endl;
+    GoodFileStream.close();
 }
 
-void Fasta::WriteToBad(string filename)
+void Fasta::WriteToBad()
 {
-    badFileName = filename + ".fasta";
-    cout << badFileName << endl;
+    BadFileStream.open(badFileName);
+    BadFileStream << FastaSeq.GetID() << endl;
+    BadFileStream << FastaSeq.GetDNASeq() << endl;
+    BadFileStream.close();
 }
 
 void Fasta::SetOutputFormat(int format){
@@ -490,16 +481,32 @@ void Fasta::SetOutputFormat(int format){
 void Fasta::AddSeqCount(){
     seqCount++;
 }
-void Fasta::AddBaseCount(int size){
+void Fasta::AddBaseCount(long size){
     baseCount += size;
 }
-int Fasta::GetBaseCount(){
+long Fasta::GetBaseCount(){
     return baseCount;
 }
 int Fasta::GetSeqCount(){
     return seqCount;
 }
-void Fasta::Stats_All(){
+
+void Fasta::PrintStats(){
+    if (vm.count("stats_info")) {
+        PrintStatsInfo();
+    }
+    
+    if (vm.count("stats_all")) {
+        PrintStats_All();
+    }
+}
+
+void Fasta::PrintStatsInfo(){
+    cout << "Sequence Count: " << GetSeqCount() << endl;
+    cout << "Base Count: " << GetBaseCount() << endl;
+}
+
+void Fasta::PrintStats_All(){
     fastaFile.open(fileName);
    
 	//amino = amino;
@@ -527,11 +534,27 @@ bool Fasta::ValExp(string s){
 }
 
 void Fasta::ProcessData(){
-    good = 1;
-    int begin = 0;
-    int end = 0;
-    
+
 }
 
-
+void Fasta::SetDefaultValues(){
+    amino = 1;
+    seqCount = 0;
+    outFormat = 1;
+    fileName = "none";
+    baseCount = 0;
+    outFormat = 0;
+    seqNum = 0;
+    trimLeft = 0;
+    trimRight = 0;
+    trimQualLeft = 0;
+    trimQualRight = 0;
+    trimTailLeft = 0;
+    trimTailRight = 0;
+    trimNSLeft = 0;
+    trimNSRight = 0;
+    trimToLen = 0;
+    minLength = 0;
+    maxLength = 0;
+}
 

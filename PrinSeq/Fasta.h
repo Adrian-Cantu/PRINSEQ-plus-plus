@@ -33,6 +33,7 @@ public:
     /// Constructors
     Fasta();
     Fasta(int optionCount, char *OptionsArray[]);
+    void SetDefaultValues();
     
     /// Option functions
     void DefineOptions(int optionCount, char *OptionsArray[]);
@@ -46,21 +47,23 @@ public:
     ///Output Functions
     int DefaultOuputType(string name);
     void SetOutputFormat(int format);
-    void WriteToGood(string filename);
-    void WriteToBad(string filename);
+    void WriteToGood();
+    void WriteToBad();
     
     /// Summary Statistics
     void AddSeqCount();
-    void AddBaseCount(int size);
-    int GetBaseCount();
+    void AddBaseCount(long size);
+    long GetBaseCount();
     int GetSeqCount();
     void ProcessFile();
-    void Stats_All();
+    void PrintStatsInfo();
+    void PrintStats_All();
+    void PrintStats();
     
     /// Filters
     void ApplyFilters();
-    void MinLengthFilter(string name);
-    void MaxLengthFilter(string name);
+    void MinLengthFilter();
+    void MaxLengthFilter();
     
     
     
@@ -79,7 +82,7 @@ private:
     bool amino;  //amino acid flag
     //int* base;
     int seqCount;
-    int baseCount;
+    long baseCount;
     int outFormat;
     //int argc;
     int seqNum;

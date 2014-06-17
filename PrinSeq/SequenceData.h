@@ -27,7 +27,7 @@ public:
     
     string GetID();
     string GetDNASeq();
-    int GetSeqLength();
+    long GetSeqLength();
     bool GetAmino();
     
     void TrimSeqLeft(int trimValue);
@@ -36,7 +36,7 @@ public:
 private:
     string sequenceID;
     string sequence;
-    int sequenceLength;
+    long sequenceLength;
     bool amino;
     
     

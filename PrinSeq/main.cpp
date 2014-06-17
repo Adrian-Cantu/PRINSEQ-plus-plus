@@ -16,6 +16,7 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
+    srand((unsigned)time(0));
 	int optind = 1;
     //Fasta FA(argc, argv);
 	if (strcmp(argv[optind],"-fasta"))
@@ -25,6 +26,7 @@ int main(int argc, char* argv[])
             return 0;
         }
 		Fasta FA(argc, argv);
+        FA.ProcessFile();
 	}
     
     else
