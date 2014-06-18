@@ -57,16 +57,21 @@ public:
     void IncrementBaseCount(long size);
     void IncrementBadSeqCount();
     void IncrementGoodSeqCount();
+    void IncrementBadBaseCount();
+    void IncrementGoodBaseCount();
     
     long GetBaseCount();
     long GetSeqCount();
     long GetBadSeqCount();
     long GetGoodSeqCount();
+    long GetBadBaseCount();
+    long GetGoodBaseCount();
     
     void ProcessFile();
     
     /// Print Statistics
     void PrintStats();
+    void PrintStandardStats();
     void PrintStatsInfo();
     void PrintStats_All();
     
@@ -75,16 +80,6 @@ public:
     void ApplyFilters();
     void MinLengthFilter();
     void MaxLengthFilter();
-    
-    
-    
-   
-    //int CountFASeq(char fileLoc[], bool amino);
-    //int CountFABase();
-    //float meanLength();
-    //void SetAmino(bool amino);
-    //void WriteFasta();
-    //bool ValExp(string s);
     
 private:
     
@@ -110,6 +105,8 @@ private:
     long baseCount;
     long goodSeqCount;
     long badSeqCount;
+    long goodBaseCount;
+    long badBaseCount;
     
     po::variables_map vm;
     

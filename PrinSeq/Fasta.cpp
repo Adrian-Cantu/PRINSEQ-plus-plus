@@ -441,23 +441,27 @@ void Fasta::ApplyFilters(){
 
 void Fasta::MinLengthFilter(){
     if(minLength <= FastaSeq.GetSeqLength()){
-        WriteToGood();
         IncrementGoodSeqCount();
+        IncrementGoodBaseCount();
+        //WriteToGood();
     }
     else{
-        WriteToBad();
         IncrementBadSeqCount();
+        IncrementBadBaseCount();
+        //WriteToBad();
     }
 }
 
 void Fasta::MaxLengthFilter(){
     if(maxLength >= FastaSeq.GetSeqLength()){
-        WriteToGood();
-        IncrementGoodSeqCount();
+        //IncrementGoodSeqCount();
+        IncrementGoodBaseCount();
+        //WriteToGood();
     }
     else{
-        WriteToBad();
         IncrementBadSeqCount();
+        IncrementBadBaseCount();
+        //WriteToBad();
     }
 }
 
@@ -468,6 +472,71 @@ string Fasta::RandFN(){
     return filename;
 }
 
+
+void Fasta::SetOutputFormat(int format){
+    outFormat = format;
+    cout << outFormat << endl;
+}
+
+//****** INCREMENT Seq/Base counts ******//
+void Fasta::IncrementSeqCount(){
+    seqCount++;
+}
+void Fasta::IncrementBaseCount(long size){
+    baseCount += size;
+}
+
+
+//****** INCREMENT BAD Seq/Base counts ******//
+void Fasta::IncrementBadSeqCount(){
+    badSeqCount++;
+}
+
+void Fasta::IncrementBadBaseCount(){
+    badBaseCount += FastaSeq.GetDNASeq().size();
+}
+
+
+//****** INCREMENT GOOD Seq/Base counts ******//
+void Fasta::IncrementGoodSeqCount(){
+    goodSeqCount = goodSeqCount + 1;
+}
+void Fasta::IncrementGoodBaseCount(){
+    goodBaseCount += FastaSeq.GetDNASeq().size();
+}
+
+
+//****** GET Seq/Base counts ******//
+long Fasta::GetSeqCount(){
+    return seqCount;
+}
+
+long Fasta::GetBaseCount(){
+    return baseCount;
+}
+
+
+//****** GET BAD Seq/Base counts ******//
+long Fasta::GetBadSeqCount(){
+    return badSeqCount;
+}
+
+long Fasta::GetBadBaseCount(){
+    return badBaseCount;
+}
+
+
+//****** GET GOOD Seq/Base counts ******//
+long Fasta::GetGoodSeqCount(){
+    return goodSeqCount;
+}
+
+long Fasta::GetGoodBaseCount(){
+    return goodBaseCount;
+}
+
+
+//****** WRITE Files ******//
 void Fasta::WriteToGood()
 {
     GoodFileStream.open(goodFileName, ios::app);
@@ -484,25 +553,10 @@ void Fasta::WriteToBad()
     BadFileStream.close();
 }
 
-void Fasta::SetOutputFormat(int format){
-    outFormat = format;
-    cout << outFormat << endl;
-}
-
-void Fasta::IncrementSeqCount(){
-    seqCount++;
-}
-void Fasta::IncrementBaseCount(long size){
-    baseCount += size;
-}
-long Fasta::GetBaseCount(){
-    return baseCount;
-}
-long Fasta::GetSeqCount(){
-    return seqCount;
-}
-
+//****** PRINT Stats ******//
 void Fasta::PrintStats(){
+    PrintStandardStats();
+    
     if (vm.count("stats_info")) {
         PrintStatsInfo();
     }
@@ -512,25 +566,27 @@ void Fasta::PrintStats(){
     }
 }
 
-void Fasta::PrintStatsInfo(){
+void Fasta::PrintStandardStats(){
     double mean = double(GetBaseCount())/double(GetSeqCount());
     cout << "Input and filter stats:" << endl;
     cout << "\t\tInput sequences: " << GetSeqCount() << endl;
     cout << "\t\tInput bases: " << GetBaseCount() << endl;
     cout << "\t\tInput mean length: " << fixed << setprecision(2) << showpoint << mean << endl;
     cout << "\t\tGood sequences: " << GetGoodSeqCount() << endl;
+    cout << "\t\tGood bases: " << GetGoodBaseCount() << endl;
     cout << "\t\tBad sequences: " << GetBadSeqCount() << endl;
-    
+    cout << "\t\tBad bases: " << GetBadBaseCount() << endl;
+    cout << "\t\tSequences filtered by specified parameters: "<< endl << "\t\tnone" << endl;
+}
+
+void Fasta::PrintStatsInfo(){
+    cout << "\t\tInput sequences: " << GetSeqCount() << endl;
+    cout << "\t\tInput bases: " << GetBaseCount() << endl;
 }
 
 void Fasta::PrintStats_All(){
-    double mean = double(GetBaseCount())/double(GetSeqCount());
-    cout << "Input and filter stats:" << endl;
     cout << "\t\tInput sequences: " << GetSeqCount() << endl;
     cout << "\t\tInput bases: " << GetBaseCount() << endl;
-    cout << "\t\tInput mean length: " << fixed << setprecision(2) << showpoint << mean << endl;
-    cout << "\t\tGood sequences: " << GetGoodSeqCount() << endl;
-    cout << "\t\tBad sequences: " << GetBadSeqCount() << endl;
 }
 
 bool Fasta::IsSeqID(string s){
@@ -538,29 +594,15 @@ bool Fasta::IsSeqID(string s){
     return regex_match(s,e1);
 }
 
-void Fasta::IncrementBadSeqCount(){
-    badSeqCount++;
-}
-
-long Fasta::GetBadSeqCount(){
-    return badSeqCount;
-}
-
-
-void Fasta::IncrementGoodSeqCount(){
-    goodSeqCount++;
-}
-
-long Fasta::GetGoodSeqCount(){
-    return goodSeqCount;
-}
 
 void Fasta::SetDefaultValues(){
     amino = 1;
     seqCount = 0;
     baseCount = 0;
     badSeqCount = 0;
+    badBaseCount = 0;
     goodSeqCount = 0;
+    goodBaseCount = 0;
     outFormat = 1;
     inputFileName = "none";
     outFormat = 0;

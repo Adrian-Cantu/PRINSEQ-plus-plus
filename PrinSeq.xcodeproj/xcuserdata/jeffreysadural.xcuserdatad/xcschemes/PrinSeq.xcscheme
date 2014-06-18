@@ -64,19 +64,23 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "e1.fasta"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "b.fasta"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "--max_len"
+            argument = "--min_len"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "25"
+            argument = "30"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "--stats_info"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>
