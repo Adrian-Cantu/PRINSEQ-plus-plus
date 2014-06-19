@@ -25,6 +25,7 @@ public:
 	FormatCheck();
 	string CheckFormat(string filename, bool amino);
 	void SetAmino(bool amino);
+    const string validCharacters = "[ABCDEFGHIKLMNOPQRSTUVWYZXabcdefghiklmmopqrstuvwyzx*-]+";
 
 private:
 	int fasta;

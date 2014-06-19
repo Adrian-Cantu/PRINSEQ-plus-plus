@@ -338,7 +338,8 @@ void Fasta::ProcessFile(){
     
     fastaFile.open(inputFileName);
     while (getline(fastaFile, currentLine)) {
-        //cout << "CurrentLine: " << currentLine << endl;
+
+        trim(currentLine);
         if (currentLine[0] == '>') {
             FastaSeq.SetID(currentLine);
         }
@@ -380,11 +381,11 @@ void Fasta::ProcessOptions(){
     }
     
     if (vm.count("trim_left")) {
-        FastaSeq.TrimSeqLeft(vm["trim_left"].as<int>());
+        trimLeftAmnt = vm["trim_left"].as<int>();
     }
     
     if (vm.count("trim_right")) {
-        FastaSeq.TrimSeqRight(vm["trim_right"].as<int>());
+        trimRightAmnt =  vm["trim_right"].as<int>();
     }
     
     if (vm.count("trim_qual_left")) {
@@ -393,6 +394,14 @@ void Fasta::ProcessOptions(){
     
     if (vm.count("trim_qual_right")) {
         trimQualRight = vm["trim_qual_right"].as<int>();
+    }
+    
+    if (vm.count("trim_tail_left")) {
+        trimTailLeft = vm["trim_tail_left"].as<int>();
+    }
+    
+    if (vm.count("trim_tail_right")) {
+        trimTailRight = vm["trim_tail_right"].as<int>();
     }
     
     if (vm.count("trim_ns_left")) {
@@ -428,6 +437,77 @@ void Fasta::ProcessOptions(){
         outFormat = vm["out_format"].as<int>();
     }
     
+}
+
+void Fasta::TrimSequence(){
+    if (vm.count("trim_left")) {
+        FastaSeq.TrimSeqLeft(trimLeftAmnt);
+    }
+    
+    if (vm.count("trim_right")) {
+        FastaSeq.TrimSeqRight(trimRightAmnt);
+    }
+    
+    if (vm.count("trim_qual_left")) {
+        
+    }
+    
+    if (vm.count("trim_qual_right")) {
+        
+    }
+    
+    if (vm.count("trim_ns_left")) {
+        
+    }
+    
+    if (vm.count("trim_ns_right")) {
+        
+    }
+    
+    if (vm.count("trim_to_len")) {
+        
+    }
+
+}
+
+void Fasta::TrimQualLeft(){
+    // Need to Code Qual First
+}
+
+void Fasta::TrimQualRight(){
+    // Need to Code Qual First
+}
+
+void Fasta::TrimTailLeft(){
+    int trimValue = 0;
+    while (FastaSeq.GetDNASeq()[trimValue] != 'A' || 'T' || 'N') {
+        trimValue++;
+    }
+    FastaSeq.TrimSeqLeft(trimValue);
+}
+
+void Fasta::TrimTailRight(){
+    long trimValue = FastaSeq.GetSeqLength();
+    while (FastaSeq.GetDNASeq()[trimValue] != 'A' || 'T' || 'N') {
+        trimValue--;
+    }
+    FastaSeq.TrimSeqRight((int)trimValue);
+}
+
+void Fasta::TrimNSLeft(){
+    int trimValue = 0;
+    while (FastaSeq.GetDNASeq()[trimValue] != 'N') {
+        trimValue++;
+    }
+    FastaSeq.TrimSeqLeft(trimValue);
+}
+
+void Fasta::TrimNSRight(){
+    long trimValue = FastaSeq.GetSeqLength();
+    while (FastaSeq.GetDNASeq()[trimValue] != 'N') {
+        trimValue--;
+    }
+    FastaSeq.TrimSeqRight((int)trimValue);
 }
 
 void Fasta::ApplyFilters(){
@@ -607,8 +687,8 @@ void Fasta::SetDefaultValues(){
     inputFileName = "none";
     outFormat = 0;
     seqNum = 0;
-    trimLeft = 0;
-    trimRight = 0;
+    trimLeftAmnt = 0;
+    trimRightAmnt = 0;
     trimQualLeft = 0;
     trimQualRight = 0;
     trimTailLeft = 0;

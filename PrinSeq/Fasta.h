@@ -77,6 +77,13 @@ public:
     
     
     /// Filters
+    void TrimSequence();
+    void TrimQualLeft();
+    void TrimQualRight();
+    void TrimTailLeft();
+    void TrimTailRight();
+    void TrimNSLeft();
+    void TrimNSRight();
     void ApplyFilters();
     void MinLengthFilter();
     void MaxLengthFilter();
@@ -89,8 +96,8 @@ private:
     
     int outFormat;
     int seqNum;
-    int trimLeft;
-    int trimRight;
+    int trimLeftAmnt;
+    int trimRightAmnt;
     int trimQualLeft;
     int trimQualRight;
     int trimTailLeft;

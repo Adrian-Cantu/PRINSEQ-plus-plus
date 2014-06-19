@@ -52,8 +52,8 @@ bool SequenceData::GetAmino(){
 }
 
 void SequenceData::TrimSeqLeft(int trimValue){
-    
+    sequence.erase(sequence.begin(), sequence.begin() + trimValue);
 }
 void SequenceData::TrimSeqRight(int trimValue){
-    
+    sequence.erase(sequence.end(), sequence.end() - trimValue);
 }

@@ -55,7 +55,7 @@ string FormatCheck::CheckFormat(string filename, bool amino){
 		
 		else if(fasta == 1) {
 			if (aa){
-				found = s.find_first_not_of("[ABCDEFGHIKLMNOPQRSTUVWYZXabcdefghiklmmopqrstuvwyzx*-]+");
+				found = s.find_first_not_of(validCharacters);
 				if(found == -1){
 					fasta = 2;
 				}
