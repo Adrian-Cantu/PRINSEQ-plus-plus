@@ -478,6 +478,14 @@ void Fasta::TrimQualRight(){
     // Need to Code Qual First
 }
 
+string Fasta::CreateTail(char ATN, int tailLength){ //create a tail consistion of A, T, or N
+    ostringstream newTail;
+    for (int i = 0; i < tailLength; i++) {
+        newTail << ATN;
+    }
+    return newTail.str();
+}
+
 void Fasta::TrimTailLeft(){
     int trimValue = 0;
     while (FastaSeq.GetDNASeq()[trimValue] != 'A' || 'T' || 'N') {

@@ -55,7 +55,7 @@ string FormatCheck::CheckFormat(string filename, bool amino){
 		
 		else if(fasta == 1) {
 			if (aa){
-				found = s.find_first_not_of(validCharacters);
+				found = (int)s.find_first_not_of(validCharacters);
 				if(found == -1){
 					fasta = 2;
 				}
@@ -68,7 +68,7 @@ string FormatCheck::CheckFormat(string filename, bool amino){
                 }
             }
 			else if(!aa){
-				found = s.find_first_not_of("[ACGTURYKMSWBDHVNXacgturykmswbdhvnx-]+");
+				found = (int)s.find_first_not_of("[ACGTURYKMSWBDHVNXacgturykmswbdhvnx-]+");
 				
 				if(found == -1){
 					fasta = 2;
@@ -91,7 +91,7 @@ string FormatCheck::CheckFormat(string filename, bool amino){
 		else if(fastq == 1){
 			//cout << "test" << endl;
 			if (aa){
-				found = s.find_first_not_of("[ABCDEFGHIKLMNOPQRSTUVWYZXabcdefghiklmmopqrstuvwyzx*-]+");
+				found = (int)s.find_first_not_of("[ABCDEFGHIKLMNOPQRSTUVWYZXabcdefghiklmmopqrstuvwyzx*-]+");
 				
 				if(found == -1){
 					fastq = 2;
@@ -99,7 +99,7 @@ string FormatCheck::CheckFormat(string filename, bool amino){
 			}
 			
 			else if(!aa){
-				found = s.find_first_not_of("[ACGTURYKMSWBDHVNXacgturykmswbdhvnx-]+");
+				found = (int)s.find_first_not_of("[ACGTURYKMSWBDHVNXacgturykmswbdhvnx-]+");
 				
 				if(found == -1){
 					fastq = 2;

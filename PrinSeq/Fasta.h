@@ -80,6 +80,7 @@ public:
     void TrimSequence();
     void TrimQualLeft();
     void TrimQualRight();
+    string CreateTail(char ATN, int tailLength);
     void TrimTailLeft();
     void TrimTailRight();
     void TrimNSLeft();
@@ -120,6 +121,7 @@ private:
     string inputFileName;
     string badFileName;
     string goodFileName;
+    string tail;
     ifstream fastaFile;
     ofstream GoodFileStream;
     ofstream BadFileStream;
