@@ -30,13 +30,16 @@ using namespace std;
 class Options{
 public:
     Options();
-    Options(int argc, char *argv[]);
+    Options(int numberOfOptions, char *optionsArray[]);
     
-    void DefineOptions(int argc, char *argv[]);
+    void DefineOptions(int numberOfOptions, char *OptionsArray[]);
     void ProcessOptions();
     bool IsOptionPresent(string option);
     string GetStringValue(string option);
     int GetIntValue(string option);
+    
+private:
+    po::variables_map vm;
     
 };
 
