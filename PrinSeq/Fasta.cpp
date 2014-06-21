@@ -424,7 +424,6 @@ void Fasta::ProcessOptions(){
         maxLength = vm["max_len"].as<int>();
     }
     
-    //////////////////////////////////////////////////
     if (vm.count("out_good")){
         goodFileName = vm["out_good"].as<string>();
     }
@@ -454,6 +453,26 @@ void Fasta::TrimSequence(){
     
     if (vm.count("trim_qual_right")) {
         
+    }
+    
+    if (vm.count("trim_tail_left")) {
+        
+        if(FastaSeq.GetDNASeq().find(CreateTail('A', trimTailLeft))){
+            TrimTailLeft();
+        }
+        else if(FastaSeq.GetDNASeq().find(CreateTail('T', trimTailLeft))){
+            TrimTailLeft();
+        }
+    }
+    
+    if (vm.count("trim_tail_right")) {
+        
+        if(FastaSeq.GetDNASeq().find(CreateTail('A', trimTailRight))){
+            TrimTailRight();
+        }
+        else if(FastaSeq.GetDNASeq().find(CreateTail('T', trimTailRight))){
+            TrimTailRight();
+        }
     }
     
     if (vm.count("trim_ns_left")) {
@@ -542,7 +561,7 @@ void Fasta::MinLengthFilter(){
 
 void Fasta::MaxLengthFilter(){
     if(maxLength >= FastaSeq.GetSeqLength()){
-        //IncrementGoodSeqCount();
+        IncrementGoodSeqCount();
         IncrementGoodBaseCount();
         //WriteToGood();
     }
