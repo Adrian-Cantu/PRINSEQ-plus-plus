@@ -44,7 +44,7 @@ void Fasta::ProcessFile(){
         if (IsSeqID(currentLine)) {
             IncrementSeqCount();
         }
-        else // need to add valid sequence checks
+        else // TODO: need to add valid sequence checks
             IncrementBaseCount(currentLine.size());
     }
     fastaFile.close();
@@ -52,23 +52,18 @@ void Fasta::ProcessFile(){
 }
 
 void Fasta::ProcessOptions(){
-    
-    ///////////////////////////////////////
-    // Functions for cmd line parameters //
-    ///////////////////////////////////////
-    
     if (optionMap.IsOptionPresent("amino")) {
         amino = optionMap.GetBoolValue("amino");
     }
     
     if (optionMap.IsOptionPresent("fasta")) {
-        inputFileName = vm["fasta"].as<string>();
+        inputFileName = optionMap.GetStringValue("fasta") ;
         string fileType = CheckFileFormat.CheckFormat(inputFileName, amino);
         if (fileType.compare("uknown") == 0){
-            cout << "Could not find input file " << '"' << vm["fasta"].as<string>() << '"'<< endl;
+            cout << "Could not find input file " << '"' << inputFileName << '"'<< endl;
             return;
         }
-    } // Calls File Format Class: FormatCheck.cpp
+    }
     
     if (optionMap.IsOptionPresent("seq_num")) {
         seqNum = optionMap.GetIntValue("seq_num");
