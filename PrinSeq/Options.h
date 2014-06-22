@@ -37,6 +37,7 @@ public:
     bool IsOptionPresent(string option);
     string GetStringValue(string option);
     int GetIntValue(string option);
+    bool GetBoolValue(string option);
     
 private:
     po::variables_map vm;

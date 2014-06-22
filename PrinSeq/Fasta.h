@@ -21,6 +21,7 @@
 #include <iomanip>
 #include "FormatCheck.h"
 #include "SequenceData.h"
+#include "Options.h"
 
 using std::string;
 using std::fstream;
@@ -117,6 +118,7 @@ private:
     long badBaseCount;
     
     po::variables_map vm;
+    Options optionMap;
     
     string inputFileName;
     string badFileName;
