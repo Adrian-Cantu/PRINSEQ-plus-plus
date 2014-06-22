@@ -70,86 +70,86 @@ void Fasta::ProcessOptions(){
         }
     } // Calls File Format Class: FormatCheck.cpp
     
-    if (vm.count("seq_num")) {
+    if (optionMap.IsOptionPresent("seq_num")) {
         seqNum = optionMap.GetIntValue("seq_num");
     }
     
-    if (vm.count("trim_left")) {
-        trimLeftAmnt = vm["trim_left"].as<int>();
+    if (optionMap.IsOptionPresent("trim_left")) {
+        trimLeftAmnt = optionMap.GetIntValue("trim_left");
     }
     
-    if (vm.count("trim_right")) {
-        trimRightAmnt =  vm["trim_right"].as<int>();
+    if (optionMap.IsOptionPresent("trim_right")) {
+        trimRightAmnt =  optionMap.GetIntValue("trim_right");
     }
     
-    if (vm.count("trim_qual_left")) {
-        trimQualLeft = vm["trim_qual_left"].as<int>();
+    if (optionMap.IsOptionPresent("trim_qual_left")) {
+        trimQualLeft = optionMap.GetIntValue("trim_qual_left");
     }
     
-    if (vm.count("trim_qual_right")) {
-        trimQualRight = vm["trim_qual_right"].as<int>();
+    if (optionMap.IsOptionPresent("trim_qual_right")) {
+        trimQualRight = optionMap.GetIntValue("trim_qual_right");
     }
     
-    if (vm.count("trim_tail_left")) {
-        trimTailLeft = vm["trim_tail_left"].as<int>();
+    if (optionMap.IsOptionPresent("trim_tail_left")) {
+        trimTailLeft = optionMap.GetIntValue("trim_tail_left");
     }
     
-    if (vm.count("trim_tail_right")) {
-        trimTailRight = vm["trim_tail_right"].as<int>();
+    if (optionMap.IsOptionPresent("trim_tail_right")) {
+        trimTailRight = optionMap.GetIntValue("trim_tail_right");
     }
     
-    if (vm.count("trim_ns_left")) {
-        trimNSLeft = vm["trim_ns_left"].as<int>();
+    if (optionMap.IsOptionPresent("trim_ns_left")) {
+        trimNSLeft = optionMap.GetIntValue("trim_ns_left");
     }
     
-    if (vm.count("trim_ns_right")) {
-        trimNSRight = vm["trim_ns_right"].as<int>();
+    if (optionMap.IsOptionPresent("trim_ns_right")) {
+        trimNSRight = optionMap.GetIntValue("trim_ns_right");
     }
     
-    if (vm.count("trim_to_len")) {
-        trimToLen = vm["trim_to_len"].as<int>();
+    if (optionMap.IsOptionPresent("trim_to_len")) {
+        trimToLen = optionMap.GetIntValue("trim_to_len");
     }
     
-    if (vm.count("min_len")) {
-        minLength = vm["min_len"].as<int>();
+    if (optionMap.IsOptionPresent("min_len")) {
+        minLength = optionMap.GetIntValue("min_len");
     }
     
-    if (vm.count("max_len")) {
-        maxLength = vm["max_len"].as<int>();
+    if (optionMap.IsOptionPresent("max_len")) {
+        maxLength = optionMap.GetIntValue("max_len");
     }
     
-    if (vm.count("out_good")){
-        goodFileName = vm["out_good"].as<string>();
+    if (optionMap.IsOptionPresent("out_good")){
+        goodFileName = optionMap.GetStringValue("out_good");
     }
     
-    if (vm.count("out_bad")){
-        badFileName = vm["out_bad"].as<string>();
+    if (optionMap.IsOptionPresent("out_bad")){
+        badFileName = optionMap.GetStringValue("out_bad");
     }
     
-    if (vm.count("out_format")) {
-        outFormat = vm["out_format"].as<int>();
+    if (optionMap.IsOptionPresent("out_format")) {
+        outFormat = optionMap.GetIntValue("out_format");
     }
     
 }
 
 void Fasta::TrimSequence(){
-    if (vm.count("trim_left")) {
+    if (optionMap.IsOptionPresent("trim_left")) {
         FastaSeq.TrimSeqLeft(trimLeftAmnt);
     }
     
-    if (vm.count("trim_right")) {
+    if (optionMap.IsOptionPresent("trim_right")) {
         FastaSeq.TrimSeqRight(trimRightAmnt);
     }
     
-    if (vm.count("trim_qual_left")) {
-        
+    if (optionMap.IsOptionPresent("trim_qual_left")) {
+        // TODO
     }
     
-    if (vm.count("trim_qual_right")) {
-        
+    if (optionMap.IsOptionPresent("trim_qual_right")) {
+        // TODO
     }
     
-    if (vm.count("trim_tail_left")) {
+    if (optionMap.IsOptionPresent("trim_tail_left")) {
         
         if(FastaSeq.GetDNASeq().find(CreateTail('A', trimTailLeft))){
             TrimTailLeft();
@@ -159,7 +159,7 @@ void Fasta::TrimSequence(){
         }
     }
     
-    if (vm.count("trim_tail_right")) {
+    if (optionMap.IsOptionPresent("trim_tail_right")) {
         
         if(FastaSeq.GetDNASeq().find(CreateTail('A', trimTailRight))){
             TrimTailRight();
@@ -169,16 +169,16 @@ void Fasta::TrimSequence(){
         }
     }
     
-    if (vm.count("trim_ns_left")) {
-        
+    if (optionMap.IsOptionPresent("trim_ns_left")) {
+        // TODO
     }
     
-    if (vm.count("trim_ns_right")) {
-        
+    if (optionMap.IsOptionPresent("trim_ns_right")) {
+        // TODO
     }
     
-    if (vm.count("trim_to_len")) {
-        
+    if (optionMap.IsOptionPresent("trim_to_len")) {
+        // TODO
     }
 
 }
@@ -358,11 +358,11 @@ void Fasta::WriteToBad()
 void Fasta::PrintStats(){
     PrintStandardStats();
     
-    if (vm.count("stats_info")) {
+    if (optionMap.IsOptionPresent("stats_info")) {
         PrintStatsInfo();
     }
     
-    if (vm.count("stats_all")) {
+    if (optionMap.IsOptionPresent("stats_all")) {
         PrintStats_All();
     }
 }

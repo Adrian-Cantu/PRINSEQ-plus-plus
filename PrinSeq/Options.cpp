@@ -322,3 +322,17 @@ void Options::DefineOptions(int numberOfOptions, char *OptionsArray[]){
         cerr << "Exception of unknown type!\n";
     }
 }
+
+bool Options::IsOptionPresent(string option){
+    return vm.count(option);
+}
+string Options::GetStringValue(string option){
+    return vm[option].as<string>();
+}
+int Options::GetIntValue(string option){
+    return vm[option].as<int>();
+}
+bool Options::GetBoolValue(string option){
+    return vm[option].as<bool>();
+}
+
