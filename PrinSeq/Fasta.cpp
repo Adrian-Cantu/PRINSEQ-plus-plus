@@ -60,7 +60,8 @@ void Fasta::ProcessOptions(){
         inputFileName = optionMap.GetStringValue("fasta") ;
         string fileType = CheckFileFormat.CheckFormat(inputFileName, amino);
         if (fileType.compare("uknown") == 0){
-            cout << "Could not find input file " << '"' << inputFileName << '"'<< endl;
+            cout << "Could not find input file " << '"' << inputFileName << '"'
+                << endl;
             return;
         }
     }
@@ -186,8 +187,8 @@ void Fasta::TrimQualRight(){
     // Need to Code Qual First
 }
 
-string Fasta::CreateTail(char ATN, int tailLength){ //create a tail consistion of A, T, or N
-    ostringstream newTail;
+string Fasta::CreateTail(char ATN, int tailLength){
+    ostringstream newTail;//create a tail consistion of A, T, or N
     for (int i = 0; i < tailLength; i++) {
         newTail << ATN;
     }
