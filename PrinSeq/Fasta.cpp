@@ -1,10 +1,23 @@
+//===============================================================================
+//   Authors: Robert SCHMIEDER and Jeff SADURAL
+//	 Computational Science Research Center @ SDSU, CA
 //
-//  Fasta.cpp
-//  PrinSeqCPP
+//   File: prinseq-lite
+//   Date: 2012-05-28
+//   Version: 0.19.2 lite
 //
-// 
-//  Copyright (c) 2014 Edwards Lab. All rights reserved.
+//   Usage:
+//      prinseq-lite [options]
 //
+//      Try 'prinseq-lite -h' for more information.
+//
+//   Purpose: PRINSEQ will help you to preprocess your genomic or metagenomic
+//             sequence data in FASTA or FASTQ format. The lite version does not
+//             require any non-core perl modules for processing.
+//
+//    Bugs: Please use http://sourceforge.net/tracker/?group_id=315449
+//
+//===============================================================================
 
 #include "Fasta.h"
 using namespace std;
@@ -166,15 +179,15 @@ void Fasta::TrimSequence(){
     }
     
     if (optionMap.IsOptionPresent("trim_ns_left")) {
-        // TODO
+        TrimNSLeft();
     }
     
     if (optionMap.IsOptionPresent("trim_ns_right")) {
-        // TODO
+        TrimNSRight();
     }
     
     if (optionMap.IsOptionPresent("trim_to_len")) {
-        // TODO
+        FastaSeq.TrimSeqRight(trimToLen);
     }
 
 }

@@ -22,6 +22,7 @@
 #include "FormatCheck.h"
 #include "SequenceData.h"
 #include "Options.h"
+#include "Qual.h"
 
 using std::string;
 using std::fstream;
@@ -119,6 +120,7 @@ private:
     
     po::variables_map vm;
     Options optionMap;
+    Qual qual;
     
     string inputFileName;
     string badFileName;

@@ -19,7 +19,7 @@
 #include <iterator>
 #include <algorithm>
 #include <iomanip>
-
+#include "Options.h"
 
 namespace po = boost::program_options;
 using namespace std;
@@ -29,10 +29,25 @@ public:
     Qual();
     Qual(string label, string sequence);
     
-    void ConvertQualNumsToAscii(string qualData);
+    string ConvertQualNumsToAscii(string qualData);
+    int *ConvertASCIItoNums(string qualData);
     void ConvertToNumbers(string qualData);
+    void trimFromLeft(int value);
+    void trimFromRigh(int);
     
 private:
+    string qualSeq;
+    int seqLength;
+    vector<int> qualSeqArray;
     
+    int trim_qual_left;
+    int trim_qual_right;
+    int trim_qual_window;
+    int trim_qual_step;
+    int qualityScore;
+    string qualityType;
+    string trim_qual_type;
+    string trim_qual_rule;
+    Options optionMap;
 };
 #endif /* defined(__PrinSeq__Qual__) */
