@@ -19,6 +19,7 @@
 #include <iterator>
 #include <algorithm>
 #include <iomanip>
+#include <exception>
 #include "FormatCheck.h"
 #include "SequenceData.h"
 #include "Options.h"

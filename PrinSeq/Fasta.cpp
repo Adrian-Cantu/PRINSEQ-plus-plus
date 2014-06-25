@@ -47,18 +47,20 @@ void Fasta::ProcessFile(){
     while (getline(fastaFile, currentLine)) {
 
         trim(currentLine);
-        if (currentLine[0] == '>') {
+        if (IsSeqID(currentLine)) {
+            IncrementSeqCount();
             FastaSeq.SetID(currentLine);
         }
         else{
+            IncrementBaseCount(currentLine.size());
             FastaSeq.SetDNA(currentLine);
             ApplyFilters();
         }
-        if (IsSeqID(currentLine)) {
-            IncrementSeqCount();
-        }
-        else // TODO: need to add valid sequence checks
-            IncrementBaseCount(currentLine.size());
+//        if (IsSeqID(currentLine)) {
+//            IncrementSeqCount();
+//        }
+//        else // TODO: need to add valid sequence checks
+//            IncrementBaseCount(currentLine.size());
     }
     fastaFile.close();
     PrintStats();
