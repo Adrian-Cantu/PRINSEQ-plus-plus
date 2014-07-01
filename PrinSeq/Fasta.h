@@ -84,8 +84,8 @@ public:
     void TrimQualLeft();
     void TrimQualRight();
     string CreateTail(char ATN, int tailLength);
-    void TrimTailLeft();
-    void TrimTailRight();
+    void TrimTailLeft(char base);
+    void TrimTailRight(char base);
     void TrimNSLeft();
     void TrimNSRight();
     void ApplyFilters();

@@ -42,8 +42,8 @@ void Fasta::DefineOptions(int numberOfOptions, char *OptionsArray[]){
 void Fasta::ProcessFile(){
     ProcessOptions();
     string currentLine;
-    
     fastaFile.open(inputFileName);
+    
     while (getline(fastaFile, currentLine)) {
 
         trim(currentLine);
@@ -54,13 +54,9 @@ void Fasta::ProcessFile(){
         else{
             IncrementBaseCount(currentLine.size());
             FastaSeq.SetDNA(currentLine);
+            TrimSequence();
             ApplyFilters();
         }
-//        if (IsSeqID(currentLine)) {
-//            IncrementSeqCount();
-//        }
-//        else // TODO: need to add valid sequence checks
-//            IncrementBaseCount(currentLine.size());
     }
     fastaFile.close();
     PrintStats();
@@ -161,22 +157,20 @@ void Fasta::TrimSequence(){
     }
     
     if (optionMap.IsOptionPresent("trim_tail_left")) {
-        
         if(FastaSeq.GetDNASeq().find(CreateTail('A', trimTailLeft))){
-            TrimTailLeft();
+            TrimTailLeft('A');
         }
         else if(FastaSeq.GetDNASeq().find(CreateTail('T', trimTailLeft))){
-            TrimTailLeft();
+            TrimTailLeft('T');
         }
     }
     
     if (optionMap.IsOptionPresent("trim_tail_right")) {
-        
         if(FastaSeq.GetDNASeq().find(CreateTail('A', trimTailRight))){
-            TrimTailRight();
+            TrimTailRight('A');
         }
         else if(FastaSeq.GetDNASeq().find(CreateTail('T', trimTailRight))){
-            TrimTailRight();
+            TrimTailRight('T');
         }
     }
     
@@ -210,25 +204,25 @@ string Fasta::CreateTail(char ATN, int tailLength){
     return newTail.str();
 }
 
-void Fasta::TrimTailLeft(){
+void Fasta::TrimTailLeft(char base){ ///////////// TODO: Fix!!!!!!!!!!!!!!!
     int trimValue = 0;
-    while (FastaSeq.GetDNASeq()[trimValue] != 'A' || 'T' || 'N') {
+    while (FastaSeq.GetDNASeq()[trimValue] == base || FastaSeq.GetDNASeq()[trimValue] == 'N'){
         trimValue++;
     }
     FastaSeq.TrimSeqLeft(trimValue);
 }
 
-void Fasta::TrimTailRight(){
-    long trimValue = FastaSeq.GetSeqLength();
-    while (FastaSeq.GetDNASeq()[trimValue] != 'A' || 'T' || 'N') {
+void Fasta::TrimTailRight(char base){
+    int trimValue = (int)FastaSeq.GetSeqLength();
+    while (FastaSeq.GetDNASeq()[trimValue] == base || FastaSeq.GetDNASeq()[trimValue] == 'N') {
         trimValue--;
     }
-    FastaSeq.TrimSeqRight((int)trimValue);
+    FastaSeq.TrimSeqRight(trimValue);
 }
 
 void Fasta::TrimNSLeft(){
     int trimValue = 0;
-    while (FastaSeq.GetDNASeq()[trimValue] != 'N') {
+    while (FastaSeq.GetDNASeq()[trimValue] == 'N') {
         trimValue++;
     }
     FastaSeq.TrimSeqLeft(trimValue);
@@ -236,7 +230,7 @@ void Fasta::TrimNSLeft(){
 
 void Fasta::TrimNSRight(){
     long trimValue = FastaSeq.GetSeqLength();
-    while (FastaSeq.GetDNASeq()[trimValue] != 'N') {
+    while (FastaSeq.GetDNASeq()[trimValue] == 'N') {
         trimValue--;
     }
     FastaSeq.TrimSeqRight((int)trimValue);

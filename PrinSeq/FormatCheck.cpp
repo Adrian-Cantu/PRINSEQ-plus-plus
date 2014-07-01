@@ -41,8 +41,7 @@ string FormatCheck::CheckFormat(string filename, bool amino){
 	for (int count = 3; count > 0; count--) {
 		indata.getline(name, 256);
 		s = name;
-        //trim(s);
-		//cout << "Qual Alarm4" << endl;
+
 		while(s == "" && (indata.peek() != EOF)){  //skips blank lines
 			indata.getline(name,256);
 			s = name;
@@ -89,7 +88,7 @@ string FormatCheck::CheckFormat(string filename, bool amino){
 		}
 		
 		else if(fastq == 1){
-			//cout << "test" << endl;
+            
 			if (aa){
 				found = (int)s.find_first_not_of("[ABCDEFGHIKLMNOPQRSTUVWYZXabcdefghiklmmopqrstuvwyzx*-]+");
 				

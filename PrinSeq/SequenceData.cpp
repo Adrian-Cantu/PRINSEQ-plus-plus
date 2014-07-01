@@ -12,7 +12,8 @@ SequenceData::SequenceData(){
     
 }
 SequenceData::SequenceData(string label,string sequence){
-    
+    sequenceID = label;
+    this->sequence = sequence;
 }
 
 SequenceData::SequenceData(string label,string sequence, bool amino){
