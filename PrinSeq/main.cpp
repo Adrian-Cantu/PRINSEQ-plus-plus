@@ -33,34 +33,34 @@ using namespace std;
 
 int main(int argc, char* argv[])
 {
-    Fasta bleh;
-    int trimValue = 0;
-
-    SequenceData testSequence("test", "AAAAAbleh");
-    cout << testSequence.GetDNASeq() << endl;
-    string yordle = testSequence.GetDNASeq();
-    while (testSequence.GetDNASeq()[trimValue] == 'A' || testSequence.GetDNASeq()[trimValue] == 'N'){
-        trimValue++;
-        cout << trimValue << endl;
-    }
-
-    testSequence.TrimSeqLeft(trimValue);
-    cout << testSequence.GetDNASeq() << endl;
+//    Fasta bleh;
+//    int trimValue = 0;
+//
+//    SequenceData testSequence("test", "AAAAAbleh");
+//    cout << testSequence.GetDNASeq() << endl;
+//    string yordle = testSequence.GetDNASeq();
+//    while (testSequence.GetDNASeq()[trimValue] == 'A' || testSequence.GetDNASeq()[trimValue] == 'N'){
+//        trimValue++;
+//        cout << trimValue << endl;
+//    }
+//
+//    testSequence.TrimSeqLeft(trimValue);
+//    cout << testSequence.GetDNASeq() << endl;
     
-//    srand((unsigned)time(0));
-//	int optind = 1;
-//    //Fasta FA(argc, argv);
-//	if (strcmp(argv[optind],"-fasta")){
-//        if (argv[optind + 1] == NULL) {
-//            cout << "Option fasta requires an argument" << endl;
-//            return 0;
-//        }
-//		Fasta FA(argc, argv);
-//        FA.ProcessFile();
-//	}
-//    
-//    else
-//        cout << "Error: you did not specify an input file containing the query sequences." << endl;
+    srand((unsigned)time(0));
+	int optind = 1;
+    //Fasta FA(argc, argv);
+	if (strcmp(argv[optind],"-fasta")){
+        if (argv[optind + 1] == NULL) {
+            cout << "Option fasta requires an argument" << endl;
+            return 0;
+        }
+		Fasta FA(argc, argv);
+        FA.ProcessFile();
+	}
+    
+    else
+        cout << "Error: you did not specify an input file containing the query sequences." << endl;
     
     return 0;
 }
