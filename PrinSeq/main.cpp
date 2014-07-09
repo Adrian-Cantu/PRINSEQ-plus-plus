@@ -52,7 +52,12 @@ int main(int argc, char* argv[])
     //Fasta FA(argc, argv);
 	if (strcmp(argv[optind],"-fasta")){
         if (argv[optind + 1] == NULL) {
-            cout << "Option fasta requires an argument" << endl;
+            cout << "Option fasta requires an argument." << endl;
+            return 0;
+        }
+        
+        if (argv[optind + 2] == NULL) {
+            cout << "Nothing to do with input data." << endl;
             return 0;
         }
 		Fasta FA(argc, argv);

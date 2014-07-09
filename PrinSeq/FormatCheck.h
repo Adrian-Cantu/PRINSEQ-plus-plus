@@ -14,6 +14,12 @@
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
+
+#define VALID_BASES_AA "[ABCDEFGHIKLMNOPQRSTUVWYZXabcdefghiklmmopqrstuvwyzx*-]+"
+
+#define VALID_BASES_NON_AA "[ACGTURYKMSWBDHVNXacgturykmswbdhvnx-]+"
+
+
 using namespace boost;
 using std::string;
 using std::fstream;
@@ -25,7 +31,6 @@ public:
 	FormatCheck();
 	string CheckFormat(string filename, bool amino);
 	void SetAmino(bool amino);
-    const string validCharacters = "[ABCDEFGHIKLMNOPQRSTUVWYZXabcdefghiklmmopqrstuvwyzx*-]+";
 
 private:
 	int fasta;

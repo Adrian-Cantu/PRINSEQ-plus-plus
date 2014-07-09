@@ -9,6 +9,10 @@
 #ifndef __PrinSeq__SequenceData__
 #define __PrinSeq__SequenceData__
 
+#define VALID_BASES_AA "[ABCDEFGHIKLMNOPQRSTUVWYZXabcdefghiklmmopqrstuvwyzx*-]+"
+
+#define VALID_BASES_NON_AA "[ACGTURYKMSWBDHVNXacgturykmswbdhvnx-]+"
+
 #include <iostream>
 using namespace std;
 
