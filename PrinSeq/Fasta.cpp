@@ -77,6 +77,15 @@ void Fasta::ProcessOptions(){
         }
     }
     
+    if (optionMap.IsOptionPresent("fastq")) {
+        cout << "fasta and fastq cannot be used together" << endl;
+        exit(EXIT_FAILURE);
+    }
+    
+    if (optionMap.IsOptionPresent("phred64")) {
+        cout << "error: option -phred64 can only be used for FASTQ input files" << endl;
+    }
+    
     if (optionMap.IsOptionPresent("seq_num")) {
         seqNum = optionMap.GetIntValue("seq_num");
     }
@@ -399,7 +408,6 @@ bool Fasta::IsSeqID(string s){
     static const regex e1("^>(\\S+)\\s*(.*)$");
     return regex_match(s,e1);
 }
-
 
 void Fasta::SetDefaultValues(){
     amino = 1;

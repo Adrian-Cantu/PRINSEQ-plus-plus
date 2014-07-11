@@ -31,21 +31,7 @@ namespace po = boost::program_options;
 #include <string>
 using namespace std;
 
-int main(int argc, char* argv[])
-{
-//    Fasta bleh;
-//    int trimValue = 0;
-//
-//    SequenceData testSequence("test", "AAAAAbleh");
-//    cout << testSequence.GetDNASeq() << endl;
-//    string yordle = testSequence.GetDNASeq();
-//    while (testSequence.GetDNASeq()[trimValue] == 'A' || testSequence.GetDNASeq()[trimValue] == 'N'){
-//        trimValue++;
-//        cout << trimValue << endl;
-//    }
-//
-//    testSequence.TrimSeqLeft(trimValue);
-//    cout << testSequence.GetDNASeq() << endl;
+int main(int argc, char* argv[]){
     
     srand((unsigned)time(0));
 	int optind = 1;

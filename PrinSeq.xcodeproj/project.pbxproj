@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		3E239C9A194FC040001D6A6F /* Filters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E239C98194FC040001D6A6F /* Filters.cpp */; };
 		3E2B4B3C19561FAC00F39647 /* Options.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E2B4B3A19561FAC00F39647 /* Options.cpp */; };
+		3E2CE8F8196DD33600B2C374 /* Fastq.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E2CE8F6196DD33600B2C374 /* Fastq.cpp */; };
 		3E37EA491950A3AD008237F6 /* SequenceData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3E37EA471950A3AD008237F6 /* SequenceData.cpp */; };
 		3EDBD2461936B75A00593941 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3EDBD2451936B75A00593941 /* main.cpp */; };
 		3EDBD2481936B75A00593941 /* PrinSeq.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3EDBD2471936B75A00593941 /* PrinSeq.1 */; };
@@ -39,6 +40,8 @@
 		3E239C99194FC040001D6A6F /* Filters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Filters.h; sourceTree = "<group>"; };
 		3E2B4B3A19561FAC00F39647 /* Options.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Options.cpp; sourceTree = "<group>"; };
 		3E2B4B3B19561FAC00F39647 /* Options.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Options.h; sourceTree = "<group>"; };
+		3E2CE8F6196DD33600B2C374 /* Fastq.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Fastq.cpp; sourceTree = "<group>"; };
+		3E2CE8F7196DD33600B2C374 /* Fastq.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Fastq.h; sourceTree = "<group>"; };
 		3E37EA471950A3AD008237F6 /* SequenceData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SequenceData.cpp; sourceTree = "<group>"; };
 		3E37EA481950A3AD008237F6 /* SequenceData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SequenceData.h; sourceTree = "<group>"; };
 		3EDBD2421936B75A00593941 /* PrinSeq */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = PrinSeq; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -108,6 +111,8 @@
 				3E37EA481950A3AD008237F6 /* SequenceData.h */,
 				3E2B4B3A19561FAC00F39647 /* Options.cpp */,
 				3E2B4B3B19561FAC00F39647 /* Options.h */,
+				3E2CE8F6196DD33600B2C374 /* Fastq.cpp */,
+				3E2CE8F7196DD33600B2C374 /* Fastq.h */,
 			);
 			path = PrinSeq;
 			sourceTree = "<group>";
@@ -164,6 +169,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3EECA691194647F1009A0292 /* Qual.cpp in Sources */,
+				3E2CE8F8196DD33600B2C374 /* Fastq.cpp in Sources */,
 				3EDBD2461936B75A00593941 /* main.cpp in Sources */,
 				3E2B4B3C19561FAC00F39647 /* Options.cpp in Sources */,
 				3E239C9A194FC040001D6A6F /* Filters.cpp in Sources */,

@@ -22,6 +22,12 @@ void Options::DefineOptions(int numberOfOptions, char *OptionsArray[]){
         po::options_description desc("Allowed options");
         desc.add_options()
         
+        ("fastq", po::value<string>(), "file type")
+        // Input file in FASTQ format that contains the sequence and
+        // quality data. Use stdin instead of a file name to read from
+        // STDIN (-fasta stdin). This can be useful to process compressed
+        // files using Unix pipes.
+        
         ("fasta", po::value<string>(), "file type")
         // Input file in FASTA format that contains the sequence data. Use stdin instead of a file name to read
         // from STDIN (-fastq stdin). This can be useful to process compressed files using Unix pipes.
@@ -29,11 +35,12 @@ void Options::DefineOptions(int numberOfOptions, char *OptionsArray[]){
         ("qual", po::value<string>(), "quality file")
         // Input file in QUAL format that contains the quality data.
         
-        
-        /*("fastq", po::value<string>(), "file type")
-         // Input file in FASTQ format that contains the sequence and quality data. Use stdin instead of a file
-         // name to read from STDIN (-fasta stdin). This can be useful to process compressed files using Unix
-         // pipes. */
+        ("phred64", "file type")
+        // Quality data in FASTQ file is in Phred+64 format
+        // (http://en.wikipedia.org/wiki/FASTQ_format#Encoding). Not
+        // required for Illumina 1.8+, Sanger, Roche/454, Ion Torrent,
+        // PacBio data.
+
         
         ("amino", po::value<bool>(), "set amino acid")
         // Input is amino acid (protein) sequences instead of nucleic acid (DNA or RNA) sequences. Allowed amino
