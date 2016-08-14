@@ -24,9 +24,9 @@ public:
     SequenceData(string label,string sequence, bool amino);
     
     void SetSeqClass(string label,string sequence);
-    void SetID(string sequenceID);
-    void SetDNA(string sequence);
-    void SetSeqLength(int sequenceLength);
+    void SetID(string sequenceID); // remove
+    void SetDNA(string sequence); // remove
+    void SetSeqLength(int sequenceLength); // remove
     void SetAmino(bool amino);
     
     string GetID();

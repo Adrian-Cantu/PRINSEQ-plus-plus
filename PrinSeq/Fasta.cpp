@@ -27,17 +27,13 @@ Fasta::Fasta(){
 
 Fasta::Fasta(int optionCount, char *OptionsArray[]){
     SetDefaultValues();
-    string name = OptionsArray[2]; // Retrive name from command line arguemnts
+    inputFileName = OptionsArray[2]; // Retrive name from command line arguemnts
     
-    badFileName = name + "_prinseq_bad_" + RandFN() + ".fasta"; // Fix later
-    goodFileName = name + "_prinseq_good_" + RandFN() + ".fasta"; // Fix later
+    badFileName = inputFileName + "_prinseq_bad_" + RandFN() + ".fasta"; // Fix later
+    goodFileName = inputFileName + "_prinseq_good_" + RandFN() + ".fasta"; // Fix later
     
-    DefineOptions(optionCount, OptionsArray);
-}
-
-void Fasta::DefineOptions(int numberOfOptions, char *OptionsArray[]){
-    optionMap.DefineOptions(numberOfOptions, OptionsArray);
-}
+    optionMap.DefineOptions(optionCount, OptionsArray);
+ }
 
 void Fasta::ProcessFile(){
     ProcessOptions();

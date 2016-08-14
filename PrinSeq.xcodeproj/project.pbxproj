@@ -258,7 +258,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/boost/1.55.0_1/lib,
+					/usr/local/Cellar/boost/1.57.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -270,7 +270,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/include;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					/usr/local/Cellar/boost/1.55.0_1/lib,
+					/usr/local/Cellar/boost/1.57.0/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
