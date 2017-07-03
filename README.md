@@ -1,0 +1,2 @@
+# pprinseqc
+parallel c prinseq
