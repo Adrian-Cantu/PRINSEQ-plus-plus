@@ -8,6 +8,7 @@ config.log
 config.status
 src/Makefile
 src/pprinseqc
+*~
 
 # Prerequisites
 *.d

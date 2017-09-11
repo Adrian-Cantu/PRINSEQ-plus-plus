@@ -3,8 +3,14 @@
 
 AC_PREREQ([2.69])
 AC_INIT([pprinseqc], [0.1], [garbanyo@gmail.com])
+
 AC_CONFIG_SRCDIR([src/pprinseqc.cpp])
+AC_LANG([C++])
+AX_CXX_COMPILE_STDCXX_11()
+
 AC_CONFIG_HEADERS([config.h])
+
+
 
 # Checks for programs.
 AC_PROG_CXX
@@ -17,6 +23,8 @@ AC_CHECK_HEADERS([stdlib.h unistd.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
+
+AX_CHECK_COMPILE_FLAG([-std=c++0x], [CXXFLAGS="$CXXFLAGS -std=c++0x"])
 
 # Checks for library functions.
 
