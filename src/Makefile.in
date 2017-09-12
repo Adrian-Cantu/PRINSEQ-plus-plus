@@ -12,10 +12,15 @@ bindir = @bindir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-all: jupiter
+all: pprinseqc
 
-jupiter: main.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -I. -I$(srcdir) -I.. -o $@ $(srcdir)/main.c
+
+pprinseqc: pprinseqc.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++11 -o pprinseqc pprinseqc.cpp
+
+
+#jupiter: main.c
+#	$(CC) $(CPPFLAGS) $(CFLAGS) -I. -I$(srcdir) -I.. -o $@ $(srcdir)/main.c
 
 check: all
 	./jupiter | grep "Hello from .*jupiter!"
@@ -23,13 +28,13 @@ check: all
 
 install:
 	install -d $(DESTDIR)$(bindir)/bin
-	install -m 0775 jupiter $(DESTDIR)$(bindir)/bin
+	install -m 0775 pprinseqc $(DESTDIR)$(bindir)/bin
 
 uninstall:
-	-rm $(DESTDIR)$(bindir)/bin/jupiter
+	-rm $(DESTDIR)$(bindir)/bin/pprinseqc
 
 clean:
-	rm jupiter
+	rm pprinseqc
 
 Makefile: Makefile.in ../config.status
 	cd .. && ./config.status src/$@
