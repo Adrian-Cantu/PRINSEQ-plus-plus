@@ -2,7 +2,12 @@ autom4te.cache/
 config.h.in
 configure
 install-sh
-
+Makefile
+config.h
+config.log
+config.status
+src/Makefile
+src/pprinseqc
 
 # Prerequisites
 *.d
