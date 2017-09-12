@@ -14,7 +14,7 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 
-all clean check install uninstall pprinseqc:
+all clean test install uninstall pprinseqc:
 	cd src && $(MAKE) $@
 
 dist : $(distdir).tar.gz

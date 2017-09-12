@@ -22,8 +22,8 @@ pprinseqc: pprinseqc.cpp
 #jupiter: main.c
 #	$(CC) $(CPPFLAGS) $(CFLAGS) -I. -I$(srcdir) -I.. -o $@ $(srcdir)/main.c
 
-check: all
-	./jupiter | grep "Hello from .*jupiter!"
+test: all
+	./pprinseqc -c test.fastq
 	@echo "*** ALL TEST PASSED***"
 
 install:
