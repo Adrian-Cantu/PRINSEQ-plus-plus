@@ -1,0 +1,40 @@
+# @configure_input@
+# Package-specific substitution variables
+package = @PACKAGE_NAME@
+version = @PACKAGE_VERSION@
+tarname = @PACKAGE_TARNAME@
+distdir = $(tarname)-$(version)
+# Prefix-specific substitution variables
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+# VPATH-related substitution variables
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+all: jupiter
+
+jupiter: main.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -I. -I$(srcdir) -I.. -o $@ $(srcdir)/main.c
+
+check: all
+	./jupiter | grep "Hello from .*jupiter!"
+	@echo "*** ALL TEST PASSED***"
+
+install:
+	install -d $(DESTDIR)$(bindir)/bin
+	install -m 0775 jupiter $(DESTDIR)$(bindir)/bin
+
+uninstall:
+	-rm $(DESTDIR)$(bindir)/bin/jupiter
+
+clean:
+	rm jupiter
+
+Makefile: Makefile.in ../config.status
+	cd .. && ./config.status src/$@
+
+../config.status: ../configure
+	cd .. && ./config.status --recheck
+
+.PHONY: all clean check install uninstall
