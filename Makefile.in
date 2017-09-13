@@ -31,7 +31,8 @@ $(distdir): FORCE
 	cp $(srcdir)/install-sh $(distdir)
 	cp $(srcdir)/Makefile.in $(distdir)
 	cp $(srcdir)/src/Makefile.in $(distdir)/src
-	cp $(srcdir)/src/pprinseq.cpp $(distdir)/src
+	cp $(srcdir)/src/pprinseqc.cpp $(distdir)/src
+	cp $(srcdir)/src/test.fastq $(distdir)/src
 
 FORCE:
 	-rm $(distdir).tar.gz >/dev/null 2>&1
@@ -41,7 +42,7 @@ distcheck: $(distdir).tar.gz
 	gzip -cd $(distdir).tar.gz | tar xvf -
 	cd $(distdir) && ./configure
 	cd $(distdir) && $(MAKE) all
-	cd $(distdir) && $(MAKE) check
+	cd $(distdir) && $(MAKE) test
 	cd $(distdir) && $(MAKE) DESTDIR=$${PWD}/_inst install
 	cd $(distdir) && $(MAKE) DESTDIR=$${PWD}/_inst uninstall
 	@remaining="`find $${PWD}/$(distdir)/_inst -type f | wc -l`"; \

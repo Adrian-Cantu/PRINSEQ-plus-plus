@@ -9,6 +9,8 @@ config.status
 src/Makefile
 src/pprinseqc
 *~
+aclocal.m4
+pprinseqc*.tar.gz
 
 # Prerequisites
 *.d

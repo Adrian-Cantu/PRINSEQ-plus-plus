@@ -24,7 +24,6 @@ AC_CHECK_HEADERS([stdlib.h unistd.h])
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
 
-AX_CHECK_COMPILE_FLAG([-std=c++0x], [CXXFLAGS="$CXXFLAGS -std=c++0x"])
 
 # Checks for library functions.
 
