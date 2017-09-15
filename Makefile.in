@@ -14,7 +14,10 @@ srcdir = @srcdir@
 VPATH = @srcdir@
 
 
-all clean test install uninstall pprinseqc:
+all test install uninstall pprinseqc:
+	cd src && $(MAKE) $@
+
+clean : FORCE
 	cd src && $(MAKE) $@
 
 dist : $(distdir).tar.gz
@@ -33,6 +36,7 @@ $(distdir): FORCE
 	cp $(srcdir)/src/Makefile.in $(distdir)/src
 	cp $(srcdir)/src/pprinseqc.cpp $(distdir)/src
 	cp $(srcdir)/src/test.fastq $(distdir)/src
+	cp $(srcdir)/src/reads.h $(distdir)/src
 
 FORCE:
 	-rm $(distdir).tar.gz >/dev/null 2>&1
