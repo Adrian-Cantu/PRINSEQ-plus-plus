@@ -2,10 +2,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <iostream>
-#include <fstream>
-#include <regex>
 
+#ifndef IOSTREAM
+#define IOSTREAM
+#include <iostream>
+#endif
+
+#include <fstream>
+
+#ifndef REGEX
+#define REGEX
+#include <regex>
+#endif
+
+#include "reads.h"
 using namespace std;
 
 int main (int argc, char **argv)
@@ -58,29 +68,12 @@ int main (int argc, char **argv)
     cerr << "Error: can not opem test file.txt" << endl ;
     return 1;
     }
-  string seq_name;
-  string seq_seq;
-  string seq_sep;
-  string seq_qual;
   regex pattern("n", regex::icase);
-  smatch m;
-  while (getline(inFile, seq_name, '\n')) {
-    getline(inFile, seq_seq, '\n');
-    getline(inFile, seq_sep, '\n');
-    getline(inFile, seq_qual, '\n');
-    if (!regex_search(seq_seq,pattern)) {
-//      cout << seq_seq << " : " << boolalpha << regex_search("salmon",pattern) << endl;
-      cout << seq_name << endl << seq_seq << endl << seq_sep << endl << seq_qual << endl;
-    }
-  } 
-//  string str;
-//  while(true) {
-//    cin >> str;
-//    regex e("abc",regex::icase);
-//    bool match = regex_match(str,e);
-//    cout << (match? "matchd" : "not matched") << endl;
-//    }
-//
+  single_read read1;
+  while(read1.read_read(inFile)) {
+    if (!read1.seq_match(pattern)) { read1.print(); }
+  }  
+
 inFile.close();  
   return 0;
 }

@@ -12,15 +12,13 @@ bindir = @bindir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
+CXXFLAGS = -std=c++11
+
+
 all: pprinseqc
 
 
-pprinseqc: pprinseqc.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -std=c++11 -o pprinseqc pprinseqc.cpp
-
-
-#jupiter: main.c
-#	$(CC) $(CPPFLAGS) $(CFLAGS) -I. -I$(srcdir) -I.. -o $@ $(srcdir)/main.c
+pprinseqc: pprinseqc.cpp reads.h
 
 test: all
 	./pprinseqc -c test.fastq
@@ -41,5 +39,7 @@ Makefile: Makefile.in ../config.status
 
 ../config.status: ../configure
 	cd .. && ./config.status --recheck
+
+
 
 .PHONY: all clean check install uninstall
