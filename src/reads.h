@@ -12,7 +12,11 @@
 using namespace std;
 class single_read {
     public:
-        int read_read(istream& file1) {
+
+        single_read(istream &is): file1(is)  {
+        }
+
+        int read_read(void) {
             if (getline(file1,seq_name, '\n')) {
                 getline(file1, seq_seq, '\n');
                 getline(file1, seq_sep, '\n');
@@ -36,9 +40,10 @@ class single_read {
         }    
 
     protected:
-         string seq_name;
-         string seq_seq;
-         string seq_sep;
-         string seq_qual;
+        istream& file1;
+        string seq_name;
+        string seq_seq;
+        string seq_sep;
+        string seq_qual;
 };         
 

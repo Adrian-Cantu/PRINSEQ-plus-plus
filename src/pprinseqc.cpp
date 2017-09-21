@@ -80,16 +80,17 @@ int main (int argc, char **argv)
     }
   
   regex pattern("n", regex::icase);
-  single_read read_f;
-  single_read read_r;
-  while(read_f.read_read(inFile_f)) {
+  
+  single_read read_f(inFile_f);
+  single_read read_r(inFile_r);
+  
+  while(read_f.read_read()) {
     if (!read_f.seq_match(pattern)) { read_f.print(); }
   }  
-  while(read_r.read_read(inFile_r)) {
+  while(read_r.read_read()) {
     if (!read_r.seq_match(pattern)) { read_r.print(); }
   }
 inFile_f.close();  
 inFile_r.close();  
   return 0;
 }
-
