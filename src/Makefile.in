@@ -21,8 +21,7 @@ all: pprinseqc
 pprinseqc: pprinseqc.cpp reads.h
 
 test: all
-	./pprinseqc -c test.fastq
-	@echo "*** ALL TEST PASSED***"
+	@./pprinseqc -f test_F.fastq -r test_R.fastq && echo "*** ALL TEST PASSED***"
 
 install:
 	install -d $(DESTDIR)$(bindir)/bin

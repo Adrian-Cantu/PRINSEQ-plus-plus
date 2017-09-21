@@ -22,14 +22,15 @@ int main (int argc, char **argv)
 {
   int aflag = 0;
   int bflag = 0;
-  char *cvalue = NULL;
+  char *forward_read_file = NULL;
+  char *reverse_read_file = NULL;
   int index;
   int c;
 
   opterr = 0;
 
 
-  while ((c = getopt (argc, argv, "abc:")) != -1)
+  while ((c = getopt (argc, argv, "abf:r:")) != -1)
     switch (c)
       {
       case 'a':
@@ -38,11 +39,14 @@ int main (int argc, char **argv)
       case 'b':
         bflag = 1;
         break;
-      case 'c':
-        cvalue = optarg;
+      case 'f':
+        forward_read_file = optarg;
+        break;
+      case 'r':
+        reverse_read_file = optarg;
         break;
       case '?':
-        if (optopt == 'c')
+        if (optopt == 'f')
           fprintf (stderr, "Option -%c requires an argument.\n", optopt);
         else if (isprint (optopt))
           fprintf (stderr, "Unknown option `-%c'.\n", optopt);
@@ -56,25 +60,36 @@ int main (int argc, char **argv)
       }
 
 
-  printf ("aflag = %d, bflag = %d, cvalue = %s\n",
-          aflag, bflag, cvalue);
+  printf ("aflag = %d, bflag = %d, forward_read_file = %s\n",
+          aflag, bflag, forward_read_file);
 
   for (index = optind; index < argc; index++)
     printf ("Non-option argument %s\n", argv[index]);
 
-  ifstream inFile;
-  inFile.open(cvalue);
-  if (!inFile) {
-    cerr << "Error: can not opem test file.txt" << endl ;
+  ifstream inFile_f;
+  ifstream inFile_r;
+  inFile_f.open(forward_read_file);
+  if (!inFile_f) {
+    cerr << "Error: can not open " << forward_read_file  << endl ;
     return 1;
     }
+  inFile_r.open(reverse_read_file);
+  if (!inFile_r) {
+    cerr << "Error: can not open " << reverse_read_file  << endl ;
+    return 1;
+    }
+  
   regex pattern("n", regex::icase);
-  single_read read1;
-  while(read1.read_read(inFile)) {
-    if (!read1.seq_match(pattern)) { read1.print(); }
+  single_read read_f;
+  single_read read_r;
+  while(read_f.read_read(inFile_f)) {
+    if (!read_f.seq_match(pattern)) { read_f.print(); }
   }  
-
-inFile.close();  
+  while(read_r.read_read(inFile_r)) {
+    if (!read_r.seq_match(pattern)) { read_r.print(); }
+  }
+inFile_f.close();  
+inFile_r.close();  
   return 0;
 }
 

@@ -2,7 +2,9 @@
 parallel c prinseq
 
 ## To test
-./autogen.sh
-./configure
-make
-make test
+1. ./autogen.sh
+2. ./configure
+3. make
+4. make test
+
+
