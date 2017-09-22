@@ -19,6 +19,8 @@ all test install uninstall pprinseqc:
 
 clean : FORCE
 	cd src && $(MAKE) $@
+	-rm -rf autom4te.cache 
+	-rm -f config.h config.log aclocal.m4 config.log config.status configure install-sh Makefile
 
 dist : $(distdir).tar.gz
 
@@ -39,7 +41,7 @@ $(distdir): FORCE
 	cp $(srcdir)/src/reads.h $(distdir)/src
 
 FORCE:
-	-rm $(distdir).tar.gz >/dev/null 2>&1
+	-rm -f $(distdir).tar.gz >/dev/null 2>&1
 	-rm -rf $(distdir) >/dev/null 2>&1
 
 distcheck: $(distdir).tar.gz

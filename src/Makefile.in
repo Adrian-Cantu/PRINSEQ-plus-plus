@@ -31,7 +31,7 @@ uninstall:
 	-rm $(DESTDIR)$(bindir)/bin/pprinseqc
 
 clean:
-	rm pprinseqc
+	-rm -f pprinseqc
 
 Makefile: Makefile.in ../config.status
 	cd .. && ./config.status src/$@
