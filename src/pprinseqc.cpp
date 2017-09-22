@@ -80,15 +80,25 @@ int main (int argc, char **argv)
     }
   
   regex pattern("n", regex::icase);
-  
+  ofstream bad_out_file;
+  ofstream single_out_file;
+  ofstream good_out_file;
+  bad_out_file.open("test_bad_out.fastq");
+  single_out_file.open("test_single_out.fastq");
+  good_out_file.open("test_good_out.fastq");
+
   single_read read_f(inFile_f);
   single_read read_r(inFile_r);
-  
+  read_f.set_outputs(bad_out_file,single_out_file,good_out_file);
+  read_r.set_outputs(bad_out_file,single_out_file,good_out_file);
+
   while(read_f.read_read()) {
-    if (!read_f.seq_match(pattern)) { read_f.print(); }
+    read_f.seq_match(pattern);
+    read_f.print();
   }  
   while(read_r.read_read()) {
-    if (!read_r.seq_match(pattern)) { read_r.print(); }
+    read_r.seq_match(pattern);
+    read_r.print();
   }
 inFile_f.close();  
 inFile_r.close();  
