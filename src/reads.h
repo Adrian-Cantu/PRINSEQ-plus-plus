@@ -11,6 +11,7 @@
 using namespace std;
 class single_read {
     public:
+//        single_read(void) {}
 
         single_read(istream &is): file1(is)  { 
         }
@@ -69,3 +70,28 @@ class single_read {
         streambuf *good_out=cout.rdbuf();
 };         
 
+class pair_read {
+    public:
+        pair_read(istream &is1, istream &is2): file1(is1),file2(is2)  {
+
+        read1= new single_read(file1);
+        read2= new single_read(file2);
+    }
+
+    int read_read(void) {
+        return read1->read_read() * read2->read_read();
+    }
+
+    void print(void) {
+        read1->print();
+        read2->print();
+    }
+
+    protected:
+        istream& file1;
+        istream& file2;
+        single_read* read1;
+        single_read* read2;
+
+
+};                    

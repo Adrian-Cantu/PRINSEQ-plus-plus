@@ -89,9 +89,12 @@ int main (int argc, char **argv)
 
   single_read read_f(inFile_f);
   single_read read_r(inFile_r);
+
+  pair_read read_rf(inFile_f,inFile_r);
+
   read_f.set_outputs(bad_out_file,single_out_file,good_out_file);
   read_r.set_outputs(bad_out_file,single_out_file,good_out_file);
-
+/*
   while(read_f.read_read()) {
     read_f.seq_match(pattern);
     read_f.print();
@@ -100,6 +103,11 @@ int main (int argc, char **argv)
     read_r.seq_match(pattern);
     read_r.print();
   }
+*/  
+  while(read_rf.read_read()) {
+    read_rf.print();
+  }
+
 inFile_f.close();  
 inFile_r.close();  
   return 0;
