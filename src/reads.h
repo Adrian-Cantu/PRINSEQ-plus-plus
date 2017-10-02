@@ -11,13 +11,9 @@
 using namespace std;
 class single_read {
     public:
-//        single_read(void) {}
-
         single_read(istream &is): file1(is)  { 
         }
 
- //       int change_output(istream &good, istream &bad) {
-            
         int set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file) {
             bad_out=bad_out_file.rdbuf();
             single_out=single_out_file.rdbuf();
@@ -55,7 +51,15 @@ class single_read {
             }
             cout << seq_name << endl << seq_seq << endl << seq_sep << endl << seq_qual << endl;
             cout.rdbuf(back_stdout);
-        }    
+        }
+
+        int get_read_status(void) {
+            return read_status;
+        }
+
+        void set_read_status(int status) {
+            read_status=status;
+        }
 
     protected:
         int read_status=0; //0 good, 1 single ,2 bad
@@ -82,10 +86,38 @@ class pair_read {
         return read1->read_read() * read2->read_read();
     }
 
+
     void print(void) {
         read1->print();
         read2->print();
     }
+
+
+    int set_outputs(ostream& bad_out_file1, ostream& single_out_file1, ostream& good_out_file1,
+                    ostream& bad_out_file2, ostream& single_out_file2, ostream& good_out_file2) {
+        read1->set_outputs(bad_out_file1, single_out_file1, good_out_file1);
+        read2->set_outputs(bad_out_file2, single_out_file2, good_out_file2);
+    }
+
+    int seq_match(regex pattern) {
+        int match1= read1->seq_match(pattern);
+        int match2= read2->seq_match(pattern);
+        if ( !match1 && !match2 ) {
+            read1->set_read_status(0);
+            read2->set_read_status(0);
+        } else if ( !match1 && match2 ) {
+            read1->set_read_status(1);
+            read2->set_read_status(2);
+        } else if ( match1 && !match2 ) {
+            read1->set_read_status(2);
+            read2->set_read_status(1);
+        } else { 
+            read1->set_read_status(2);
+            read2->set_read_status(2);
+        }
+    }
+
+
 
     protected:
         istream& file1;

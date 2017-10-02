@@ -11,9 +11,9 @@ src/pprinseqc
 *~
 aclocal.m4
 pprinseqc*.tar.gz
-src/test_bad_out.fastq
-src/test_good_out.fastq
-src/test_single_out.fastq
+src/*.fastq
+!src/test_F.fastq
+!src/test_R.fastq
 
 
 # Prerequisites
