@@ -6,11 +6,8 @@
 //  Copyright (c) 2014 Jeffrey Sadural. All rights reserved.
 //
 
-#ifndef __PrinSeq__FormatCheck__
-#define __PrinSeq__FormatCheck__
-
 #include <iostream>
-#include<fstream>
+#include <fstream>
 #include <boost/regex.hpp>
 #include <boost/algorithm/string.hpp>
 
@@ -46,4 +43,4 @@ private:
 	int found; //controls invalid character finder
 	ifstream indata;
 };
-#endif /* defined(__PrinSeq__FormatCheck__) */
+

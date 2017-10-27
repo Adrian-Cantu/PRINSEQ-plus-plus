@@ -49,7 +49,7 @@ public:
     
     bool IsSeqID(string s);
     
-    ///Output Functions
+    /// Output Functions
     int DefaultOuputType(string name);
     void SetOutputFormat(int format);
     void WriteToGood();

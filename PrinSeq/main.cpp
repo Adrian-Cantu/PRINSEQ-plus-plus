@@ -32,26 +32,6 @@ namespace po = boost::program_options;
 using namespace std;
 
 int main(int argc, char* argv[]){
-    
-    srand((unsigned)time(0));
-	int optind = 1;
-    //Fasta FA(argc, argv);
-	if (strcmp(argv[optind],"-fasta")){
-        if (argv[optind + 1] == NULL) {
-            cout << "Option fasta requires an argument." << endl;
-            return 0;
-        }
-        
-        if (argv[optind + 2] == NULL) {
-            cout << "Nothing to do with input data." << endl;
-            return 0;
-        }
-		Fasta FA(argc, argv);
-        FA.ProcessFile();
-	}
-    
-    else
-        cout << "Error: you did not specify an input file containing the query sequences." << endl;
-    
+   
     return 0;
 }

@@ -6,12 +6,11 @@
 //  Copyright (c) 2014 Jeffrey Sadural. All rights reserved.
 //
 
-#include "FormatCheck.h"
 
+#include "FormatCheck.h"
 #include<iostream>
 #include<fstream>
 using std::ifstream;
-using namespace std;
 
 /*
  *  Default Constructor
@@ -22,7 +21,7 @@ FormatCheck::FormatCheck(){
 	qual = 0;
 	
 	format = "unknown";
-	aa = 1;  //amino acid flag
+	aa = true;  //amino acid flag
 	found = 0; //controls invalid character finder
 }
 
