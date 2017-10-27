@@ -32,6 +32,8 @@ uninstall:
 
 clean:
 	-rm -f pprinseqc
+	-rm -f Test*fastq
+
 
 Makefile: Makefile.in ../config.status
 	cd .. && ./config.status src/$@

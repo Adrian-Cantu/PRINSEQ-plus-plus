@@ -24,11 +24,14 @@ int main (int argc, char **argv)
     int bflag = 0;
     char *forward_read_file = NULL;
     char *reverse_read_file = NULL;
+    string rand_string;
     int index;
+    
     int c;
 
     opterr = 0;
-
+    
+    // Readin inout from the command line
     while ((c = getopt (argc, argv, "abf:r:")) != -1)
         switch (c) {
             case 'a':
@@ -55,12 +58,16 @@ int main (int argc, char **argv)
                 abort ();
         }
 
-
-    printf ("aflag = %d, bflag = %d, forward_read_file = %s\n", aflag, bflag, forward_read_file);
-
+    rand_string=random_string(6);    
+    printf ("aflag = %d, bflag = %d, forward_read_file = %s ,reverse_read_file =%s\n ", aflag, bflag, forward_read_file, reverse_read_file);
+//    printf ("random string = %s \n", rand_string);
+    cout << "random string " << rand_string  << endl ;
     for (index = optind; index < argc; index++)
         printf ("Non-option argument %s\n", argv[index]);
-    
+
+
+
+/////////// open input files
     ifstream inFile_f;
     ifstream inFile_r;
     inFile_f.open(forward_read_file);
@@ -73,9 +80,8 @@ int main (int argc, char **argv)
         cerr << "Error: can not open " << reverse_read_file  << endl ;
         return 1;
     }
-  
-    regex pattern("n", regex::icase);
-    
+      
+////////// open and name oupput files
     ofstream bad_out_file_R1;
     ofstream single_out_file_R1;
     ofstream good_out_file_R1;
@@ -83,14 +89,15 @@ int main (int argc, char **argv)
     ofstream single_out_file_R2;
     ofstream good_out_file_R2;
 
-    bad_out_file_R1.open("test_bad_out_R1.fastq");
-    single_out_file_R1.open("test_single_out_R1.fastq");
-    good_out_file_R1.open("test_good_out_R1.fastq");
-    bad_out_file_R2.open("test_bad_out_R2.fastq");
-    single_out_file_R2.open("test_single_out_R2.fastq");
-    good_out_file_R2.open("test_good_out_R2.fastq");
+    bad_out_file_R1.open("Test_" + rand_string  + "_bad_out_R1.fastq");
+    single_out_file_R1.open("Test_" + rand_string  + "_single_out_R1.fastq");
+    good_out_file_R1.open("Test_" + rand_string  + "_good_out_R1.fastq");
+    bad_out_file_R2.open("Test_" + rand_string  + "_bad_out_R2.fastq");
+    single_out_file_R2.open("Test" + rand_string  + "__single_out_R2.fastq");
+    good_out_file_R2.open("Test_"+ rand_string + "_good_out_R2.fastq");
 
 
+    regex pattern("n", regex::icase);
     single_read read_f(inFile_f);
     single_read read_r(inFile_r);
 
