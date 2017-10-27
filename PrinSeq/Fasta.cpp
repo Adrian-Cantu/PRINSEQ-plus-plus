@@ -1,5 +1,5 @@
 //===============================================================================
-//   Authors: Robert SCHMIEDER and Jeff SADURAL
+//   Authors: Robert SCHMIEDER, Jeff SADURAL and Adrian CANTU
 //	 Computational Science Research Center @ SDSU, CA
 //
 //   File: prinseq-lite
