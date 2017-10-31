@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #ifndef IOSTREAM
 #define IOSTREAM
@@ -20,8 +21,6 @@ using namespace std;
 
 int main (int argc, char **argv)
 {
-    int aflag = 0;
-    int bflag = 0;
     char *forward_read_file = NULL;
     char *reverse_read_file = NULL;
     string rand_string;
@@ -30,16 +29,18 @@ int main (int argc, char **argv)
     int c;
 
     opterr = 0;
-    
+
+    struct option longopts[] = {
+        { "fastq" , required_argument , NULL , 'f'},
+        { "fastq2", required_argument , NULL , 'r'},
+        {0,0,0,0}
+    };    
+
+
+
     // Readin inout from the command line
-    while ((c = getopt (argc, argv, "abf:r:")) != -1)
+    while ((c = getopt_long_only(argc, argv, "",longopts, NULL)) != -1)
         switch (c) {
-            case 'a':
-                aflag = 1;
-                break;
-            case 'b':
-                bflag = 1;
-                break;
             case 'f':
                 forward_read_file = optarg;
                 break;
@@ -59,8 +60,7 @@ int main (int argc, char **argv)
         }
 
     rand_string=random_string(6);    
-    printf ("aflag = %d, bflag = %d, forward_read_file = %s ,reverse_read_file =%s\n ", aflag, bflag, forward_read_file, reverse_read_file);
-//    printf ("random string = %s \n", rand_string);
+    printf ("forward_read_file = %s ,reverse_read_file =%s\n ", forward_read_file, reverse_read_file);
     cout << "random string " << rand_string  << endl ;
     for (index = optind; index < argc; index++)
         printf ("Non-option argument %s\n", argv[index]);
@@ -105,16 +105,8 @@ int main (int argc, char **argv)
 
     read_rf.set_outputs(bad_out_file_R1,single_out_file_R1,good_out_file_R1,
         bad_out_file_R2,single_out_file_R2,good_out_file_R2);
-/*
-  while(read_f.read_read()) {
-    read_f.seq_match(pattern);
-    read_f.print();
-  }  
-  while(read_r.read_read()) {
-    read_r.seq_match(pattern);
-    read_r.print();
-  }
-*/  
+    
+    // main loop
     while(read_rf.read_read()) {
         read_rf.seq_match(pattern);
         read_rf.print();
