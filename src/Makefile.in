@@ -21,6 +21,7 @@ all: pprinseqc
 pprinseqc: pprinseqc.cpp reads.h
 
 test: all
+	@./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -out_format 1 && \
 	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq && echo "*** ALL TEST PASSED***"
 
 install:
@@ -33,7 +34,7 @@ uninstall:
 clean:
 	-rm -f pprinseqc
 	-rm -f Test*fastq
-
+	-rm -f Test*fasta
 
 Makefile: Makefile.in ../config.status
 	cd .. && ./config.status src/$@

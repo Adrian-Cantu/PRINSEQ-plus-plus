@@ -24,7 +24,9 @@ int main (int argc, char **argv)
     char *forward_read_file = NULL;
     char *reverse_read_file = NULL;
     string rand_string;
+    string out_ext="fastq";
     int index;
+    int out_format=0; // 0 fastq, 1 fasta
     
     int c;
 
@@ -33,6 +35,7 @@ int main (int argc, char **argv)
     struct option longopts[] = {
         { "fastq" , required_argument , NULL , 'f'},
         { "fastq2", required_argument , NULL , 'r'},
+        { "out_format" , required_argument , &out_format , 1 },
         {0,0,0,0}
     };    
 
@@ -46,6 +49,9 @@ int main (int argc, char **argv)
                 break;
             case 'r':
                 reverse_read_file = optarg;
+                break;
+            case 0:
+                // getopt set a variable
                 break;
             case '?':
                 if (optopt == 'f')
@@ -61,7 +67,7 @@ int main (int argc, char **argv)
 
     rand_string=random_string(6);    
     printf ("forward_read_file = %s ,reverse_read_file =%s\n ", forward_read_file, reverse_read_file);
-    cout << "random string " << rand_string  << endl ;
+    cout << "random string " << rand_string << "out format " << out_format  << endl ;
     for (index = optind; index < argc; index++)
         printf ("Non-option argument %s\n", argv[index]);
 
@@ -89,12 +95,13 @@ int main (int argc, char **argv)
     ofstream single_out_file_R2;
     ofstream good_out_file_R2;
 
-    bad_out_file_R1.open("Test_" + rand_string  + "_bad_out_R1.fastq");
-    single_out_file_R1.open("Test_" + rand_string  + "_single_out_R1.fastq");
-    good_out_file_R1.open("Test_" + rand_string  + "_good_out_R1.fastq");
-    bad_out_file_R2.open("Test_" + rand_string  + "_bad_out_R2.fastq");
-    single_out_file_R2.open("Test" + rand_string  + "__single_out_R2.fastq");
-    good_out_file_R2.open("Test_"+ rand_string + "_good_out_R2.fastq");
+    if (out_format == 1 ) { out_ext = "fasta";}
+    bad_out_file_R1.open("Test_" + rand_string  + "_bad_out_R1." + out_ext );
+    single_out_file_R1.open("Test_" + rand_string  + "_single_out_R1." + out_ext  );
+    good_out_file_R1.open("Test_" + rand_string  + "_good_out_R1." + out_ext);
+    bad_out_file_R2.open("Test_" + rand_string  + "_bad_out_R2." + out_ext );
+    single_out_file_R2.open("Test_" + rand_string  + "_single_out_R2." + out_ext);
+    good_out_file_R2.open("Test_"+ rand_string + "_good_out_R2."  + out_ext);
 
 
     regex pattern("n", regex::icase);
@@ -106,6 +113,8 @@ int main (int argc, char **argv)
     read_rf.set_outputs(bad_out_file_R1,single_out_file_R1,good_out_file_R1,
         bad_out_file_R2,single_out_file_R2,good_out_file_R2);
     
+    read_rf.set_out_format(out_format);
+
     // main loop
     while(read_rf.read_read()) {
         read_rf.seq_match(pattern);

@@ -12,6 +12,7 @@ using namespace std;
 class single_read {
     public:
         single_read(istream &is): file1(is)  { 
+            fastq_to_fasta.assign("^@");
         }
 
         int set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file) {
@@ -41,7 +42,7 @@ class single_read {
             }
         }
 
-        void print(void) {
+        void print(int out_form) {
             if (read_status==2) {
                 cout.rdbuf(bad_out);
             } else if (read_status==1) {
@@ -49,9 +50,13 @@ class single_read {
             } else if (read_status==0) {
                 cout.rdbuf(good_out);
             }
-            cout << seq_name << endl << seq_seq << endl << seq_sep << endl << seq_qual << endl;
+            if (out_form==0) {
+                cout << seq_name << endl << seq_seq << endl << seq_sep << endl << seq_qual << endl;
+            } else if (out_form==1) {
+                cout << regex_replace(seq_name,fastq_to_fasta, ">") << endl << seq_seq << endl;
+            }
             cout.rdbuf(back_stdout);
-        }
+       }
 
         int get_read_status(void) {
             return read_status;
@@ -61,8 +66,11 @@ class single_read {
             read_status=status;
         }
 
+
     protected:
+        regex fastq_to_fasta;
         int read_status=0; //0 good, 1 single ,2 bad
+
         istream& file1;
         string seq_name;
         string seq_seq;
@@ -88,8 +96,8 @@ class pair_read {
 
 
     void print(void) {
-        read1->print();
-        read2->print();
+        read1->print(out_form);
+        read2->print(out_form);
     }
 
 
@@ -117,14 +125,16 @@ class pair_read {
         }
     }
 
-
+    void set_out_format(int format) {
+        out_form=format;
+    }    
 
     protected:
         istream& file1;
         istream& file2;
         single_read* read1;
         single_read* read2;
-
+        int out_form=0;    //0 fastq , 1 fasta
 
 };                    
 
