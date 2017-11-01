@@ -27,15 +27,17 @@ int main (int argc, char **argv)
     string out_ext="fastq";
     int index;
     int out_format=0; // 0 fastq, 1 fasta
+    int min_qual_score=0;
     
     int c;
 
     opterr = 0;
 
     struct option longopts[] = {
-        { "fastq" , required_argument , NULL , 'f'},
-        { "fastq2", required_argument , NULL , 'r'},
-        { "out_format" , required_argument , &out_format , 1 },
+        { "fastq"           , required_argument , NULL , 1 },
+        { "fastq2"          , required_argument , NULL , 2 },
+        { "out_format"      , required_argument , NULL , 3 },
+        { "min_qual_score"  , required_argument , NULL , 4 },
         {0,0,0,0}
     };    
 
@@ -44,11 +46,17 @@ int main (int argc, char **argv)
     // Readin inout from the command line
     while ((c = getopt_long_only(argc, argv, "",longopts, NULL)) != -1)
         switch (c) {
-            case 'f':
+            case 1:
                 forward_read_file = optarg;
                 break;
-            case 'r':
+            case 2:
                 reverse_read_file = optarg;
+                break;
+            case 3:
+                out_format = atoi(optarg);
+                break;
+            case 4:
+                min_qual_score = atoi(optarg);
                 break;
             case 0:
                 // getopt set a variable
@@ -67,7 +75,8 @@ int main (int argc, char **argv)
 
     rand_string=random_string(6);    
     printf ("forward_read_file = %s ,reverse_read_file =%s\n ", forward_read_file, reverse_read_file);
-    cout << "random string " << rand_string << "out format " << out_format  << endl ;
+    cout << "random string " << rand_string << " out format " << out_format  << endl ;
+    cout << "minqual " << min_qual_score << endl ;
     for (index = optind; index < argc; index++)
         printf ("Non-option argument %s\n", argv[index]);
 
@@ -118,6 +127,7 @@ int main (int argc, char **argv)
     // main loop
     while(read_rf.read_read()) {
         read_rf.seq_match(pattern);
+        if (min_qual_score) { read_rf.min_qual_score(min_qual_score);}
         read_rf.print();
     }
 

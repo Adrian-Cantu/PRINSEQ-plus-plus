@@ -56,14 +56,26 @@ class single_read {
                 cout << regex_replace(seq_name,fastq_to_fasta, ">") << endl << seq_seq << endl;
             }
             cout.rdbuf(back_stdout);
-       }
+        }
+
+        int min_qual_score(int min_qual) {
+            string temp_seq_qual=seq_qual;
+            char base;
+            int score;
+            for(std::string::size_type i = seq_qual.size()-1; i > 0; --i) {
+                score=int(seq_qual[i])-33;
+    //            cout << "char is " << seq_qual[i] << " i is " << i << " score is " << score << " and minqual " << min_qual  << endl;
+                if (score < min_qual) { return 1 ;}
+            }
+            return 0;
+        }    
 
         int get_read_status(void) {
             return read_status;
         }
 
         void set_read_status(int status) {
-            read_status=status;
+            if (status > read_status) {read_status=status;}
         }
 
 
@@ -124,6 +136,25 @@ class pair_read {
             read2->set_read_status(2);
         }
     }
+
+    int min_qual_score(int min_qual) {
+        int match1= read1->min_qual_score(min_qual);
+        int match2= read2->min_qual_score(min_qual);
+        if ( !match1 && !match2 ) {
+            read1->set_read_status(0);
+            read2->set_read_status(0);
+        } else if ( !match1 && match2 ) {
+            read1->set_read_status(1);
+            read2->set_read_status(2);
+        } else if ( match1 && !match2 ) {
+            read1->set_read_status(2);
+            read2->set_read_status(1);
+        } else {
+            read1->set_read_status(2);
+            read2->set_read_status(2);
+        }
+    }
+
 
     void set_out_format(int format) {
         out_form=format;
