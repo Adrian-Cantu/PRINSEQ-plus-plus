@@ -28,7 +28,7 @@ int main (int argc, char **argv)
     int index;
     int out_format=0; // 0 fastq, 1 fasta
     int min_qual_score=0;
-    
+    int ns_max_n=0;
     int c;
 
     opterr = 0;
@@ -38,6 +38,7 @@ int main (int argc, char **argv)
         { "fastq2"          , required_argument , NULL , 2 },
         { "out_format"      , required_argument , NULL , 3 },
         { "min_qual_score"  , required_argument , NULL , 4 },
+        { "ns_max_n"        , required_argument , NULL , 5 },
         {0,0,0,0}
     };    
 
@@ -58,6 +59,9 @@ int main (int argc, char **argv)
             case 4:
                 min_qual_score = atoi(optarg);
                 break;
+            case 5:
+                ns_max_n = atoi(optarg);
+                break;
             case 0:
                 // getopt set a variable
                 break;
@@ -76,7 +80,7 @@ int main (int argc, char **argv)
     rand_string=random_string(6);    
     printf ("forward_read_file = %s ,reverse_read_file =%s\n ", forward_read_file, reverse_read_file);
     cout << "random string " << rand_string << " out format " << out_format  << endl ;
-    cout << "minqual " << min_qual_score << endl ;
+    cout << "ns_max_n " << ns_max_n << endl ;
     for (index = optind; index < argc; index++)
         printf ("Non-option argument %s\n", argv[index]);
 
@@ -126,7 +130,7 @@ int main (int argc, char **argv)
 
     // main loop
     while(read_rf.read_read()) {
-        read_rf.seq_match(pattern);
+        if (ns_max_n > -1 ) {read_rf.seq_match(pattern,ns_max_n);}
         if (min_qual_score) { read_rf.min_qual_score(min_qual_score);}
         read_rf.print();
     }
@@ -135,3 +139,6 @@ int main (int argc, char **argv)
     inFile_r.close();  
     return 0;
 }
+
+
+

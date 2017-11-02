@@ -33,9 +33,11 @@ class single_read {
             }
         }
 
-        int seq_match(regex pattern) {
-            if (regex_search(seq_seq,pattern)) {
-                read_status=2;
+        int seq_match(regex pattern,int ns_max_n) {
+            int hit_num=distance(sregex_iterator(seq_seq.begin(), seq_seq.end(), pattern),sregex_iterator());
+     //       std::cout << hit_num << " matches found in :" << seq_seq << std::endl;
+            if ( hit_num > ns_max_n ) {
+              read_status=2;
                 return 1;
             } else {
                 return 0;
@@ -119,9 +121,9 @@ class pair_read {
         read2->set_outputs(bad_out_file2, single_out_file2, good_out_file2);
     }
 
-    int seq_match(regex pattern) {
-        int match1= read1->seq_match(pattern);
-        int match2= read2->seq_match(pattern);
+    int seq_match(regex pattern,int ns_max_n) {
+        int match1= read1->seq_match(pattern, ns_max_n);
+        int match2= read2->seq_match(pattern, ns_max_n);
         if ( !match1 && !match2 ) {
             read1->set_read_status(0);
             read2->set_read_status(0);
