@@ -156,8 +156,8 @@ string random_string( size_t length )
         const size_t max_index = (sizeof(charset) - 1);
         return charset[ rand() % max_index ];
     };
-    srand (time(NULL));
     std::string str(length,0);
+    srand (time(NULL) ^ (time_t)&str );
     std::generate_n( str.begin(), length, randchar );
     return str;
 }
