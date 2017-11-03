@@ -18,7 +18,11 @@ CXXFLAGS = -std=c++11
 all: pprinseqc
 
 
-pprinseqc: pprinseqc.cpp reads.h
+pprinseqc: main.o reads.o
+	$(CXX) $(CXXFLAGS) -o pprinseqc main.o reads.o
+
+main.o: main.cpp reads.h
+reads.o: reads.cpp reads.h 
 
 test: all
 	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -out_format 1 && \
@@ -35,6 +39,7 @@ clean:
 	-rm -f pprinseqc
 	-rm -f Test*fastq
 	-rm -f Test*fasta
+	-rm -f *.o
 
 Makefile: Makefile.in ../config.status
 	cd .. && ./config.status src/$@
