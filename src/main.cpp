@@ -29,6 +29,7 @@ int main (int argc, char **argv)
     int out_format=0; // 0 fastq, 1 fasta
     int min_qual_score=0;
     int ns_max_n=0;
+    int min_qual_mean=0;
     int c;
 
     opterr = 0;
@@ -39,6 +40,7 @@ int main (int argc, char **argv)
         { "out_format"      , required_argument , NULL , 3 },
         { "min_qual_score"  , required_argument , NULL , 4 },
         { "ns_max_n"        , required_argument , NULL , 5 },
+        { "min_qual_mean"   , required_argument , NULL , 6 },
         {0,0,0,0}
     };    
 
@@ -61,6 +63,9 @@ int main (int argc, char **argv)
                 break;
             case 5:
                 ns_max_n = atoi(optarg);
+                break;
+            case 6:
+                min_qual_mean = atoi(optarg);
                 break;
             case 0:
                 // getopt set a variable
@@ -131,6 +136,7 @@ int main (int argc, char **argv)
     // main loop
     while(read_rf.read_read()) {
         if (ns_max_n > -1 ) {read_rf.seq_match(pattern,ns_max_n);}
+        if (min_qual_mean)  {read_rf.min_qual_mean(min_qual_mean);}
         if (min_qual_score) { read_rf.min_qual_score(min_qual_score);}
         read_rf.print();
     }

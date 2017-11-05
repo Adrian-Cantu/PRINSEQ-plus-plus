@@ -14,10 +14,14 @@ class single_read {
         int set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file);
         int read_read(void);
         int seq_match(regex pattern,int ns_max_n);
+        int max_n_p(int ns_max_p);
         void print(int out_form);
         int min_qual_score(int min_qual);
+        int min_qual_mean(int min_qual);
         int get_read_status(void);
         void set_read_status(int status); 
+        
+
 
     protected:
         regex fastq_to_fasta;
@@ -41,8 +45,11 @@ class pair_read {
         int set_outputs(ostream& bad_out_file1, ostream& single_out_file1, ostream& good_out_file1,
                     ostream& bad_out_file2, ostream& single_out_file2, ostream& good_out_file2);
         int seq_match(regex pattern,int ns_max_n);
-        int min_qual_score(int min_qual); 
+        int min_qual_score(int min_qual);
+        int min_qual_mean(int min_qual);
         void set_out_format(int format);
+        int max_n_p(int ns_max_p);
+
 
     protected:
         istream& file1;

@@ -80,6 +80,21 @@ using namespace std;
             if (status > read_status) {read_status=status;}
         }
 
+int single_read::min_qual_mean(int min_qual) {
+    int score;
+    float average=0;
+    for(std::string::size_type i = seq_qual.size()-1; i > 0; --i) {
+        score=int(seq_qual[i])-33;
+        average= average + score;
+        }
+//    cout << "sum is : " << average;
+    average=average/seq_qual.size();
+//    cout << " and average is: "  << average << endl;
+    if (average < min_qual) { return 1 ;}
+    return 0;
+}    
+    
+//////////////////////////////////////////////////////////////////////////////
 
         pair_read::pair_read(istream &is1, istream &is2): file1(is1),file2(is2)  {
 
@@ -125,6 +140,24 @@ using namespace std;
     int pair_read::min_qual_score(int min_qual) {
         int match1= read1->min_qual_score(min_qual);
         int match2= read2->min_qual_score(min_qual);
+        if ( !match1 && !match2 ) {
+            read1->set_read_status(0);
+            read2->set_read_status(0);
+        } else if ( !match1 && match2 ) {
+            read1->set_read_status(1);
+            read2->set_read_status(2);
+        } else if ( match1 && !match2 ) {
+            read1->set_read_status(2);
+            read2->set_read_status(1);
+        } else {
+            read1->set_read_status(2);
+            read2->set_read_status(2);
+        }
+    }
+
+int pair_read::min_qual_mean(int min_qual) {
+        int match1= read1->min_qual_mean(min_qual);
+        int match2= read2->min_qual_mean(min_qual);
         if ( !match1 && !match2 ) {
             read1->set_read_status(0);
             read2->set_read_status(0);
