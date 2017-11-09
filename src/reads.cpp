@@ -122,42 +122,28 @@ int single_read::min_qual_mean(int min_qual) {
     int pair_read::seq_match(regex pattern,int ns_max_n) {
         int match1= read1->seq_match(pattern, ns_max_n);
         int match2= read2->seq_match(pattern, ns_max_n);
-        if ( !match1 && !match2 ) {
-            read1->set_read_status(0);
-            read2->set_read_status(0);
-        } else if ( !match1 && match2 ) {
-            read1->set_read_status(1);
-            read2->set_read_status(2);
-        } else if ( match1 && !match2 ) {
-            read1->set_read_status(2);
-            read2->set_read_status(1);
-        } else { 
-            read1->set_read_status(2);
-            read2->set_read_status(2);
-        }
+        pair_read::set_read_status(match1,match2);
     }
 
     int pair_read::min_qual_score(int min_qual) {
         int match1= read1->min_qual_score(min_qual);
         int match2= read2->min_qual_score(min_qual);
-        if ( !match1 && !match2 ) {
-            read1->set_read_status(0);
-            read2->set_read_status(0);
-        } else if ( !match1 && match2 ) {
-            read1->set_read_status(1);
-            read2->set_read_status(2);
-        } else if ( match1 && !match2 ) {
-            read1->set_read_status(2);
-            read2->set_read_status(1);
-        } else {
-            read1->set_read_status(2);
-            read2->set_read_status(2);
-        }
+        pair_read::set_read_status(match1,match2);
     }
 
 int pair_read::min_qual_mean(int min_qual) {
         int match1= read1->min_qual_mean(min_qual);
         int match2= read2->min_qual_mean(min_qual);
+        
+        pair_read::set_read_status(match1,match2);
+  }
+
+
+    void pair_read::set_out_format(int format) {
+        out_form=format;
+    }    
+
+    void pair_read::set_read_status(int match1, int match2) {
         if ( !match1 && !match2 ) {
             read1->set_read_status(0);
             read2->set_read_status(0);
@@ -174,9 +160,6 @@ int pair_read::min_qual_mean(int min_qual) {
     }
 
 
-    void pair_read::set_out_format(int format) {
-        out_form=format;
-    }    
 
 string random_string( size_t length )
 {

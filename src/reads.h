@@ -49,6 +49,7 @@ class pair_read {
         int min_qual_mean(int min_qual);
         void set_out_format(int format);
         int max_n_p(int ns_max_p);
+        void set_read_status(int match1, int match2);
 
 
     protected:
