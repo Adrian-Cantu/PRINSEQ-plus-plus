@@ -33,7 +33,8 @@ using namespace std;
             }
         }
 
-        int single_read::seq_match(regex pattern,int ns_max_n) {
+        int single_read::ns_max_n(int ns_max_n) {
+            regex pattern("n", regex::icase);
             int hit_num=distance(sregex_iterator(seq_seq.begin(), seq_seq.end(), pattern),sregex_iterator());
      //       std::cout << hit_num << " matches found in :" << seq_seq << std::endl;
             if ( hit_num > ns_max_n ) {
@@ -129,9 +130,10 @@ int single_read::noiupac() {
         read2->set_outputs(bad_out_file2, single_out_file2, good_out_file2);
     }
 
-    int pair_read::seq_match(regex pattern,int ns_max_n) {
-        int match1= read1->seq_match(pattern, ns_max_n);
-        int match2= read2->seq_match(pattern, ns_max_n);
+    int pair_read::ns_max_n(int ns_max_n) {
+        regex pattern("n", regex::icase);
+        int match1= read1->ns_max_n(ns_max_n);
+        int match2= read2->ns_max_n(ns_max_n);
         pair_read::set_read_status(match1,match2);
     }
 

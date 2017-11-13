@@ -124,7 +124,6 @@ int main (int argc, char **argv)
     good_out_file_R2.open("Test_"+ rand_string + "_good_out_R2."  + out_ext);
 
 
-    regex pattern("n", regex::icase);
     single_read read_f(inFile_f);
     single_read read_r(inFile_r);
 
@@ -137,7 +136,7 @@ int main (int argc, char **argv)
 
     // main loop
     while(read_rf.read_read()) {
-        if (ns_max_n > -1 ) {read_rf.seq_match(pattern,ns_max_n);}
+        if (ns_max_n > -1 ) {read_rf.ns_max_n(ns_max_n);}
         if (min_qual_mean)  {read_rf.min_qual_mean(min_qual_mean);}
         if (min_qual_score) { read_rf.min_qual_score(min_qual_score);}
         if (noiupac) {read_rf.noiupac();}
