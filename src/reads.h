@@ -20,7 +20,7 @@ class single_read {
         int min_qual_mean(int min_qual);
         int get_read_status(void);
         void set_read_status(int status); 
-        
+        int noiupac(void);        
 
 
     protected:
@@ -50,7 +50,7 @@ class pair_read {
         void set_out_format(int format);
         int max_n_p(int ns_max_p);
         void set_read_status(int match1, int match2);
-
+        void noiupac(void);
 
     protected:
         istream& file1;

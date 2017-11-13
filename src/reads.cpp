@@ -93,7 +93,17 @@ int single_read::min_qual_mean(int min_qual) {
     if (average < min_qual) { return 1 ;}
     return 0;
 }    
-    
+
+int single_read::noiupac() {
+    regex pattern("^[ACGTN]+$", regex::icase);
+    if (!regex_search(seq_seq,pattern)) {
+        return 1;
+    } else {
+        return 0;
+    }
+}    
+
+
 //////////////////////////////////////////////////////////////////////////////
 
         pair_read::pair_read(istream &is1, istream &is2): file1(is1),file2(is2)  {
@@ -138,6 +148,11 @@ int pair_read::min_qual_mean(int min_qual) {
         pair_read::set_read_status(match1,match2);
   }
 
+void pair_read::noiupac(void) {
+    int match1= read1->noiupac();
+    int match2= read2->noiupac();
+    pair_read::set_read_status(match1,match2);
+}    
 
     void pair_read::set_out_format(int format) {
         out_form=format;

@@ -30,17 +30,19 @@ int main (int argc, char **argv)
     int min_qual_score=0;
     int ns_max_n=0;
     int min_qual_mean=0;
+    int noiupac=0;
     int c;
 
     opterr = 0;
 
     struct option longopts[] = {
-        { "fastq"           , required_argument , NULL , 1 },
-        { "fastq2"          , required_argument , NULL , 2 },
-        { "out_format"      , required_argument , NULL , 3 },
-        { "min_qual_score"  , required_argument , NULL , 4 },
-        { "ns_max_n"        , required_argument , NULL , 5 },
-        { "min_qual_mean"   , required_argument , NULL , 6 },
+        { "fastq"           , required_argument , NULL     , 1 },
+        { "fastq2"          , required_argument , NULL     , 2 },
+        { "out_format"      , required_argument , NULL     , 3 },
+        { "min_qual_score"  , required_argument , NULL     , 4 },
+        { "ns_max_n"        , required_argument , NULL     , 5 },
+        { "min_qual_mean"   , required_argument , NULL     , 6 },
+        { "noiupac"         , no_argument       , &noiupac , 1 }, 
         {0,0,0,0}
     };    
 
@@ -138,6 +140,7 @@ int main (int argc, char **argv)
         if (ns_max_n > -1 ) {read_rf.seq_match(pattern,ns_max_n);}
         if (min_qual_mean)  {read_rf.min_qual_mean(min_qual_mean);}
         if (min_qual_score) { read_rf.min_qual_score(min_qual_score);}
+        if (noiupac) {read_rf.noiupac();}
         read_rf.print();
     }
 
