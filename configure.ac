@@ -3,8 +3,8 @@
 
 AC_PREREQ([2.69])
 AC_INIT([pprinseqc], [0.1], [garbanyo@gmail.com])
-
-AC_CONFIG_SRCDIR([src/pprinseqc.cpp])
+##AM_INIT_AUTOMAKE
+AC_CONFIG_SRCDIR([src/main.cpp])
 AC_LANG([C++])
 AX_CXX_COMPILE_STDCXX_11()
 

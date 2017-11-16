@@ -36,9 +36,11 @@ $(distdir): FORCE
 	cp $(srcdir)/install-sh $(distdir)
 	cp $(srcdir)/Makefile.in $(distdir)
 	cp $(srcdir)/src/Makefile.in $(distdir)/src
-	cp $(srcdir)/src/pprinseqc.cpp $(distdir)/src
-	cp $(srcdir)/src/test.fastq $(distdir)/src
+	cp $(srcdir)/src/main.cpp $(distdir)/src
+	cp $(srcdir)/src/reads.cpp $(distdir)/src
 	cp $(srcdir)/src/reads.h $(distdir)/src
+	cp $(srcdir)/src/test_F.fastq $(distdir)/src
+	cp $(srcdir)/src/test_R.fastq $(distdir)/src
 
 FORCE:
 	-rm -f $(distdir).tar.gz >/dev/null 2>&1
