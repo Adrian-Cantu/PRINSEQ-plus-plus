@@ -32,6 +32,8 @@ int main (int argc, char **argv)
     int min_qual_mean=0;
     int noiupac=0;
     int c;
+    int min_len=0;
+    int max_len=0;
 
     opterr = 0;
 
@@ -43,7 +45,10 @@ int main (int argc, char **argv)
         { "ns_max_n"        , required_argument , NULL     , 5 },
         { "min_qual_mean"   , required_argument , NULL     , 6 },
         { "noiupac"         , no_argument       , &noiupac , 1 }, 
-        {0,0,0,0}
+        { "min_len"         , required_argument , NULL     , 7 },
+        { "max_len"         , required_argument , NULL
+, 8 },
+{0,0,0,0}
     };    
 
 
@@ -68,6 +73,12 @@ int main (int argc, char **argv)
                 break;
             case 6:
                 min_qual_mean = atoi(optarg);
+                break;
+            case 7:
+                min_len = atoi(optarg);
+                break;
+            case 8:
+                max_len = atoi(optarg);
                 break;
             case 0:
                 // getopt set a variable
@@ -140,6 +151,8 @@ int main (int argc, char **argv)
         if (min_qual_mean)  {read_rf.min_qual_mean(min_qual_mean);}
         if (min_qual_score) { read_rf.min_qual_score(min_qual_score);}
         if (noiupac) {read_rf.noiupac();}
+        if (min_len) {read_rf.min_len(min_len);}
+        if (max_len) {read_rf.max_len(max_len);}
         read_rf.print();
     }
 

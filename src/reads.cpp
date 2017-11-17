@@ -105,6 +105,21 @@ int single_read::noiupac() {
 }    
 
 
+int single_read::min_len(int len) {
+    if (seq_seq.size() < len) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int single_read::max_len(int len) {
+    if (seq_seq.size() > len) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 //////////////////////////////////////////////////////////////////////////////
 
         pair_read::pair_read(istream &is1, istream &is2): file1(is1),file2(is2)  {
@@ -155,6 +170,21 @@ void pair_read::noiupac(void) {
     int match2= read2->noiupac();
     pair_read::set_read_status(match1,match2);
 }    
+
+
+void pair_read::min_len(int len) {
+    int match1= read1->min_len(len);
+    int match2= read2->min_len(len);
+    pair_read::set_read_status(match1,match2);
+}    
+
+
+void pair_read::max_len(int len) {
+    int match1= read1->max_len(len);
+    int match2= read2->max_len(len);
+    pair_read::set_read_status(match1,match2);
+}    
+
 
     void pair_read::set_out_format(int format) {
         out_form=format;
