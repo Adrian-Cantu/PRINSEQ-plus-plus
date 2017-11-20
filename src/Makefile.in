@@ -12,10 +12,15 @@ bindir = @bindir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-CXXFLAGS = -std=c++11
+CXXFLAGS = -std=c++11 -Wall
 
 
 all: pprinseqc
+
+
+comp: pprinseqc
+	time ./prinseq-lite.pl -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5000 -out_good Test_good -out_bad Test_bad -no_qual_header 
+	time ./pprinseqc -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5000 -ns_max_n -1
 
 
 pprinseqc: main.o reads.o
@@ -36,6 +41,8 @@ install:
 
 uninstall:
 	-rm $(DESTDIR)$(bindir)/bin/pprinseqc
+
+clear: clean
 
 clean:
 	-rm -f pprinseqc

@@ -15,7 +15,7 @@ using namespace std;
             fastq_to_fasta.assign("^@");
         }
 
-        int single_read::set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file) {
+        void single_read::set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file) {
             bad_out=bad_out_file.rdbuf();
             single_out=single_out_file.rdbuf();
             good_out=good_out_file.rdbuf();
@@ -63,7 +63,6 @@ using namespace std;
 
         int single_read::min_qual_score(int min_qual) {
             string temp_seq_qual=seq_qual;
-            char base;
             int score;
             for(std::string::size_type i = seq_qual.size()-1; i > 0; --i) {
                 score=int(seq_qual[i])-33;
@@ -105,7 +104,7 @@ int single_read::noiupac() {
 }    
 
 
-int single_read::min_len(int len) {
+int single_read::min_len(unsigned int len) {
     if (seq_seq.size() < len) {
         return 1;
     } else {
@@ -113,7 +112,7 @@ int single_read::min_len(int len) {
     }
 }
 
-int single_read::max_len(int len) {
+int single_read::max_len(unsigned int len) {
     if (seq_seq.size() > len) {
         return 1;
     } else {
@@ -139,26 +138,26 @@ int single_read::max_len(int len) {
     }
 
 
-    int pair_read::set_outputs(ostream& bad_out_file1, ostream& single_out_file1, ostream& good_out_file1,
+    void pair_read::set_outputs(ostream& bad_out_file1, ostream& single_out_file1, ostream& good_out_file1,
                     ostream& bad_out_file2, ostream& single_out_file2, ostream& good_out_file2) {
         read1->set_outputs(bad_out_file1, single_out_file1, good_out_file1);
         read2->set_outputs(bad_out_file2, single_out_file2, good_out_file2);
     }
 
-    int pair_read::ns_max_n(int ns_max_n) {
+    void pair_read::ns_max_n(int ns_max_n) {
         regex pattern("n", regex::icase);
         int match1= read1->ns_max_n(ns_max_n);
         int match2= read2->ns_max_n(ns_max_n);
         pair_read::set_read_status(match1,match2);
     }
 
-    int pair_read::min_qual_score(int min_qual) {
+    void pair_read::min_qual_score(int min_qual) {
         int match1= read1->min_qual_score(min_qual);
         int match2= read2->min_qual_score(min_qual);
         pair_read::set_read_status(match1,match2);
     }
 
-int pair_read::min_qual_mean(int min_qual) {
+    void pair_read::min_qual_mean(int min_qual) {
         int match1= read1->min_qual_mean(min_qual);
         int match2= read2->min_qual_mean(min_qual);
         
@@ -172,14 +171,14 @@ void pair_read::noiupac(void) {
 }    
 
 
-void pair_read::min_len(int len) {
+void pair_read::min_len(unsigned int len) {
     int match1= read1->min_len(len);
     int match2= read2->min_len(len);
     pair_read::set_read_status(match1,match2);
 }    
 
 
-void pair_read::max_len(int len) {
+void pair_read::max_len(unsigned int len) {
     int match1= read1->max_len(len);
     int match2= read2->max_len(len);
     pair_read::set_read_status(match1,match2);

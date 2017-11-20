@@ -46,8 +46,7 @@ int main (int argc, char **argv)
         { "min_qual_mean"   , required_argument , NULL     , 6 },
         { "noiupac"         , no_argument       , &noiupac , 1 }, 
         { "min_len"         , required_argument , NULL     , 7 },
-        { "max_len"         , required_argument , NULL
-, 8 },
+        { "max_len"         , required_argument , NULL     , 8 },
 {0,0,0,0}
     };    
 

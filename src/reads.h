@@ -11,7 +11,7 @@ using namespace std;
 class single_read {
     public:
         single_read(istream &is);
-        int set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file);
+        void set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file);
         int read_read(void);
         int ns_max_n(int ns_max_n);
         int max_n_p(int ns_max_p);
@@ -21,8 +21,8 @@ class single_read {
         int get_read_status(void);
         void set_read_status(int status); 
         int noiupac(void);        
-        int min_len(int len); 
-        int max_len(int len);
+        int min_len(unsigned int len); 
+        int max_len(unsigned int len);
 
     protected:
         regex fastq_to_fasta;
@@ -43,17 +43,17 @@ class pair_read {
         pair_read(istream &is1, istream &is2);
         int read_read(void);
         void print(void);
-        int set_outputs(ostream& bad_out_file1, ostream& single_out_file1, ostream& good_out_file1,
+        void set_outputs(ostream& bad_out_file1, ostream& single_out_file1, ostream& good_out_file1,
                     ostream& bad_out_file2, ostream& single_out_file2, ostream& good_out_file2);
-        int ns_max_n(int ns_max_n);
-        int min_qual_score(int min_qual);
-        int min_qual_mean(int min_qual);
+        void ns_max_n(int ns_max_n);
+        void min_qual_score(int min_qual);
+        void min_qual_mean(int min_qual);
         void set_out_format(int format);
         int max_n_p(int ns_max_p);
         void set_read_status(int match1, int match2);
         void noiupac(void);   
-        void min_len(int len); 
-        void max_len(int len);
+        void min_len(unsigned int len); 
+        void max_len(unsigned int len);
 
 
     protected:
