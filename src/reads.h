@@ -23,6 +23,8 @@ class single_read {
         int noiupac(void);        
         int min_len(unsigned int len); 
         int max_len(unsigned int len);
+        int max_gc(float max_gc);
+        int min_gc(float min_gc);
 
     protected:
         regex fastq_to_fasta;

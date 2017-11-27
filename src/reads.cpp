@@ -119,6 +119,30 @@ int single_read::max_len(unsigned int len) {
         return 0;
     }
 }
+
+
+
+
+
+int single_read::max_gc(float max_gc) {
+    regex pattern("[gc]", regex::icase); 
+    int hit_num=distance(sregex_iterator(seq_seq.begin(), seq_seq.end(), pattern),sregex_iterator());
+    float gc_content=(float)hit_num/seq_seq.size();
+    if (max_gc < gc_content) { return 1 ;}
+    return 0;
+}
+
+
+int single_read::min_gc(float min_gc) {
+    regex pattern("[gc]", regex::icase); 
+    int hit_num=distance(sregex_iterator(seq_seq.begin(), seq_seq.end(), pattern),sregex_iterator());
+    float gc_content=(float)hit_num/seq_seq.size();
+    if (min_gc > gc_content) { return 1 ;}
+    return 0;
+}    
+
+
+
 //////////////////////////////////////////////////////////////////////////////
 
         pair_read::pair_read(istream &is1, istream &is2): file1(is1),file2(is2)  {

@@ -12,7 +12,7 @@ bindir = @bindir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++11 -Wall -O
 
 
 all: pprinseqc
