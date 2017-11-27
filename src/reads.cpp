@@ -34,9 +34,17 @@ using namespace std;
         }
 
         int single_read::ns_max_n(int ns_max_n) {
-            regex pattern("n", regex::icase);
-            int hit_num=distance(sregex_iterator(seq_seq.begin(), seq_seq.end(), pattern),sregex_iterator());
+//            regex pattern("n", regex::icase);
+//            int hit_num=distance(sregex_iterator(seq_seq.begin(), seq_seq.end(), pattern),sregex_iterator());
      //       std::cout << hit_num << " matches found in :" << seq_seq << std::endl;
+            int hit_num=0;
+            for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
+ //               cout << i << " " << seq_seq[i] << " " ;
+                if ((seq_seq[i-1] == 'n') || (seq_seq[i-1] == 'N')) {
+                    hit_num++;
+                }    
+            }
+ //           cout << endl;
             if ( hit_num > ns_max_n ) {
               read_status=2;
                 return 1;
@@ -64,7 +72,8 @@ using namespace std;
         int single_read::min_qual_score(int min_qual) {
             string temp_seq_qual=seq_qual;
             int score;
-            for(std::string::size_type i = seq_qual.size()-1; i > 0; --i) {
+            int i;
+            for(i = seq_qual.size()-1; i >= 0; --i) {
                 score=int(seq_qual[i])-33;
     //            cout << "char is " << seq_qual[i] << " i is " << i << " score is " << score << " and minqual " << min_qual  << endl;
                 if (score < min_qual) { return 1 ;}
