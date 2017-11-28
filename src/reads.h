@@ -56,6 +56,9 @@ class pair_read {
         void noiupac(void);   
         void min_len(unsigned int len); 
         void max_len(unsigned int len);
+        void max_gc(float max_gc);
+        void min_gc(float min_gc);
+
 
 
     protected:

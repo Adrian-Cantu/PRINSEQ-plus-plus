@@ -34,17 +34,12 @@ using namespace std;
         }
 
         int single_read::ns_max_n(int ns_max_n) {
-//            regex pattern("n", regex::icase);
-//            int hit_num=distance(sregex_iterator(seq_seq.begin(), seq_seq.end(), pattern),sregex_iterator());
-     //       std::cout << hit_num << " matches found in :" << seq_seq << std::endl;
             int hit_num=0;
             for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
- //               cout << i << " " << seq_seq[i] << " " ;
                 if ((seq_seq[i-1] == 'n') || (seq_seq[i-1] == 'N')) {
                     hit_num++;
                 }    
             }
- //           cout << endl;
             if ( hit_num > ns_max_n ) {
               read_status=2;
                 return 1;
@@ -75,7 +70,6 @@ using namespace std;
             int i;
             for(i = seq_qual.size()-1; i >= 0; --i) {
                 score=int(seq_qual[i])-33;
-    //            cout << "char is " << seq_qual[i] << " i is " << i << " score is " << score << " and minqual " << min_qual  << endl;
                 if (score < min_qual) { return 1 ;}
             }
             return 0;
@@ -96,9 +90,7 @@ int single_read::min_qual_mean(int min_qual) {
         score=int(seq_qual[i])-33;
         average= average + score;
         }
-//    cout << "sum is : " << average;
     average=average/seq_qual.size();
-//    cout << " and average is: "  << average << endl;
     if (average < min_qual) { return 1 ;}
     return 0;
 }    
@@ -134,22 +126,32 @@ int single_read::max_len(unsigned int len) {
 
 
 int single_read::max_gc(float max_gc) {
-    regex pattern("[gc]", regex::icase); 
-    int hit_num=distance(sregex_iterator(seq_seq.begin(), seq_seq.end(), pattern),sregex_iterator());
-    float gc_content=(float)hit_num/seq_seq.size();
-    if (max_gc < gc_content) { return 1 ;}
+    int hit_num=0;
+    for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
+        if ((seq_seq[i-1] == 'G') || (seq_seq[i-1] == 'C')
+         || (seq_seq[i-1] == 'g') || (seq_seq[i-1] == 'c')) {
+            hit_num++;
+        }    
+    }
+    cout << "max_gc: " << max_gc << " , percent : " <<
+    hit_num <<" / " << seq_seq.size() << " = " <<
+    100*(float)hit_num/seq_seq.size()<< endl;
+    if (max_gc < 100*(float)hit_num/seq_seq.size()) { return 1 ;}
     return 0;
 }
 
 
 int single_read::min_gc(float min_gc) {
-    regex pattern("[gc]", regex::icase); 
-    int hit_num=distance(sregex_iterator(seq_seq.begin(), seq_seq.end(), pattern),sregex_iterator());
-    float gc_content=(float)hit_num/seq_seq.size();
-    if (min_gc > gc_content) { return 1 ;}
+    int hit_num=0;
+    for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
+        if ((seq_seq[i-1] == 'G') || (seq_seq[i-1] == 'C')
+         || (seq_seq[i-1] == 'g') || (seq_seq[i-1] == 'c')) {
+            hit_num++;
+        }    
+    }
+    if (min_gc > 100*(float)hit_num/seq_seq.size()) { return 1 ;}
     return 0;
-}    
-
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -218,6 +220,17 @@ void pair_read::max_len(unsigned int len) {
 }    
 
 
+void pair_read::max_gc(float max_gc) {
+    int match1= read1->max_gc(max_gc);
+    int match2= read2->max_gc(max_gc);
+    pair_read::set_read_status(match1,match2);
+}
+
+void pair_read::min_gc(float min_gc) {
+    int match1= read1->min_gc(min_gc);
+    int match2= read2->min_gc(min_gc);
+    pair_read::set_read_status(match1,match2);
+}
     void pair_read::set_out_format(int format) {
         out_form=format;
     }    

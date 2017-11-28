@@ -34,7 +34,8 @@ int main (int argc, char **argv)
     int c;
     int min_len=0;
     int max_len=0;
-
+    float max_gc=100;
+    float min_gc=0;
     opterr = 0;
 
     struct option longopts[] = {
@@ -47,6 +48,8 @@ int main (int argc, char **argv)
         { "noiupac"         , no_argument       , &noiupac , 1 }, 
         { "min_len"         , required_argument , NULL     , 7 },
         { "max_len"         , required_argument , NULL     , 8 },
+        { "max_gc"          , required_argument , NULL     , 9 },
+        { "min_gc"          , required_argument , NULL     ,10 },
 {0,0,0,0}
     };    
 
@@ -78,6 +81,12 @@ int main (int argc, char **argv)
                 break;
             case 8:
                 max_len = atoi(optarg);
+                break;
+            case 9:
+                max_gc = atof(optarg);
+                break;
+            case 10:
+                min_gc = atoi(optarg);
                 break;
             case 0:
                 // getopt set a variable
@@ -152,6 +161,8 @@ int main (int argc, char **argv)
         if (noiupac) {read_rf.noiupac();}
         if (min_len) {read_rf.min_len(min_len);}
         if (max_len) {read_rf.max_len(max_len);}
+        if (max_gc < 100) {read_rf.max_gc(max_gc);}
+        if (min_gc > 0) {read_rf.max_gc(max_gc);}
         read_rf.print();
     }
 
