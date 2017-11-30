@@ -30,13 +30,13 @@ compp: pprinseqc
 pprinseqc: main.o reads.o
 	$(CXX) $(CXXFLAGS) -o pprinseqc main.o reads.o
 
-main.o: main.cpp reads.h
+main.o: main.cpp reads.h bloom_filter.hpp
 reads.o: reads.cpp reads.h 
 
 test: all
 	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -out_format 1 && \
 	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq && \
-    ./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -min_qual_mean 25 -ns_max_n -1 \
+    ./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -min_qual_mean 25 -ns_max_n -1 && \
 	echo "*** ALL TEST PASSED***"
 
 install:

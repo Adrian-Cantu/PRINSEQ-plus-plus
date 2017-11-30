@@ -1,3 +1,4 @@
+#include "bloom_filter.hpp"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,6 +38,7 @@ int main (int argc, char **argv)
     float max_gc=100;
     float min_gc=0;
     opterr = 0;
+    int derep;
 
     struct option longopts[] = {
         { "fastq"           , required_argument , NULL     , 1 },
@@ -45,7 +47,8 @@ int main (int argc, char **argv)
         { "min_qual_score"  , required_argument , NULL     , 4 },
         { "ns_max_n"        , required_argument , NULL     , 5 },
         { "min_qual_mean"   , required_argument , NULL     , 6 },
-        { "noiupac"         , no_argument       , &noiupac , 1 }, 
+        { "noiupac"         , no_argument       , &noiupac , 1 },
+        { "derep"           , no_argument       , &derep   , 1 },
         { "min_len"         , required_argument , NULL     , 7 },
         { "max_len"         , required_argument , NULL     , 8 },
         { "max_gc"          , required_argument , NULL     , 9 },
@@ -152,6 +155,22 @@ int main (int argc, char **argv)
         bad_out_file_R2,single_out_file_R2,good_out_file_R2);
     
     read_rf.set_out_format(out_format);
+    
+    bloom_parameters parameters;
+    bloom_filter *filter=NULL;
+    if (derep) {    
+        parameters.projected_element_count = 10000000;
+        parameters.false_positive_probability = 0.000001; // 1 in 10000
+        parameters.random_seed = 0xA5A5A5A5;
+        if (!parameters) {
+            std::cout << "Error - Invalid set of bloom filter parameters!" << std::endl;
+            return 1;
+        }
+        parameters.compute_optimal_parameters();
+        filter  = new bloom_filter(parameters);
+        //bloom_filter *temp  = new bloom_filter(parameters);
+        //filter = temp;
+    }
 
     // main loop
     while(read_rf.read_read()) {
@@ -162,8 +181,13 @@ int main (int argc, char **argv)
         if (min_len) {read_rf.min_len(min_len);}
         if (max_len) {read_rf.max_len(max_len);}
         if (max_gc < 100) {read_rf.max_gc(max_gc);}
-        if (min_gc > 0) {read_rf.max_gc(max_gc);}
-        read_rf.print();
+        if (min_gc > 0) {read_rf.min_gc(min_gc);}
+        if (derep) {
+            read_rf.set_read_status(filter->contains(read_rf.read1->seq_seq),filter->contains(read_rf.read2->seq_seq));
+            filter->insert(read_rf.read1->seq_seq);
+            filter->insert(read_rf.read2->seq_seq);
+            read_rf.print();
+        }
     }
 
     inFile_f.close();  

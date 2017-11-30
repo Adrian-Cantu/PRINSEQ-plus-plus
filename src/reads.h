@@ -26,14 +26,16 @@ class single_read {
         int max_gc(float max_gc);
         int min_gc(float min_gc);
 
-    protected:
-        regex fastq_to_fasta;
-        int read_status=0; //0 good, 1 single ,2 bad
-        istream& file1;
         string seq_name;
         string seq_seq;
         string seq_sep;
         string seq_qual;
+
+    protected:
+        regex fastq_to_fasta;
+        int read_status=0; //0 good, 1 single ,2 bad
+        istream& file1;
+
         streambuf *back_stdout=cout.rdbuf();
         streambuf *bad_out=cout.rdbuf();
         streambuf *single_out=cout.rdbuf();
@@ -59,13 +61,14 @@ class pair_read {
         void max_gc(float max_gc);
         void min_gc(float min_gc);
 
+        single_read* read1;
+        single_read* read2;
 
 
     protected:
         istream& file1;
         istream& file2;
-        single_read* read1;
-        single_read* read2;
+
         int out_form=0;    //0 fastq , 1 fasta
 
 };                    
