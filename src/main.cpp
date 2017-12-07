@@ -29,7 +29,7 @@ int main (int argc, char **argv)
     int index;
     int out_format=0; // 0 fastq, 1 fasta
     int min_qual_score=0;
-    int ns_max_n=0;
+    int ns_max_n=-1;
     int min_qual_mean=0;
     int noiupac=0;
     int c;
@@ -39,20 +39,23 @@ int main (int argc, char **argv)
     float min_gc=0;
     opterr = 0;
     int derep;
+    float entropy_threshold=0.5 ;
+    int lc_entropy=0;
 
     struct option longopts[] = {
-        { "fastq"           , required_argument , NULL     , 1 },
-        { "fastq2"          , required_argument , NULL     , 2 },
-        { "out_format"      , required_argument , NULL     , 3 },
-        { "min_qual_score"  , required_argument , NULL     , 4 },
-        { "ns_max_n"        , required_argument , NULL     , 5 },
-        { "min_qual_mean"   , required_argument , NULL     , 6 },
-        { "noiupac"         , no_argument       , &noiupac , 1 },
-        { "derep"           , no_argument       , &derep   , 1 },
-        { "min_len"         , required_argument , NULL     , 7 },
-        { "max_len"         , required_argument , NULL     , 8 },
-        { "max_gc"          , required_argument , NULL     , 9 },
-        { "min_gc"          , required_argument , NULL     ,10 },
+        { "fastq"           , required_argument , NULL     ,  1 },
+        { "fastq2"          , required_argument , NULL     ,  2 },
+        { "out_format"      , required_argument , NULL     ,  3 },
+        { "min_qual_score"  , required_argument , NULL     ,  4 },
+        { "ns_max_n"        , required_argument , NULL     ,  5 },
+        { "min_qual_mean"   , required_argument , NULL     ,  6 },
+        { "noiupac"         , no_argument       , &noiupac ,  1 },
+        { "derep"           , no_argument       , &derep   ,  1 },
+        { "min_len"         , required_argument , NULL     ,  7 },
+        { "max_len"         , required_argument , NULL     ,  8 },
+        { "max_gc"          , required_argument , NULL     ,  9 },
+        { "min_gc"          , required_argument , NULL     , 10 },
+        { "lc_entropy"      , optional_argument , NULL     , 11 },
 {0,0,0,0}
     };    
 
@@ -90,6 +93,12 @@ int main (int argc, char **argv)
                 break;
             case 10:
                 min_gc = atoi(optarg);
+                break;
+            case 11:
+                if (optarg != NULL) {
+                    entropy_threshold = atof(optarg);
+                }
+                lc_entropy=1;
                 break;
             case 0:
                 // getopt set a variable
@@ -186,8 +195,11 @@ int main (int argc, char **argv)
             read_rf.set_read_status(filter->contains(read_rf.read1->seq_seq),filter->contains(read_rf.read2->seq_seq));
             filter->insert(read_rf.read1->seq_seq);
             filter->insert(read_rf.read2->seq_seq);
-            read_rf.print();
         }
+        
+        if (lc_entropy) {read_rf.entropy(entropy_threshold);}
+        
+        read_rf.print();
     }
 
     inFile_f.close();  

@@ -8,7 +8,15 @@
 #include <regex>
 #endif
 
+#ifndef MATH
+#define MATH
+#include <math.h>
+#endif
+
 #include "reads.h"
+#include <unordered_map>
+#include <algorithm> 
+
 
 using namespace std;
         single_read::single_read(istream &is): file1(is)  { 
@@ -153,6 +161,68 @@ int single_read::min_gc(float min_gc) {
     return 0;
 }
 
+int single_read::entropy(float threshold) {
+    
+//    cout << seq_seq << endl;
+    unsigned int j=0;
+    std::string window;
+    vector<float> vals;
+    while ( 1 ) {
+        try {
+            window = seq_seq.substr(j*32,64);
+        } catch (const std::exception& e) {
+            break;
+        }
+        if (window.size() < 15 ) {
+            if (vals.size() == 0) {
+                vals.push_back(0.0);
+                break;
+            } else {
+                break;
+            }
+        }
+        unordered_map<string, int> hashtable;
+        
+        for ( std::string::size_type i = 0; i < window.size()-2 ; i++  ) {
+            string sub = window.substr(i,3);
+            if (hashtable.count(sub)) {
+                hashtable[sub]++;
+            } else {
+                hashtable.emplace(sub,1);
+            }
+        }
+        double entropy=0;
+//        double dust=0;
+        double l=window.size()-2;
+        double k=min(64.0,l);
+    
+        for (auto &itr : hashtable) {
+//            cout << itr.first << ": " << itr.second << endl;
+            entropy -= ((float)itr.second/l)*(log((float)itr.second/l)/log(k));
+        }
+//        for (auto &itr : hashtable) {
+//            dust += (float)(itr.second*(itr.second-1)*l);
+//        }
+//        dust=(dust*(100.00/31.00))/(2*(k-1)*k);
+ //       cout << "seq " << window << endl;
+//        cout << " entropy " << j+1  <<" is : " << entropy << endl << "dust is : " << dust << endl ;
+        vals.push_back(entropy);
+        j++;    
+        
+    }
+    double mean = 1.0 * std::accumulate(vals.begin(), vals.end(), 0.0) / vals.size();
+//    for ( std::string::size_type i = 0; i < vals.size() ; i++  ) {
+//        cout << vals[i] << "  ";
+//    }
+    
+//    cout << "total entropy is " << mean << endl ;
+    if (mean < threshold ) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -233,7 +303,14 @@ void pair_read::min_gc(float min_gc) {
 }
     void pair_read::set_out_format(int format) {
         out_form=format;
-    }    
+    }
+
+void pair_read::entropy(float threshold) {
+    int match1= read1->entropy(threshold);
+    int match2= read2->entropy(threshold);
+    pair_read::set_read_status(match1,match2);
+}
+    
 
     void pair_read::set_read_status(int match1, int match2) {
         if ( !match1 && !match2 ) {
