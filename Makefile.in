@@ -41,6 +41,7 @@ $(distdir): FORCE
 	cp $(srcdir)/src/reads.h $(distdir)/src
 	cp $(srcdir)/src/test_F.fastq $(distdir)/src
 	cp $(srcdir)/src/test_R.fastq $(distdir)/src
+	cp $(srcdir)/src/bloom_filter.hpp $(distdir)/src
 
 FORCE:
 	-rm -f $(distdir).tar.gz >/dev/null 2>&1
