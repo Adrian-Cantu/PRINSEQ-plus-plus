@@ -129,10 +129,6 @@ int single_read::max_len(unsigned int len) {
     }
 }
 
-
-
-
-
 int single_read::max_gc(float max_gc) {
     int hit_num=0;
     for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
@@ -148,7 +144,6 @@ int single_read::max_gc(float max_gc) {
     return 0;
 }
 
-
 int single_read::min_gc(float min_gc) {
     int hit_num=0;
     for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
@@ -162,8 +157,6 @@ int single_read::min_gc(float min_gc) {
 }
 
 int single_read::entropy(float threshold) {
-    
-//    cout << seq_seq << endl;
     unsigned int j=0;
     std::string window;
     vector<float> vals;
@@ -182,7 +175,6 @@ int single_read::entropy(float threshold) {
             }
         }
         unordered_map<string, int> hashtable;
-        
         for ( std::string::size_type i = 0; i < window.size()-2 ; i++  ) {
             string sub = window.substr(i,3);
             if (hashtable.count(sub)) {
@@ -192,31 +184,66 @@ int single_read::entropy(float threshold) {
             }
         }
         double entropy=0;
-//        double dust=0;
         double l=window.size()-2;
         double k=min(64.0,l);
-    
         for (auto &itr : hashtable) {
-//            cout << itr.first << ": " << itr.second << endl;
             entropy -= ((float)itr.second/l)*(log((float)itr.second/l)/log(k));
         }
-//        for (auto &itr : hashtable) {
-//            dust += (float)(itr.second*(itr.second-1)*l);
-//        }
-//        dust=(dust*(100.00/31.00))/(2*(k-1)*k);
- //       cout << "seq " << window << endl;
-//        cout << " entropy " << j+1  <<" is : " << entropy << endl << "dust is : " << dust << endl ;
         vals.push_back(entropy);
         j++;    
         
     }
     double mean = 1.0 * std::accumulate(vals.begin(), vals.end(), 0.0) / vals.size();
-//    for ( std::string::size_type i = 0; i < vals.size() ; i++  ) {
-//        cout << vals[i] << "  ";
-//    }
-    
-//    cout << "total entropy is " << mean << endl ;
     if (mean < threshold ) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+int single_read::dust(float threshold) {
+    unsigned int j=0;
+    std::string window;
+    vector<float> vals;
+//    std::cout << seq_seq << std::endl;
+    while ( 1 ) {
+        try {
+            window = seq_seq.substr(j*32,64);
+        } catch (const std::exception& e) {
+            break;
+        }
+        if (window.size() < 15 ) {
+            if (vals.size() == 0) {
+                vals.push_back(62.0);
+                break;
+            } else {
+                break;
+            }
+        }
+        unordered_map<string, int> hashtable;
+        
+        for ( std::string::size_type i = 0; i < window.size()-2 ; i++  ) {
+            string sub = window.substr(i,3);
+            if (hashtable.count(sub)) {
+                hashtable[sub]++;
+            } else {
+                hashtable.emplace(sub,1);
+            }
+        }
+        double dust=0;
+        double l=window.size()-2;
+        for (auto &itr : hashtable) {
+            dust += (((float)itr.second)*((float)itr.second-1))/(l-1);
+        }
+        vals.push_back(dust);
+ //       cout << "dust " << j+1 << " is : " << (dust*0.5)/(31) << endl;
+        j++;    
+        
+    }
+    double mean = 1.0 * std::accumulate(vals.begin(), vals.end(), 0.0) / vals.size();
+    mean = (mean*0.5)/(31);
+//    cout << "total entropy is " << mean << endl ;
+    if (mean > threshold ) {
         return 1;
     } else {
         return 0;
@@ -310,7 +337,12 @@ void pair_read::entropy(float threshold) {
     int match2= read2->entropy(threshold);
     pair_read::set_read_status(match1,match2);
 }
-    
+
+void pair_read::dust(float threshold) {
+    int match1= read1->dust(threshold);
+    int match2= read2->dust(threshold);
+    pair_read::set_read_status(match1,match2);
+}    
 
     void pair_read::set_read_status(int match1, int match2) {
         if ( !match1 && !match2 ) {

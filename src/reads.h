@@ -33,7 +33,8 @@ class single_read {
         int max_len(unsigned int len);
         int max_gc(float max_gc);
         int min_gc(float min_gc);
-        int entropy(float threshold); // 1 = entropy, 2 = dust
+        int entropy(float threshold); 
+        int dust(float threshold);
 
         string seq_name;
         string seq_seq;
@@ -70,6 +71,7 @@ class pair_read {
         void max_gc(float max_gc);
         void min_gc(float min_gc);
         void entropy(float threshold);
+        void dust(float threshold);
 
         single_read* read1;
         single_read* read2;

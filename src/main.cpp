@@ -41,6 +41,8 @@ int main (int argc, char **argv)
     int derep;
     float entropy_threshold=0.5 ;
     int lc_entropy=0;
+    float dust_threshold=0.5 ;
+    int lc_dust=0;
 
     struct option longopts[] = {
         { "fastq"           , required_argument , NULL     ,  1 },
@@ -56,6 +58,7 @@ int main (int argc, char **argv)
         { "max_gc"          , required_argument , NULL     ,  9 },
         { "min_gc"          , required_argument , NULL     , 10 },
         { "lc_entropy"      , optional_argument , NULL     , 11 },
+        { "lc_dust"         , optional_argument , NULL     , 12 },
 {0,0,0,0}
     };    
 
@@ -100,6 +103,12 @@ int main (int argc, char **argv)
                 }
                 lc_entropy=1;
                 break;
+            case 12:
+                if (optarg != NULL) {
+                    dust_threshold = atof(optarg);
+                }
+                lc_dust=1;
+                break;    
             case 0:
                 // getopt set a variable
                 break;
@@ -177,8 +186,6 @@ int main (int argc, char **argv)
         }
         parameters.compute_optimal_parameters();
         filter  = new bloom_filter(parameters);
-        //bloom_filter *temp  = new bloom_filter(parameters);
-        //filter = temp;
     }
 
     // main loop
@@ -198,6 +205,7 @@ int main (int argc, char **argv)
         }
         
         if (lc_entropy) {read_rf.entropy(entropy_threshold);}
+        if (lc_dust) {read_rf.dust(dust_threshold);}
         
         read_rf.print();
     }
