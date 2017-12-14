@@ -43,6 +43,15 @@ int main (int argc, char **argv)
     int lc_entropy=0;
     float dust_threshold=0.5 ;
     int lc_dust=0;
+    
+    float trim_qual_right_threshold=20;
+    int trim_qual_right=0;
+    float trim_qual_left_threshold=20;
+    int trim_qual_left=0;
+    string trim_qual_type="min";
+    string trim_qual_rule="lt";
+    int trim_qual_window=5;
+    int trim_qual_step=2;
 
     struct option longopts[] = {
         { "fastq"           , required_argument , NULL     ,  1 },
@@ -59,6 +68,12 @@ int main (int argc, char **argv)
         { "min_gc"          , required_argument , NULL     , 10 },
         { "lc_entropy"      , optional_argument , NULL     , 11 },
         { "lc_dust"         , optional_argument , NULL     , 12 },
+        { "trim_qual_right" , optional_argument , NULL     , 13 },
+        { "trim_qual_left"  , optional_argument , NULL     , 14 },
+        { "trim_qual_type"  , required_argument , NULL     , 15 },
+        { "trim_qual_rule"  , required_argument , NULL     , 16 },
+        { "trim_qual_window", required_argument , NULL     , 17 },
+        { "trim_qual_step"  , required_argument , NULL     , 18 },
 {0,0,0,0}
     };    
 
@@ -108,7 +123,31 @@ int main (int argc, char **argv)
                     dust_threshold = atof(optarg);
                 }
                 lc_dust=1;
-                break;    
+                break;
+            case 13:
+                if (optarg != NULL) {
+                    trim_qual_right_threshold = atof(optarg);
+                }
+                trim_qual_right=1;
+                break;
+            case 14:
+                if (optarg != NULL) {
+                    trim_qual_left_threshold = atof(optarg);
+                }
+                trim_qual_left=1;
+                break;
+            case 15:
+                trim_qual_type=optarg;
+                break;
+            case 16:
+                trim_qual_rule=optarg;
+                break;
+            case 17:
+                trim_qual_window=atoi(optarg);
+                break;
+            case 18:
+                trim_qual_step=atoi(optarg);
+                break;
             case 0:
                 // getopt set a variable
                 break;
@@ -190,6 +229,7 @@ int main (int argc, char **argv)
 
     // main loop
     while(read_rf.read_read()) {
+        read_rf.read1->trim_qual_right("mean","lt",5,10,30);
         if (ns_max_n > -1 ) {read_rf.ns_max_n(ns_max_n);}
         if (min_qual_mean)  {read_rf.min_qual_mean(min_qual_mean);}
         if (min_qual_score) { read_rf.min_qual_score(min_qual_score);}

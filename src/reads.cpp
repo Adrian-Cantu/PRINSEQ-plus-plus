@@ -250,6 +250,53 @@ int single_read::dust(float threshold) {
     }
 }
 
+ // type min* mean max sum // rule lt* gt eq 
+void single_read::trim_qual_right(string type, string rule, int step, int window_size, float threshold ) {
+    string window;
+    string copy_seq=seq_seq;
+    string copy_qual=seq_qual;
+    std::cout << seq_seq << std::endl;
+    while ( 1 ) {
+        try {
+            window = copy_qual.substr(copy_qual.size()-window_size,window_size);
+        } catch (const std::exception& e) {
+            break;
+        }
+        int score;
+        vector<float> vals;
+        for(int i = window.size()-1; i >= 0; --i) {
+                score=int(window[i])-33;
+                vals.push_back(score);
+        }
+        float compare;
+        if (type == "min") {
+            compare = *min_element(vals.begin(), vals.end());
+        } else if (type == "max") {
+            compare = *max_element(vals.begin(), vals.end());
+        } else if (type == "mean" ) {
+            compare = accumulate( vals.begin(), vals.end(), 0.0)/vals.size();
+        } else {
+            compare = accumulate( vals.begin(), vals.end(), 0.0);
+        }
+        if ((rule == "lt") && (compare < threshold)) {
+            size_t b_win = max(0,(int)copy_qual.size()-step);
+            copy_qual.erase(b_win,copy_qual.size());
+            copy_seq.erase(b_win,copy_qual.size());
+            std::cout << copy_seq << std::endl;
+        } else {
+            break;
+        }
+    }
+    if (copy_qual.size() == 0) {
+        single_read::set_read_status(2);
+    } else {
+        seq_qual=copy_qual;
+        seq_seq=copy_seq;
+    }
+    std::cout << seq_seq << std::endl << std::endl;
+}
+
+
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -360,7 +407,7 @@ void pair_read::dust(float threshold) {
         }
     }
 
-
+void pair_read::trim_qual_right(string type, string rule, int step, int window_size, float threshold ); 
 
 string random_string( size_t length )
 {
