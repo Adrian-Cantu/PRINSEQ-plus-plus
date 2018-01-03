@@ -407,7 +407,10 @@ void pair_read::dust(float threshold) {
         }
     }
 
-void pair_read::trim_qual_right(string type, string rule, int step, int window_size, float threshold ); 
+void pair_read::trim_qual_right(string type, string rule, int step, int window_size, float threshold ) {
+    read1->trim_qual_right(type, rule, step, window_size, threshold);
+    read2->trim_qual_right(type, rule, step, window_size, threshold);
+} 
 
 string random_string( size_t length )
 {
