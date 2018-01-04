@@ -67,7 +67,10 @@ using namespace std;
             if (out_form==0) {
                 cout << seq_name << endl << seq_seq << endl << seq_sep << endl << seq_qual << endl;
             } else if (out_form==1) {
-                cout << regex_replace(seq_name,fastq_to_fasta, ">") << endl << seq_seq << endl;
+                //cout << regex_replace(seq_name,fastq_to_fasta, '>') << endl << seq_seq << endl;
+                string seq_name_copy=seq_name;
+                seq_name_copy[0]='>';
+                cout << seq_name_copy << endl << seq_seq << endl << seq_sep << endl << seq_qual << endl;
             }
             cout.rdbuf(back_stdout);
         }
