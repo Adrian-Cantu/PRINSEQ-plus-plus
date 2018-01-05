@@ -109,23 +109,19 @@ void single_read::noiupac() {
 }    
 
 
-int single_read::min_len(unsigned int len) {
+void single_read::min_len(unsigned int len) {
     if (seq_seq.size() < len) {
-        return 1;
-    } else {
-        return 0;
-    }
+        single_read::set_read_status(2);
+    }    
 }
 
-int single_read::max_len(unsigned int len) {
+void single_read::max_len(unsigned int len) {
     if (seq_seq.size() > len) {
-        return 1;
-    } else {
-        return 0;
-    }
+        single_read::set_read_status(2);
+    } 
 }
 
-int single_read::max_gc(float max_gc) {
+void single_read::max_gc(float max_gc) {
     int hit_num=0;
     for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
         if ((seq_seq[i-1] == 'G') || (seq_seq[i-1] == 'C')
@@ -133,14 +129,13 @@ int single_read::max_gc(float max_gc) {
             hit_num++;
         }    
     }
-    cout << "max_gc: " << max_gc << " , percent : " <<
-    hit_num <<" / " << seq_seq.size() << " = " <<
-    100*(float)hit_num/seq_seq.size()<< endl;
-    if (max_gc < 100*(float)hit_num/seq_seq.size()) { return 1 ;}
-    return 0;
+//    cout << "max_gc: " << max_gc << " , percent : " <<
+//    hit_num <<" / " << seq_seq.size() << " = " <<
+//    100*(float)hit_num/seq_seq.size()<< endl;
+    if (max_gc < 100*(float)hit_num/seq_seq.size()) { single_read::set_read_status(2);}
 }
 
-int single_read::min_gc(float min_gc) {
+void single_read::min_gc(float min_gc) {
     int hit_num=0;
     for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
         if ((seq_seq[i-1] == 'G') || (seq_seq[i-1] == 'C')
@@ -148,11 +143,10 @@ int single_read::min_gc(float min_gc) {
             hit_num++;
         }    
     }
-    if (min_gc > 100*(float)hit_num/seq_seq.size()) { return 1 ;}
-    return 0;
+    if (min_gc > 100*(float)hit_num/seq_seq.size()) { single_read::set_read_status(2);}
 }
 
-int single_read::entropy(float threshold) {
+void single_read::entropy(float threshold) {
     unsigned int j=0;
     std::string window;
     vector<float> vals;
@@ -191,13 +185,11 @@ int single_read::entropy(float threshold) {
     }
     double mean = 1.0 * std::accumulate(vals.begin(), vals.end(), 0.0) / vals.size();
     if (mean < threshold ) {
-        return 1;
-    } else {
-        return 0;
+        single_read::set_read_status(2);
     }
 }
 
-int single_read::dust(float threshold) {
+void single_read::dust(float threshold) {
     unsigned int j=0;
     std::string window;
     vector<float> vals;
@@ -240,10 +232,8 @@ int single_read::dust(float threshold) {
     mean = (mean*0.5)/(31);
 //    cout << "total entropy is " << mean << endl ;
     if (mean > threshold ) {
-        return 1;
-    } else {
-        return 0;
-    }
+        single_read::set_read_status(2);
+    }    
 }
 
  // type min* mean max sum // rule lt* gt eq 
@@ -393,44 +383,45 @@ void single_read::trim_qual_left(string type, string rule, int step, int window_
 
 
 void pair_read::min_len(unsigned int len) {
-    int match1= read1->min_len(len);
-    int match2= read2->min_len(len);
-    pair_read::set_read_status(match1,match2);
+    read1->min_len(len);
+    read2->min_len(len);
+    pair_read::auto_set_read_status();
 }    
 
 
 void pair_read::max_len(unsigned int len) {
-    int match1= read1->max_len(len);
-    int match2= read2->max_len(len);
-    pair_read::set_read_status(match1,match2);
+    read1->max_len(len);
+    read2->max_len(len);
+    pair_read::auto_set_read_status();
 }    
 
 
 void pair_read::max_gc(float max_gc) {
-    int match1= read1->max_gc(max_gc);
-    int match2= read2->max_gc(max_gc);
-    pair_read::set_read_status(match1,match2);
+    read1->max_gc(max_gc);
+    read2->max_gc(max_gc);
+    pair_read::auto_set_read_status();
 }
 
 void pair_read::min_gc(float min_gc) {
-    int match1= read1->min_gc(min_gc);
-    int match2= read2->min_gc(min_gc);
-    pair_read::set_read_status(match1,match2);
+    read1->min_gc(min_gc);
+    read2->min_gc(min_gc);
+    pair_read::auto_set_read_status();
 }
+
     void pair_read::set_out_format(int format) {
         out_form=format;
     }
 
 void pair_read::entropy(float threshold) {
-    int match1= read1->entropy(threshold);
-    int match2= read2->entropy(threshold);
-    pair_read::set_read_status(match1,match2);
+    read1->entropy(threshold);
+    read2->entropy(threshold);
+    pair_read::auto_set_read_status();
 }
 
 void pair_read::dust(float threshold) {
-    int match1= read1->dust(threshold);
-    int match2= read2->dust(threshold);
-    pair_read::set_read_status(match1,match2);
+    read1->dust(threshold);
+    read2->dust(threshold);
+    pair_read::auto_set_read_status();
 }    
 
     void pair_read::set_read_status(int match1, int match2) {

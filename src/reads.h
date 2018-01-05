@@ -29,12 +29,12 @@ class single_read {
         int get_read_status(void);
         void set_read_status(int status); 
         void noiupac(void);        
-        int min_len(unsigned int len); 
-        int max_len(unsigned int len);
-        int max_gc(float max_gc);
-        int min_gc(float min_gc);
-        int entropy(float threshold); 
-        int dust(float threshold);
+        void min_len(unsigned int len); 
+        void max_len(unsigned int len);
+        void max_gc(float max_gc);
+        void min_gc(float min_gc);
+        void entropy(float threshold); 
+        void dust(float threshold);
         // type min* mean max sum // rule lt* gt eq 
         void trim_qual_right(string type, string rule, int step, int window_size, float threshold );  
         void  trim_qual_left(string type, string rule, int step, int window_size, float threshold );
