@@ -41,7 +41,7 @@ using namespace std;
             }
         }
 
-        int single_read::ns_max_n(int ns_max_n) {
+        void single_read::ns_max_n(int ns_max_n) {
             int hit_num=0;
             for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
                 if ((seq_seq[i-1] == 'n') || (seq_seq[i-1] == 'N')) {
@@ -49,10 +49,7 @@ using namespace std;
                 }    
             }
             if ( hit_num > ns_max_n ) {
-            read_status=2;
-                return 1;
-            } else {
-                return 0;
+            single_read::set_read_status(2);
             }
         }
 
@@ -75,15 +72,14 @@ using namespace std;
             cout.rdbuf(back_stdout);
         }
 
-        int single_read::min_qual_score(int min_qual) {
+        void single_read::min_qual_score(int min_qual) {
             string temp_seq_qual=seq_qual;
             int score;
             int i;
             for(i = seq_qual.size()-1; i >= 0; --i) {
                 score=int(seq_qual[i])-33;
-                if (score < min_qual) { return 1 ;}
+                if (score < min_qual) { single_read::set_read_status(2);}
             }
-            return 0;
         }    
 
         int single_read::get_read_status(void) {
@@ -94,7 +90,7 @@ using namespace std;
             if (status > read_status) {read_status=status;}
         }
 
-int single_read::min_qual_mean(int min_qual) {
+void single_read::min_qual_mean(int min_qual) {
     int score;
     float average=0;
     for(std::string::size_type i = seq_qual.size()-1; i > 0; --i) {
@@ -102,16 +98,13 @@ int single_read::min_qual_mean(int min_qual) {
         average= average + score;
         }
     average=average/seq_qual.size();
-    if (average < min_qual) { return 1 ;}
-    return 0;
+    if (average < min_qual) { single_read::set_read_status(2);}
 }    
 
-int single_read::noiupac() {
+void single_read::noiupac() {
     regex pattern("^[ACGTN]+$", regex::icase);
     if (!regex_search(seq_seq,pattern)) {
-        return 1;
-    } else {
-        return 0;
+        single_read::set_read_status(2);
     }
 }    
 
@@ -375,29 +368,28 @@ void single_read::trim_qual_left(string type, string rule, int step, int window_
     }
 
     void pair_read::ns_max_n(int ns_max_n) {
-        int match1= read1->ns_max_n(ns_max_n);
-        int match2= read2->ns_max_n(ns_max_n);
-        pair_read::set_read_status(match1,match2);
+        read1->ns_max_n(ns_max_n);
+        read2->ns_max_n(ns_max_n);
+        pair_read::auto_set_read_status();
     }
 
     void pair_read::min_qual_score(int min_qual) {
-        int match1= read1->min_qual_score(min_qual);
-        int match2= read2->min_qual_score(min_qual);
-        pair_read::set_read_status(match1,match2);
+        read1->min_qual_score(min_qual);
+        read2->min_qual_score(min_qual);
+        pair_read::auto_set_read_status();
     }
 
     void pair_read::min_qual_mean(int min_qual) {
-        int match1= read1->min_qual_mean(min_qual);
-        int match2= read2->min_qual_mean(min_qual);
-        
-        pair_read::set_read_status(match1,match2);
-  }
+        read1->min_qual_mean(min_qual);
+        read2->min_qual_mean(min_qual);
+        pair_read::auto_set_read_status();
+    }
 
-void pair_read::noiupac(void) {
-    int match1= read1->noiupac();
-    int match2= read2->noiupac();
-    pair_read::set_read_status(match1,match2);
-}    
+    void pair_read::noiupac(void) {
+        read1->noiupac();
+        read2->noiupac();
+        pair_read::auto_set_read_status();
+    }    
 
 
 void pair_read::min_len(unsigned int len) {
