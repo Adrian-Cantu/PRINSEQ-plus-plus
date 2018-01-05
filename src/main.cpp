@@ -230,6 +230,12 @@ int main (int argc, char **argv)
     // main loop
     while(read_rf.read_read()) {
         //read_rf.read1->trim_qual_right("mean","lt",5,10,30);
+        if (trim_qual_right) {
+            read_rf.trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);
+            }
+        if (trim_qual_left) {
+            read_rf.trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);
+        }
         if (ns_max_n > -1 ) {read_rf.ns_max_n(ns_max_n);}
         if (min_qual_mean)  {read_rf.min_qual_mean(min_qual_mean);}
         if (min_qual_score) { read_rf.min_qual_score(min_qual_score);}
