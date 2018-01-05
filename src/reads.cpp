@@ -49,7 +49,7 @@ using namespace std;
                 }    
             }
             if ( hit_num > ns_max_n ) {
-              read_status=2;
+            read_status=2;
                 return 1;
             } else {
                 return 0;
@@ -375,7 +375,6 @@ void single_read::trim_qual_left(string type, string rule, int step, int window_
     }
 
     void pair_read::ns_max_n(int ns_max_n) {
-        regex pattern("n", regex::icase);
         int match1= read1->ns_max_n(ns_max_n);
         int match2= read2->ns_max_n(ns_max_n);
         pair_read::set_read_status(match1,match2);
