@@ -24,7 +24,6 @@ int main (int argc, char **argv)
 {
     char *forward_read_file = NULL;
     char *reverse_read_file = NULL;
-    string rand_string;
     string out_ext="fastq";
     int index;
     int out_format=0; // 0 fastq, 1 fasta
@@ -52,6 +51,7 @@ int main (int argc, char **argv)
     string trim_qual_rule="lt";
     int trim_qual_window=5;
     int trim_qual_step=2;
+    string out_name=random_string(6);
 
     struct option longopts[] = {
         { "fastq"           , required_argument , NULL     ,  1 },
@@ -74,6 +74,7 @@ int main (int argc, char **argv)
         { "trim_qual_rule"  , required_argument , NULL     , 16 },
         { "trim_qual_window", required_argument , NULL     , 17 },
         { "trim_qual_step"  , required_argument , NULL     , 18 },
+        { "out_name"        , required_argument , NULL     , 19 },
 {0,0,0,0}
     };    
 
@@ -148,6 +149,9 @@ int main (int argc, char **argv)
             case 18:
                 trim_qual_step=atoi(optarg);
                 break;
+            case 19:
+                out_name=optarg;
+                break;
             case 0:
                 // getopt set a variable
                 break;
@@ -163,9 +167,8 @@ int main (int argc, char **argv)
                 abort ();
         }
 
-    rand_string=random_string(6);    
     printf ("forward_read_file = %s ,reverse_read_file =%s\n ", forward_read_file, reverse_read_file);
-    cout << "random string " << rand_string << " out format " << out_format  << endl ;
+    cout << "random string " << out_name << " out format " << out_format  << endl ;
     cout << "ns_max_n " << ns_max_n << endl ;
     for (index = optind; index < argc; index++)
         printf ("Non-option argument %s\n", argv[index]);
@@ -195,12 +198,12 @@ int main (int argc, char **argv)
     ofstream good_out_file_R2;
 
     if (out_format == 1 ) { out_ext = "fasta";}
-    bad_out_file_R1.open("Test_" + rand_string  + "_bad_out_R1." + out_ext );
-    single_out_file_R1.open("Test_" + rand_string  + "_single_out_R1." + out_ext  );
-    good_out_file_R1.open("Test_" + rand_string  + "_good_out_R1." + out_ext);
-    bad_out_file_R2.open("Test_" + rand_string  + "_bad_out_R2." + out_ext );
-    single_out_file_R2.open("Test_" + rand_string  + "_single_out_R2." + out_ext);
-    good_out_file_R2.open("Test_"+ rand_string + "_good_out_R2."  + out_ext);
+    bad_out_file_R1.open("Test_" + out_name  + "_bad_out_R1." + out_ext );
+    single_out_file_R1.open("Test_" + out_name  + "_single_out_R1." + out_ext  );
+    good_out_file_R1.open("Test_" + out_name  + "_good_out_R1." + out_ext);
+    bad_out_file_R2.open("Test_" + out_name  + "_bad_out_R2." + out_ext );
+    single_out_file_R2.open("Test_" + out_name  + "_single_out_R2." + out_ext);
+    good_out_file_R2.open("Test_"+ out_name + "_good_out_R2."  + out_ext);
 
 
     single_read read_f(inFile_f);
