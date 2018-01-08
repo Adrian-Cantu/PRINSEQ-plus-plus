@@ -203,16 +203,15 @@ int main (int argc, char **argv)
     
     
     if (reverse_read_file) {
-        bad_out_file_R1.open("Test_" + out_name  + "_bad_out_R1." + out_ext );
-        single_out_file_R1.open("Test_" + out_name  + "_single_out_R1." + out_ext  );
-        good_out_file_R1.open("Test_" + out_name  + "_good_out_R1." + out_ext);
-        bad_out_file_R2.open("Test_" + out_name  + "_bad_out_R2." + out_ext );
-        single_out_file_R2.open("Test_" + out_name  + "_single_out_R2." + out_ext);
-        good_out_file_R2.open("Test_"+ out_name + "_good_out_R2."  + out_ext);
+        bad_out_file_R1.open(out_name  + "_bad_out_R1." + out_ext );
+        single_out_file_R1.open(out_name  + "_single_out_R1." + out_ext  );
+        good_out_file_R1.open(out_name  + "_good_out_R1." + out_ext);
+        bad_out_file_R2.open(out_name  + "_bad_out_R2." + out_ext );
+        single_out_file_R2.open(out_name  + "_single_out_R2." + out_ext);
+        good_out_file_R2.open(out_name + "_good_out_R2."  + out_ext);
     } else {
-        bad_out_file_R1.open("Test_" + out_name  + "_bad_out." + out_ext );
-        single_out_file_R1.open("Test_" + out_name  + "_single_out." + out_ext  );
-        good_out_file_R1.open("Test_" + out_name  + "_good_out." + out_ext);
+        bad_out_file_R1.open(out_name  + "_bad_out." + out_ext );
+        good_out_file_R1.open(out_name  + "_good_out." + out_ext);
     }
 
     single_read read_f(inFile_f);
@@ -291,9 +290,11 @@ int main (int argc, char **argv)
         }
     }
     
-    
     inFile_f.close();
-    if (reverse_read_file){ inFile_r.close(); }  
+    if (reverse_read_file){ 
+        inFile_r.close(); 
+        
+    }  
     return 0;
 }
 

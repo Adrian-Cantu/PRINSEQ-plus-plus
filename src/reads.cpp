@@ -16,7 +16,7 @@
 #include "reads.h"
 #include <unordered_map>
 #include <algorithm> 
-
+#include <numeric>
 
 using namespace std;
         single_read::single_read(istream &is): file1(is)  { 
