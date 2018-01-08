@@ -241,14 +241,11 @@ int main (int argc, char **argv)
     
     // main loop
     if (reverse_read_file) {
+        ////////////////////////////////////////for pair end
         while(read_rf.read_read()) {
         //read_rf.read1->trim_qual_right("mean","lt",5,10,30);
-            if (trim_qual_right) {
-                read_rf.trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);
-                }
-            if (trim_qual_left) {
-                read_rf.trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);
-            }
+            if (trim_qual_right) {read_rf.trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
+            if (trim_qual_left) {read_rf.trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
             if (ns_max_n > -1 ) {read_rf.ns_max_n(ns_max_n);}
             if (min_qual_mean)  {read_rf.min_qual_mean(min_qual_mean);}
             if (min_qual_score) { read_rf.min_qual_score(min_qual_score);}
@@ -268,10 +265,29 @@ int main (int argc, char **argv)
         
             read_rf.print();
         } 
+    /////////////////////////////////////////// for single end    
     } else {
         while(read_f.read_read()) {
+            if (trim_qual_right) {read_f.trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
+            if (trim_qual_left) {read_f.trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
             if (ns_max_n > -1 ) {read_f.ns_max_n(ns_max_n);}
-                read_f.print(out_format);
+            if (min_qual_mean)  {read_f.min_qual_mean(min_qual_mean);}
+            if (min_qual_score) { read_f.min_qual_score(min_qual_score);}
+            if (noiupac) {read_f.noiupac();}
+            if (min_len) {read_f.min_len(min_len);}
+            if (max_len) {read_f.max_len(max_len);}
+            if (max_gc < 100) {read_f.max_gc(max_gc);}
+            if (min_gc > 0) {read_f.min_gc(min_gc);}
+            if (derep) {
+                if(filter->contains(read_f.seq_seq)) { read_f.set_read_status(2);}
+                filter->insert(read_f.seq_seq);
+                
+            }
+        
+            if (lc_entropy) {read_f.entropy(entropy_threshold);}
+            if (lc_dust) {read_f.dust(dust_threshold);}
+            
+            read_f.print(out_format);
         }
     }
     
