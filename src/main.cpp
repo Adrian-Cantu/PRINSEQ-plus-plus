@@ -52,6 +52,7 @@ int main (int argc, char **argv)
     int trim_qual_window=5;
     int trim_qual_step=2;
     string out_name=random_string(6);
+    int rm_header=0;
 
     struct option longopts[] = {
         { "fastq"           , required_argument , NULL     ,  1 },
@@ -75,6 +76,7 @@ int main (int argc, char **argv)
         { "trim_qual_window", required_argument , NULL     , 17 },
         { "trim_qual_step"  , required_argument , NULL     , 18 },
         { "out_name"        , required_argument , NULL     , 19 },
+        { "rm_header"       , no_argument       , &rm_header, 1 },
 {0,0,0,0}
     };    
 
@@ -261,7 +263,7 @@ int main (int argc, char **argv)
         
             if (lc_entropy) {read_rf.entropy(entropy_threshold);}
             if (lc_dust) {read_rf.dust(dust_threshold);}
-        
+            if (rm_header) {read_rf.rm_header();}
             read_rf.print();
         } 
     /////////////////////////////////////////// for single end    
@@ -285,7 +287,7 @@ int main (int argc, char **argv)
         
             if (lc_entropy) {read_f.entropy(entropy_threshold);}
             if (lc_dust) {read_f.dust(dust_threshold);}
-            
+            if (rm_header) {read_f.rm_header();}
             read_f.print(out_format);
         }
     }

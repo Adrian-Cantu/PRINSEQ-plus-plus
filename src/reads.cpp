@@ -331,6 +331,9 @@ void single_read::trim_qual_left(string type, string rule, int step, int window_
 //    std::cout << seq_seq << std::endl << std::endl;
 }
 
+void single_read::rm_header(void) {
+    seq_sep="+";
+}
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -423,6 +426,11 @@ void pair_read::dust(float threshold) {
     read2->dust(threshold);
     pair_read::auto_set_read_status();
 }    
+
+void pair_read::rm_header(void) {
+    read1->rm_header();
+    read2->rm_header();
+}
 
     void pair_read::set_read_status(int match1, int match2) {
         if ( !match1 && !match2 ) {
