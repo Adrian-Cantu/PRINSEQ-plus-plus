@@ -34,9 +34,9 @@ main.o: main.cpp reads.h bloom_filter.hpp
 reads.o: reads.cpp reads.h 
 
 test: all
-	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -out_format 1 -out_name 1 && \
-	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -trim_qual_right=25 -out_name 2 && \
-    ./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -min_qual_mean 25 -ns_max_n 2 -out_name 3 && \
+	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -out_format 1 -out_name Test_1 && \
+	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -trim_qual_right=25 -out_name Test_2 && \
+    ./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -min_qual_mean 25 -ns_max_n 2 -out_name Test_3 && \
 	echo "*** ALL TEST PASSED***"
 
 install:

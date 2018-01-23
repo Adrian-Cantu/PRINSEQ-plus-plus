@@ -39,6 +39,7 @@ class single_read {
         void trim_qual_right(string type, string rule, int step, int window_size, float threshold );  
         void trim_qual_left(string type, string rule, int step, int window_size, float threshold );
         void rm_header(void);
+        void trim_tail_left(int num);
 
         string seq_name;
         string seq_seq;
@@ -80,7 +81,8 @@ class pair_read {
         // type min* mean max sum // rule lt* gt eq 
         void trim_qual_right(string type, string rule, int step, int window_size, float threshold );         
         void trim_qual_left(string type, string rule, int step, int window_size, float threshold );
-         void rm_header(void);
+        void rm_header(void);
+        void trim_tail_left(int num);
         
         
         single_read* read1;

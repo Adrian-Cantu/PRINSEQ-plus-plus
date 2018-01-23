@@ -53,6 +53,7 @@ int main (int argc, char **argv)
     int trim_qual_step=2;
     string out_name=random_string(6);
     int rm_header=0;
+    int trim_tail_left=0;
 
     struct option longopts[] = {
         { "fastq"           , required_argument , NULL     ,  1 },
@@ -77,6 +78,7 @@ int main (int argc, char **argv)
         { "trim_qual_step"  , required_argument , NULL     , 18 },
         { "out_name"        , required_argument , NULL     , 19 },
         { "rm_header"       , no_argument       , &rm_header, 1 },
+        { "trim_tail_left"  , required_argument , NULL     , 20 },
 {0,0,0,0}
     };    
 
@@ -153,6 +155,9 @@ int main (int argc, char **argv)
                 break;
             case 19:
                 out_name=optarg;
+                break;
+            case 20:
+                trim_tail_left=atoi(optarg);
                 break;
             case 0:
                 // getopt set a variable
@@ -245,6 +250,7 @@ int main (int argc, char **argv)
         ////////////////////////////////////////for pair end
         while(read_rf.read_read()) {
         //read_rf.read1->trim_qual_right("mean","lt",5,10,30);
+            if (trim_tail_left) {read_rf.trim_tail_left(trim_tail_left);}
             if (trim_qual_right) {read_rf.trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
             if (trim_qual_left) {read_rf.trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
             if (ns_max_n > -1 ) {read_rf.ns_max_n(ns_max_n);}
@@ -269,6 +275,7 @@ int main (int argc, char **argv)
     /////////////////////////////////////////// for single end    
     } else {
         while(read_f.read_read()) {
+            if (trim_tail_left) {read_f.trim_tail_left(trim_tail_left);}
             if (trim_qual_right) {read_f.trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
             if (trim_qual_left) {read_f.trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
             if (ns_max_n > -1 ) {read_f.ns_max_n(ns_max_n);}
