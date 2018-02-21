@@ -40,6 +40,7 @@ class single_read {
         void trim_qual_left(string type, string rule, int step, int window_size, float threshold );
         void rm_header(void);
         void trim_tail_left(int num);
+        void trim_tail_right(int num);
 
         string seq_name;
         string seq_seq;
@@ -83,6 +84,7 @@ class pair_read {
         void trim_qual_left(string type, string rule, int step, int window_size, float threshold );
         void rm_header(void);
         void trim_tail_left(int num);
+        void trim_tail_right(int num);
         
         
         single_read* read1;

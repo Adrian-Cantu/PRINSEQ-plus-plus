@@ -353,6 +353,24 @@ void single_read::trim_tail_left(int num) {
     }
 }
 
+void single_read::trim_tail_right(int num) {
+    int sum=0;
+    int temp_size = seq_seq.size();
+    for(int i = temp_size -1; i >= 0; i--) {
+        if ((seq_seq[i]=='A') || (seq_seq[i]=='T') || (seq_seq[i]=='a') || (seq_seq[i]=='t')) {
+            sum++;
+        } else {
+            break;
+        }
+    }
+    if (sum == temp_size ) {
+        single_read::set_read_status(2);
+    } else if (sum >= num) {
+        seq_seq.erase(temp_size-sum,temp_size);
+        seq_qual.erase(temp_size-sum,temp_size);
+    }
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
         pair_read::pair_read(istream &is1, istream &is2): file1(is1),file2(is2)  {
@@ -451,6 +469,12 @@ void pair_read::trim_tail_left(int num) {
     pair_read::auto_set_read_status();
 }    
 
+void pair_read::trim_tail_right(int num) {
+    read1->trim_tail_right(num);
+    read2->trim_tail_right(num);
+    pair_read::auto_set_read_status();
+}    
+
 void pair_read::rm_header(void) {
     read1->rm_header();
     read2->rm_header();
@@ -491,6 +515,8 @@ void pair_read::trim_qual_left(string type, string rule, int step, int window_si
     read2->trim_qual_left(type, rule, step, window_size, threshold);
     pair_read::auto_set_read_status();
 } 
+
+
 
 string random_string( size_t length )
 {
