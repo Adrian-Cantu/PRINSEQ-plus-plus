@@ -38,6 +38,9 @@ test: all
 	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -trim_qual_right=25 -out_name Test_2 && \
     ./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -min_qual_mean 25 -ns_max_n 2 -out_name Test_3 && \
 	echo "*** ALL TEST PASSED***"
+	
+test_single: all
+	./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single
 
 install:
 	install -d $(DESTDIR)$(bindir)/bin

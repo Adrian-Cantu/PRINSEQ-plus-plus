@@ -13,12 +13,19 @@
 #include <math.h>
 #endif
 
+#ifndef PTHREAD
+#define PTHREAD
+#include <pthread.h>
+#endif
+
 using namespace std;
 
 
 class single_read {
     public:
         single_read(istream &is);
+        single_read(void);
+        void set_inputs(istream &is);
         void set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file);
         int read_read(void);
         void ns_max_n(int ns_max_n);
@@ -100,3 +107,5 @@ class pair_read {
 };                    
 
 string random_string( size_t length );
+
+

@@ -20,8 +20,13 @@
 #include "reads.h"
 using namespace std;
 
-int main (int argc, char **argv)
-{
+#ifndef PTHREAD
+#define PTHREAD
+#include <pthread.h>
+#endif
+
+
+
     char *forward_read_file = NULL;
     char *reverse_read_file = NULL;
     string out_ext="fastq";
@@ -36,7 +41,7 @@ int main (int argc, char **argv)
     int max_len=0;
     float max_gc=100;
     float min_gc=0;
-    opterr = 0;
+    int opterr = 0;
     int derep;
     float entropy_threshold=0.5 ;
     int lc_entropy=0;
@@ -55,6 +60,7 @@ int main (int argc, char **argv)
     int rm_header=0;
     int trim_tail_left=0;
     int trim_tail_right=0;
+    int threads=5;
 
     struct option longopts[] = {
         { "fastq"           , required_argument , NULL     ,  1 },
@@ -83,8 +89,16 @@ int main (int argc, char **argv)
         { "trim_tail_right" , required_argument , NULL     , 21 },
 {0,0,0,0}
     };    
+    
+struct arg_struct {
+    single_read * read;
+    bloom_filter * filter;
+};
 
+void do_single (arg_struct * arguments);
 
+int main (int argc, char **argv)
+{
 
     // Readin inout from the command line
     while ((c = getopt_long_only(argc, argv, "",longopts, NULL)) != -1)
@@ -225,7 +239,8 @@ int main (int argc, char **argv)
         bad_out_file_R1.open(out_name  + "_bad_out." + out_ext );
         good_out_file_R1.open(out_name  + "_good_out." + out_ext);
     }
-
+    
+    
     single_read read_f(inFile_f);
     single_read read_r(inFile_r);
     pair_read read_rf(inFile_f,inFile_r);
@@ -249,7 +264,10 @@ int main (int argc, char **argv)
         parameters.compute_optimal_parameters();
         filter  = new bloom_filter(parameters);
     }
-    
+    // declare structure for the thread
+    arg_struct ttt;
+    ttt.read= & read_f;
+    ttt.filter= filter;
     // main loop
     if (reverse_read_file) {
         ////////////////////////////////////////for pair end
@@ -280,30 +298,7 @@ int main (int argc, char **argv)
         } 
     /////////////////////////////////////////// for single end    
     } else {
-        while(read_f.read_read()) {
-            if (trim_tail_left) {read_f.trim_tail_left(trim_tail_left);}
-            if (trim_tail_right) {read_rf.trim_tail_right(trim_tail_right);}
-            if (trim_qual_right) {read_f.trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
-            if (trim_qual_left) {read_f.trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
-            if (ns_max_n > -1 ) {read_f.ns_max_n(ns_max_n);}
-            if (min_qual_mean)  {read_f.min_qual_mean(min_qual_mean);}
-            if (min_qual_score) { read_f.min_qual_score(min_qual_score);}
-            if (noiupac) {read_f.noiupac();}
-            if (min_len) {read_f.min_len(min_len);}
-            if (max_len) {read_f.max_len(max_len);}
-            if (max_gc < 100) {read_f.max_gc(max_gc);}
-            if (min_gc > 0) {read_f.min_gc(min_gc);}
-            if (derep) {
-                if(filter->contains(read_f.seq_seq)) { read_f.set_read_status(2);}
-                filter->insert(read_f.seq_seq);
-                
-            }
-        
-            if (lc_entropy) {read_f.entropy(entropy_threshold);}
-            if (lc_dust) {read_f.dust(dust_threshold);}
-            if (rm_header) {read_f.rm_header();}
-            read_f.print(out_format);
-        }
+        do_single(& ttt);
     }
     
     inFile_f.close();
@@ -315,4 +310,33 @@ int main (int argc, char **argv)
 }
 
 
+void do_single (arg_struct * arguments) {
+    struct arg_struct *args = arguments;
+    single_read * read=args->read;
+    bloom_filter* filter=args->filter;
+    while( read->read_read()) {
+        if (trim_tail_left) {read->trim_tail_left(trim_tail_left);}
+        if (trim_tail_right) {read->trim_tail_right(trim_tail_right);}
+        if (trim_qual_right) {read->trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
+        if (trim_qual_left) {read->trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
+        if (ns_max_n > -1 ) {read->ns_max_n(ns_max_n);}
+        if (min_qual_mean)  {read->min_qual_mean(min_qual_mean);}
+        if (min_qual_score) {read->min_qual_score(min_qual_score);}
+        if (noiupac) {read->noiupac();}
+        if (min_len) {read->min_len(min_len);}
+        if (max_len) {read->max_len(max_len);}
+        if (max_gc < 100) {read->max_gc(max_gc);}
+        if (min_gc > 0) {read->min_gc(min_gc);}
+        if (derep) {
+            if(filter->contains(read->seq_seq)) { read->set_read_status(2);}
+            filter->insert(read->seq_seq);
+            
+        }
+    
+        if (lc_entropy) {read->entropy(entropy_threshold);}
+        if (lc_dust) {read->dust(dust_threshold);}
+        if (rm_header) {read->rm_header();}
+        read->print(out_format);
+    }
+}
 

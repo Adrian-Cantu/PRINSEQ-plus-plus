@@ -13,6 +13,11 @@
 #include <math.h>
 #endif
 
+#ifndef PTHREAD
+#define PTHREAD
+#include <pthread.h>
+#endif
+
 #include "reads.h"
 #include <unordered_map>
 #include <algorithm> 
