@@ -24,8 +24,8 @@ comp: pprinseqc
 
 
 compp: pprinseqc
-	time ./prinseq-lite.pl -fastq test_F.fastq -fastq2 test_R.fastq -min_len 5 -out_good Test_good -out_bad Test_bad -no_qual_header -ns_max_n 2
-	time ./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -min_len 5 -ns_max_n 2
+	time -v ./prinseq-lite.pl -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5 -out_good Test_good -out_bad Test_bad -no_qual_header -ns_max_n 2 
+	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5 -ns_max_n 2 -out_name Test_time_ 
 
 pprinseqc: main.o reads.o
 	$(CXX) $(CXXFLAGS) -o pprinseqc main.o reads.o
