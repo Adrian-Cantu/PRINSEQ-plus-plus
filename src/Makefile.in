@@ -12,7 +12,7 @@ bindir = @bindir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-CXXFLAGS = -std=c++11 -Wall -O3
+CXXFLAGS = -std=c++11 -Wall -O3 -pthread
 
 
 all: pprinseqc
@@ -41,6 +41,7 @@ test: all
 	
 test_single: all
 	./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single
+	
 
 install:
 	install -d $(DESTDIR)$(bindir)/bin

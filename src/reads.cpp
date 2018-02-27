@@ -27,6 +27,14 @@ using namespace std;
         single_read::single_read(istream &is): file1(is)  { 
             fastq_to_fasta.assign("^@");
         }
+        
+        single_read::single_read(void) : file1(cin){ // starndar input
+            fastq_to_fasta.assign("^@");
+        }
+        
+        void  single_read::set_inputs(istream &is) {
+            file1.rdbuf(is.rdbuf());
+        }
 
         void single_read::set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file) {
             bad_out=bad_out_file.rdbuf();
@@ -34,14 +42,17 @@ using namespace std;
             good_out=good_out_file.rdbuf();
         }
 
-        int single_read::read_read(void) {
+        int single_read::read_read(pthread_mutex_t * read_mutex) {
         read_status=0;
+        pthread_mutex_lock(read_mutex);
             if (getline(file1,seq_name, '\n')) {
                 getline(file1, seq_seq, '\n');
                 getline(file1, seq_sep, '\n');
                 getline(file1, seq_qual, '\n');
+                pthread_mutex_unlock(read_mutex);
                 return 1;
             } else {
+                pthread_mutex_unlock(read_mutex);
                 return 0;
             }
         }
@@ -378,14 +389,30 @@ void single_read::trim_tail_right(int num) {
 
 //////////////////////////////////////////////////////////////////////////////
 
+
+
+/////////////////////////////////////////////////////////////////////////////
+
         pair_read::pair_read(istream &is1, istream &is2): file1(is1),file2(is2)  {
 
         read1= new single_read(file1);
         read2= new single_read(file2);
     }
+    
+    pair_read::pair_read(void):file1(cin),file2(cin) {
+        read1= new single_read(file1);
+        read2= new single_read(file2);
+    }    
+    
+    void  pair_read::set_inputs(istream &read_f,istream &read_r) {
+   //     read1->file1.rdbuf(read_f.rdbuf());
+    //    read2->file1.rdbuf(read_r.rdbuf());
+        read1->set_inputs(read_f);
+        read2->set_inputs(read_r);
+    }    
 
-    int pair_read::read_read(void) {
-        return read1->read_read() * read2->read_read();
+    int pair_read::read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2) {
+        return read1->read_read(read_mutex_1) * read2->read_read(read_mutex_2);
     }
 
 
