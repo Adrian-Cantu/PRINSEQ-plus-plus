@@ -12,7 +12,7 @@ bindir = @bindir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-CXXFLAGS = -std=c++11 -Wall -O3 -pthread
+CXXFLAGS = -std=c++11 -Wall -O3 -pthread -lboost_filesystem -lboost_system  -lboost_iostreams -lz
 
 
 all: pprinseqc
@@ -37,6 +37,9 @@ test: all
 	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -out_format 1 -out_name Test_1 && \
 	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -trim_qual_right=25 -out_name Test_2 && \
     ./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -min_qual_mean 25 -ns_max_n 2 -out_name Test_3 && \
+    ./pprinseqc -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -out_format 1 -out_name Test_1Z && \
+	./pprinseqc -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -trim_qual_right=25 -out_name Test_2Z && \
+    ./pprinseqc -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -min_qual_mean 25 -ns_max_n 2 -out_name Test_3Z && \
 	echo "*** ALL TEST PASSED***"
 	
 test_single: all

@@ -11,4 +11,5 @@ parallel c prinseq
 1. automake
 2. g++
 3. make
+4. boost-devel
 

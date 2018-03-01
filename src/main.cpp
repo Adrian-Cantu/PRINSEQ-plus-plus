@@ -25,6 +25,11 @@ using namespace std;
 #include <pthread.h>
 #endif
 
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+#include <boost/filesystem.hpp>
+
 
 pthread_mutex_t write_mutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t read_mutex=PTHREAD_MUTEX_INITIALIZER;
@@ -32,8 +37,9 @@ pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
 
     char *forward_read_file = NULL;
     char *reverse_read_file = NULL;
+    boost::filesystem::path p1,p2;
     string out_ext="fastq";
-    int index;
+    int ii;
     int out_format=0; // 0 fastq, 1 fasta
     int min_qual_score=0;
     int ns_max_n=-1;
@@ -64,7 +70,8 @@ pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
     int trim_tail_left=0;
     int trim_tail_right=0;
     int threads=5;
-    int ii=0;
+
+    std::string line;
 
     struct option longopts[] = {
         { "fastq"           , required_argument , NULL     ,  1 },
@@ -115,9 +122,11 @@ int main (int argc, char **argv)
         switch (c) {
             case 1:
                 forward_read_file = optarg;
+                p1 = optarg;
                 break;
             case 2:
                 reverse_read_file = optarg;
+                p2=optarg;
                 break;
             case 3:
                 out_format = atoi(optarg);
@@ -202,31 +211,63 @@ int main (int argc, char **argv)
             default:
                 abort ();
         }
-
-    printf ("forward_read_file = %s ,reverse_read_file =%s\n ", forward_read_file, reverse_read_file);
+    
+/*    printf ("forward_read_file = %s ,reverse_read_file =%s\n ", forward_read_file, reverse_read_file);
     cout << "random string " << out_name << " out format " << out_format  << endl ;
     cout << "ns_max_n " << ns_max_n << endl ;
-    for (index = optind; index < argc; index++)
-        printf ("Non-option argument %s\n", argv[index]);
-
+    cout  <<  "  extension()----------: " << p1.extension() << '\n';
+    for (ii = optind; ii < argc; ii++)
+        printf ("Non-option argument %s\n", argv[ii]);
+*/
 
 
 /////////// open input files
-    ifstream inFile_f;
-    ifstream inFile_r;
-    inFile_f.open(forward_read_file);
-    if (!inFile_f) {
+
+    istream * inFile_r;
+    istream * inFile_f;
+    ifstream *file;
+    ifstream *file2;
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> inbuf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> inbuf2;
+    
+
+    file = new ifstream(p1.native() , std::ios_base::in | std::ios_base::binary);
+    file2 = new ifstream(p2.native() , std::ios_base::in | std::ios_base::binary);
+    
+    if (!(*file)) {
         cerr << "Error: can not open " << forward_read_file  << endl ;
         return 1;
     }
     if (reverse_read_file) {
-        inFile_r.open(reverse_read_file);
-        if (!inFile_r) {
+        if (!(*file2)) {
             cerr << "Error: can not open " << reverse_read_file  << endl ;
             return 1;
         }
+    } 
+ 
+    
+    
+    if (p1.extension()==".gz") {
+        inbuf.push(boost::iostreams::gzip_decompressor());
     }    
-      
+    
+    
+    if (p2.extension()==".gz") {
+        inbuf2.push(boost::iostreams::gzip_decompressor());      
+    } 
+        
+
+    inbuf.push(*file);
+    inFile_f = new std::istream(&inbuf);
+    inbuf2.push(*file2);
+    inFile_r = new std::istream(&inbuf2);
+    
+ 
+
+//    while(std::getline(*inFile_f, line)) {
+//        std::cout << line << std::endl;
+//    }
+//    std::cout << "bla" << line << "bla" << std::endl;
 ////////// open and name oupput files
     ofstream bad_out_file_R1;
     ofstream single_out_file_R1;
@@ -251,9 +292,10 @@ int main (int argc, char **argv)
     }
     
 
-    single_read read_f(inFile_f);
-    single_read read_r(inFile_r);
-    pair_read read_rf(inFile_f,inFile_r);
+    single_read read_f(*inFile_f);
+    single_read read_r(*inFile_r);
+    pair_read read_rf(*inFile_f,*inFile_r);
+    
     if (reverse_read_file) {
         read_rf.set_outputs(bad_out_file_R1,single_out_file_R1,good_out_file_R1,
             bad_out_file_R2,single_out_file_R2,good_out_file_R2);
@@ -275,10 +317,7 @@ int main (int argc, char **argv)
         filter  = new bloom_filter(parameters);
     }
  
- 
-    
- 
- 
+
  
     // main loop
     if (reverse_read_file) {
@@ -288,14 +327,13 @@ int main (int argc, char **argv)
         vector<arg_struct_pair> ttt2(threads);
         for (ii=0 ; ii<threads ; ii++){
        // v[ii].set_inputs(inFile_f);
-            v2[ii].set_inputs(inFile_f,inFile_r);
+            v2[ii].set_inputs(*inFile_f,*inFile_r);
             v2[ii].set_outputs(bad_out_file_R1,single_out_file_R1,good_out_file_R1,bad_out_file_R2,single_out_file_R2,good_out_file_R2);
             v2[ii].set_out_format(out_format);
             ttt2[ii].read= & v2[ii];
             ttt2[ii].filter= filter;
             pthread_create(&tthreads[ii],NULL,do_pair, (void *) &ttt2[ii]); 
         }
-        
         for (ii=0 ; ii<threads ; ii++){
             pthread_join(tthreads[ii],NULL);   
         }
@@ -303,7 +341,7 @@ int main (int argc, char **argv)
     /////////////////////////////////////////// for single end    
     } else {
              //////////// pthreads magic
-        vector<single_read> v(threads,inFile_f);
+        vector<single_read> v(threads,*inFile_f);
         vector<pthread_t> tthreads(threads);
         vector<arg_struct> ttt(threads);
        // declare structure for the thread
@@ -322,12 +360,13 @@ int main (int argc, char **argv)
             pthread_join(tthreads[ii],NULL);   
         }
     } 
-    
-    inFile_f.close();
+
+//    inFile_f->close();
     if (reverse_read_file){ 
-        inFile_r.close(); 
+//        inFile_r->close(); 
         
     }  
+
     return 0;
 }
 
