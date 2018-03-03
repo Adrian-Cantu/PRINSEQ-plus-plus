@@ -20,12 +20,26 @@
 #include "reads.h"
 using namespace std;
 
-int main (int argc, char **argv)
-{
+#ifndef PTHREAD
+#define PTHREAD
+#include <pthread.h>
+#endif
+
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/copy.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+#include <boost/filesystem.hpp>
+
+
+pthread_mutex_t write_mutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t read_mutex=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
+
     char *forward_read_file = NULL;
     char *reverse_read_file = NULL;
+    boost::filesystem::path p1,p2;
     string out_ext="fastq";
-    int index;
+    int ii;
     int out_format=0; // 0 fastq, 1 fasta
     int min_qual_score=0;
     int ns_max_n=-1;
@@ -36,7 +50,7 @@ int main (int argc, char **argv)
     int max_len=0;
     float max_gc=100;
     float min_gc=0;
-    opterr = 0;
+    int opterr = 0;
     int derep;
     float entropy_threshold=0.5 ;
     int lc_entropy=0;
@@ -55,6 +69,10 @@ int main (int argc, char **argv)
     int rm_header=0;
     int trim_tail_left=0;
     int trim_tail_right=0;
+    int threads=5;
+    int out_gz=0;
+
+    std::string line;
 
     struct option longopts[] = {
         { "fastq"           , required_argument , NULL     ,  1 },
@@ -81,19 +99,37 @@ int main (int argc, char **argv)
         { "rm_header"       , no_argument       , &rm_header, 1 },
         { "trim_tail_left"  , required_argument , NULL     , 20 },
         { "trim_tail_right" , required_argument , NULL     , 21 },
+        { "out_gz"          , no_argument       , &out_gz  ,  1 },
+        { "threads"         , required_argument , NULL     , 22 },
 {0,0,0,0}
     };    
+    
+struct arg_struct {
+    single_read * read;
+    bloom_filter * filter;
+};
 
+struct arg_struct_pair {
+    pair_read * read;
+    bloom_filter * filter;
+};
 
+void* do_single (void * arguments);
+void* do_pair (void* arguments);
+
+int main (int argc, char **argv)
+{
 
     // Readin inout from the command line
     while ((c = getopt_long_only(argc, argv, "",longopts, NULL)) != -1)
         switch (c) {
             case 1:
                 forward_read_file = optarg;
+                p1 = optarg;
                 break;
             case 2:
                 reverse_read_file = optarg;
+                p2=optarg;
                 break;
             case 3:
                 out_format = atoi(optarg);
@@ -164,6 +200,9 @@ int main (int argc, char **argv)
             case 21: 
                 trim_tail_right=atoi(optarg);
                 break;
+            case 22: 
+                threads=atoi(optarg);
+                break;
             case 0:
                 // getopt set a variable
                 break;
@@ -178,63 +217,143 @@ int main (int argc, char **argv)
             default:
                 abort ();
         }
-
-    printf ("forward_read_file = %s ,reverse_read_file =%s\n ", forward_read_file, reverse_read_file);
+    
+/*    printf ("forward_read_file = %s ,reverse_read_file =%s\n ", forward_read_file, reverse_read_file);
     cout << "random string " << out_name << " out format " << out_format  << endl ;
     cout << "ns_max_n " << ns_max_n << endl ;
-    for (index = optind; index < argc; index++)
-        printf ("Non-option argument %s\n", argv[index]);
-
+    cout  <<  "  extension()----------: " << p1.extension() << '\n';
+    for (ii = optind; ii < argc; ii++)
+        printf ("Non-option argument %s\n", argv[ii]);
+*/
 
 
 /////////// open input files
-    ifstream inFile_f;
-    ifstream inFile_r;
-    inFile_f.open(forward_read_file);
-    if (!inFile_f) {
+
+    istream * inFile_r;
+    istream * inFile_f;
+    ifstream *file;
+    ifstream *file2;
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> inbuf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::input> inbuf2;
+    
+
+    file = new ifstream(p1.native() , std::ios_base::in | std::ios_base::binary);
+    file2 = new ifstream(p2.native() , std::ios_base::in | std::ios_base::binary);
+    
+    if (!(*file)) {
         cerr << "Error: can not open " << forward_read_file  << endl ;
         return 1;
     }
     if (reverse_read_file) {
-        inFile_r.open(reverse_read_file);
-        if (!inFile_r) {
+        if (!(*file2)) {
             cerr << "Error: can not open " << reverse_read_file  << endl ;
             return 1;
         }
+    } 
+ 
+    
+    
+    if (p1.extension()==".gz") {
+        inbuf.push(boost::iostreams::gzip_decompressor());
     }    
-      
+    
+    
+    if (p2.extension()==".gz") {
+        inbuf2.push(boost::iostreams::gzip_decompressor());      
+    } 
+        
+
+    inbuf.push(*file);
+    inFile_f = new std::istream(&inbuf);
+    inbuf2.push(*file2);
+    inFile_r = new std::istream(&inbuf2);
+    
+ 
+
+//    while(std::getline(*inFile_f, line)) {
+//        std::cout << line << std::endl;
+//    }
+//    std::cout << "bla" << line << "bla" << std::endl;
 ////////// open and name oupput files
-    ofstream bad_out_file_R1;
-    ofstream single_out_file_R1;
-    ofstream good_out_file_R1;
-    ofstream bad_out_file_R2;
-    ofstream single_out_file_R2;
-    ofstream good_out_file_R2;
-
+    ofstream *tmp_bad_out_file_R1;
+    ofstream *tmp_single_out_file_R1;
+    ofstream *tmp_good_out_file_R1;
+    ofstream *tmp_bad_out_file_R2;
+    ofstream *tmp_single_out_file_R2;
+    ofstream *tmp_good_out_file_R2;
+    
+    ostream *bad_out_file_R1= NULL;
+    ostream *single_out_file_R1= NULL;
+    ostream *good_out_file_R1= NULL;
+    ostream *bad_out_file_R2= NULL;
+    ostream *single_out_file_R2= NULL;
+    ostream *good_out_file_R2= NULL;
+    
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_bad_R1_buf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_bad_R2_buf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_single_R1_buf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_single_R2_buf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_good_R1_buf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_good_R2_buf;
+    
     if (out_format == 1 ) { out_ext = "fasta";}
-    
+    if (out_gz == 1 ) { out_ext = out_ext + ".gz"; }
     
     if (reverse_read_file) {
-        bad_out_file_R1.open(out_name  + "_bad_out_R1." + out_ext );
-        single_out_file_R1.open(out_name  + "_single_out_R1." + out_ext  );
-        good_out_file_R1.open(out_name  + "_good_out_R1." + out_ext);
-        bad_out_file_R2.open(out_name  + "_bad_out_R2." + out_ext );
-        single_out_file_R2.open(out_name  + "_single_out_R2." + out_ext);
-        good_out_file_R2.open(out_name + "_good_out_R2."  + out_ext);
+        tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out_R1." + out_ext );
+        tmp_single_out_file_R1= new std::ofstream(out_name  + "_single_out_R1." + out_ext  );
+        tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out_R1." + out_ext);
+        tmp_bad_out_file_R2= new std::ofstream(out_name  + "_bad_out_R2." + out_ext );
+        tmp_single_out_file_R2= new std::ofstream(out_name  + "_single_out_R2." + out_ext);
+        tmp_good_out_file_R2= new std::ofstream(out_name + "_good_out_R2."  + out_ext);
+        if (out_gz) {
+            out_bad_R1_buf.push(boost::iostreams::gzip_compressor());
+            out_bad_R2_buf.push(boost::iostreams::gzip_compressor());
+            out_single_R1_buf.push(boost::iostreams::gzip_compressor());
+            out_single_R2_buf.push(boost::iostreams::gzip_compressor());
+            out_good_R1_buf.push(boost::iostreams::gzip_compressor());
+            out_good_R2_buf.push(boost::iostreams::gzip_compressor());
+        }
+        out_bad_R1_buf.push(*tmp_bad_out_file_R1);
+        out_bad_R2_buf.push(*tmp_bad_out_file_R2);
+        out_single_R1_buf.push(*tmp_single_out_file_R1);
+        out_single_R2_buf.push(*tmp_single_out_file_R2);
+        out_good_R1_buf.push(*tmp_good_out_file_R1);
+        out_good_R2_buf.push(*tmp_good_out_file_R2);
+        
+        bad_out_file_R1= new std::ostream(&out_bad_R1_buf);
+        bad_out_file_R2= new std::ostream(&out_bad_R2_buf);
+        single_out_file_R1= new std::ostream(&out_single_R1_buf);
+        single_out_file_R2= new std::ostream(&out_single_R2_buf);
+        good_out_file_R1= new std::ostream(&out_good_R1_buf);
+        good_out_file_R2= new std::ostream(&out_good_R2_buf);
+        
+        
     } else {
-        bad_out_file_R1.open(out_name  + "_bad_out." + out_ext );
-        good_out_file_R1.open(out_name  + "_good_out." + out_ext);
+        tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out." + out_ext);
+        tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out." + out_ext);
+        if (out_gz) {
+            out_good_R1_buf.push(boost::iostreams::gzip_compressor());
+            out_bad_R1_buf.push(boost::iostreams::gzip_compressor());
+        }
+        out_good_R1_buf.push(*tmp_good_out_file_R1);
+        out_bad_R1_buf.push(*tmp_bad_out_file_R1);
+        
+        good_out_file_R1= new std::ostream(&out_good_R1_buf);
+        bad_out_file_R1= new std::ostream(&out_bad_R1_buf);
     }
+    
 
-    single_read read_f(inFile_f);
-    single_read read_r(inFile_r);
-    pair_read read_rf(inFile_f,inFile_r);
+    single_read read_f(*inFile_f);
+    single_read read_r(*inFile_r);
+    pair_read read_rf(*inFile_f,*inFile_r);
+    
     if (reverse_read_file) {
-        read_rf.set_outputs(bad_out_file_R1,single_out_file_R1,good_out_file_R1,
-            bad_out_file_R2,single_out_file_R2,good_out_file_R2);
+        read_rf.set_outputs(*bad_out_file_R1,*single_out_file_R1,*good_out_file_R1,
+            *bad_out_file_R2,*single_out_file_R2,*good_out_file_R2);
         read_rf.set_out_format(out_format);
     } else {
-        read_f.set_outputs(bad_out_file_R1,single_out_file_R1,good_out_file_R1);
+        read_f.set_outputs(*bad_out_file_R1,*bad_out_file_R1,*good_out_file_R1);
     }
     bloom_parameters parameters;
     bloom_filter *filter=NULL;
@@ -249,70 +368,125 @@ int main (int argc, char **argv)
         parameters.compute_optimal_parameters();
         filter  = new bloom_filter(parameters);
     }
-    
+ 
+
+ 
     // main loop
     if (reverse_read_file) {
         ////////////////////////////////////////for pair end
-        while(read_rf.read_read()) {
-        //read_rf.read1->trim_qual_right("mean","lt",5,10,30);
-            if (trim_tail_left) {read_rf.trim_tail_left(trim_tail_left);}
-            if (trim_tail_right) {read_rf.trim_tail_right(trim_tail_right);}
-            if (trim_qual_right) {read_rf.trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
-            if (trim_qual_left) {read_rf.trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
-            if (ns_max_n > -1 ) {read_rf.ns_max_n(ns_max_n);}
-            if (min_qual_mean)  {read_rf.min_qual_mean(min_qual_mean);}
-            if (min_qual_score) { read_rf.min_qual_score(min_qual_score);}
-            if (noiupac) {read_rf.noiupac();}
-            if (min_len) {read_rf.min_len(min_len);}
-            if (max_len) {read_rf.max_len(max_len);}
-            if (max_gc < 100) {read_rf.max_gc(max_gc);}
-            if (min_gc > 0) {read_rf.min_gc(min_gc);}
-            if (derep) {
-                read_rf.set_read_status(filter->contains(read_rf.read1->seq_seq),filter->contains(read_rf.read2->seq_seq));
-                filter->insert(read_rf.read1->seq_seq);
-                filter->insert(read_rf.read2->seq_seq);
-            }
-        
-            if (lc_entropy) {read_rf.entropy(entropy_threshold);}
-            if (lc_dust) {read_rf.dust(dust_threshold);}
-            if (rm_header) {read_rf.rm_header();}
-            read_rf.print();
-        } 
+        vector<pair_read> v2(threads);
+        vector<pthread_t> tthreads(threads);
+        vector<arg_struct_pair> ttt2(threads);
+        for (ii=0 ; ii<threads ; ii++){
+       // v[ii].set_inputs(inFile_f);
+            v2[ii].set_inputs(*inFile_f,*inFile_r);
+            v2[ii].set_outputs(*bad_out_file_R1,*single_out_file_R1,*good_out_file_R1,*bad_out_file_R2,*single_out_file_R2,*good_out_file_R2);
+            v2[ii].set_out_format(out_format);
+            ttt2[ii].read= & v2[ii];
+            ttt2[ii].filter= filter;
+            pthread_create(&tthreads[ii],NULL,do_pair, (void *) &ttt2[ii]); 
+        }
+        for (ii=0 ; ii<threads ; ii++){
+            pthread_join(tthreads[ii],NULL);   
+        }
+       
     /////////////////////////////////////////// for single end    
     } else {
-        while(read_f.read_read()) {
-            if (trim_tail_left) {read_f.trim_tail_left(trim_tail_left);}
-            if (trim_tail_right) {read_rf.trim_tail_right(trim_tail_right);}
-            if (trim_qual_right) {read_f.trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
-            if (trim_qual_left) {read_f.trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
-            if (ns_max_n > -1 ) {read_f.ns_max_n(ns_max_n);}
-            if (min_qual_mean)  {read_f.min_qual_mean(min_qual_mean);}
-            if (min_qual_score) { read_f.min_qual_score(min_qual_score);}
-            if (noiupac) {read_f.noiupac();}
-            if (min_len) {read_f.min_len(min_len);}
-            if (max_len) {read_f.max_len(max_len);}
-            if (max_gc < 100) {read_f.max_gc(max_gc);}
-            if (min_gc > 0) {read_f.min_gc(min_gc);}
-            if (derep) {
-                if(filter->contains(read_f.seq_seq)) { read_f.set_read_status(2);}
-                filter->insert(read_f.seq_seq);
-                
-            }
+             //////////// pthreads magic
+        vector<single_read> v(threads,*inFile_f);
+        vector<pthread_t> tthreads(threads);
+        vector<arg_struct> ttt(threads);
+       // declare structure for the thread
         
-            if (lc_entropy) {read_f.entropy(entropy_threshold);}
-            if (lc_dust) {read_f.dust(dust_threshold);}
-            if (rm_header) {read_f.rm_header();}
-            read_f.print(out_format);
-        }
-    }
     
-    inFile_f.close();
+    
+        for (ii=0 ; ii<threads ; ii++){
+       // v[ii].set_inputs(inFile_f);
+            v[ii].set_outputs(*bad_out_file_R1,*bad_out_file_R1,*good_out_file_R1);
+            ttt[ii].read= & v[ii];
+            ttt[ii].filter= filter;
+            pthread_create(&tthreads[ii],NULL,do_single, (void *) &ttt[ii]); 
+        }
+    
+        for (ii=0 ; ii<threads ; ii++){
+            pthread_join(tthreads[ii],NULL);   
+        }
+    } 
+
+//    inFile_f->close();
     if (reverse_read_file){ 
-        inFile_r.close(); 
+//        inFile_r->close(); 
         
     }  
+
     return 0;
 }
 
 
+void* do_single (void * arguments) {
+    struct arg_struct *args = (arg_struct*) arguments;
+    single_read * read=args->read;
+    bloom_filter* filter=args->filter;
+    while( read->read_read( &read_mutex)) {
+        if (trim_tail_left) {read->trim_tail_left(trim_tail_left);}
+        if (trim_tail_right) {read->trim_tail_right(trim_tail_right);}
+        if (trim_qual_right) {read->trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
+        if (trim_qual_left) {read->trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
+        if (ns_max_n > -1 ) {read->ns_max_n(ns_max_n);}
+        if (min_qual_mean)  {read->min_qual_mean(min_qual_mean);}
+        if (min_qual_score) {read->min_qual_score(min_qual_score);}
+        if (noiupac) {read->noiupac();}
+        if (min_len) {read->min_len(min_len);}
+        if (max_len) {read->max_len(max_len);}
+        if (max_gc < 100) {read->max_gc(max_gc);}
+        if (min_gc > 0) {read->min_gc(min_gc);}
+        if (derep) {
+            if(filter->contains(read->seq_seq)) { read->set_read_status(2);}
+            filter->insert(read->seq_seq);
+            
+        }
+    
+        if (lc_entropy) {read->entropy(entropy_threshold);}
+        if (lc_dust) {read->dust(dust_threshold);}
+        if (rm_header) {read->rm_header();}
+        pthread_mutex_lock(& write_mutex);
+        read->print(out_format);
+        pthread_mutex_unlock(& write_mutex);
+    }
+    pthread_exit(NULL);
+    
+}
 
+void* do_pair (void * arguments) {
+    struct arg_struct_pair *args = (arg_struct_pair*) arguments;
+    pair_read * read=args->read;
+    bloom_filter* filter=args->filter;
+    while(read->read_read(&read_mutex, &read_mutex2)) {
+        //read_rf.read1->trim_qual_right("mean","lt",5,10,30);
+            if (trim_tail_left) {read->trim_tail_left(trim_tail_left);}
+            if (trim_tail_right) {read->trim_tail_right(trim_tail_right);}
+            if (trim_qual_right) {read->trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
+            if (trim_qual_left) {read->trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
+            if (ns_max_n > -1 ) {read->ns_max_n(ns_max_n);}
+            if (min_qual_mean)  {read->min_qual_mean(min_qual_mean);}
+            if (min_qual_score) { read->min_qual_score(min_qual_score);}
+            if (noiupac) {read->noiupac();}
+            if (min_len) {read->min_len(min_len);}
+            if (max_len) {read->max_len(max_len);}
+            if (max_gc < 100) {read->max_gc(max_gc);}
+            if (min_gc > 0) {read->min_gc(min_gc);}
+            if (derep) {
+                read->set_read_status(filter->contains(read->read1->seq_seq),filter->contains(read->read2->seq_seq));
+                filter->insert(read->read1->seq_seq);
+                filter->insert(read->read2->seq_seq);
+            }
+        
+            if (lc_entropy) {read->entropy(entropy_threshold);}
+            if (lc_dust) {read->dust(dust_threshold);}
+            if (rm_header) {read->rm_header();}
+            pthread_mutex_lock(& write_mutex);
+            read->print();
+            pthread_mutex_unlock(& write_mutex);
+        } 
+    pthread_exit(NULL);
+}    

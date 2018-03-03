@@ -13,14 +13,21 @@
 #include <math.h>
 #endif
 
+#ifndef PTHREAD
+#define PTHREAD
+#include <pthread.h>
+#endif
+
 using namespace std;
 
 
 class single_read {
     public:
         single_read(istream &is);
+        single_read(void);
+        void set_inputs(istream &is);
         void set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file);
-        int read_read(void);
+        int read_read(pthread_mutex_t * read_mutex);
         void ns_max_n(int ns_max_n);
       //  int max_n_p(int ns_max_p);
         void print(int out_form);
@@ -61,7 +68,9 @@ class single_read {
 class pair_read {
     public:
         pair_read(istream &is1, istream &is2);
-        int read_read(void);
+        pair_read(void);
+        void set_inputs(istream &read_f,istream &read_r);
+        int read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2);
         void print(void);
         void set_outputs(ostream& bad_out_file1, ostream& single_out_file1, ostream& good_out_file1,
                     ostream& bad_out_file2, ostream& single_out_file2, ostream& good_out_file2);
@@ -100,3 +109,5 @@ class pair_read {
 };                    
 
 string random_string( size_t length );
+
+

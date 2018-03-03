@@ -14,7 +14,8 @@ pprinseqc*.tar.gz
 src/*.fastq
 !src/test_F.fastq
 !src/test_R.fastq
-
+config.guess
+config.sub
 
 # Prerequisites
 *.d

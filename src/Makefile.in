@@ -12,7 +12,7 @@ bindir = @bindir@
 srcdir = @srcdir@
 VPATH = @srcdir@
 
-CXXFLAGS = -std=c++11 -Wall -O3
+CXXFLAGS = -std=c++11 -Wall -O3 -pthread -lboost_filesystem -lboost_system  -lboost_iostreams -lz
 
 
 all: pprinseqc
@@ -24,8 +24,8 @@ comp: pprinseqc
 
 
 compp: pprinseqc
-	time ./prinseq-lite.pl -fastq test_F.fastq -fastq2 test_R.fastq -min_len 5 -out_good Test_good -out_bad Test_bad -no_qual_header -ns_max_n 2
-	time ./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -min_len 5 -ns_max_n 2
+	time -v ./prinseq-lite.pl -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5 -out_good Test_good -out_bad Test_bad -no_qual_header -ns_max_n 2 
+	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5 -ns_max_n 2 -out_name Test_time_ 
 
 pprinseqc: main.o reads.o
 	$(CXX) $(CXXFLAGS) -o pprinseqc main.o reads.o
@@ -37,7 +37,17 @@ test: all
 	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -out_format 1 -out_name Test_1 && \
 	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -trim_qual_right=25 -out_name Test_2 && \
     ./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -min_qual_mean 25 -ns_max_n 2 -out_name Test_3 && \
+    ./pprinseqc -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -out_format 1 -out_name Test_1Z && \
+	./pprinseqc -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -trim_qual_right=25 -out_name Test_2Z && \
+    ./pprinseqc -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -min_qual_mean 25 -ns_max_n 2 -out_name Test_3Z && \
 	echo "*** ALL TEST PASSED***"
+	
+test_single: all
+	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t1 -out_gz -threads 1
+	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t2 -out_gz -threads 2
+	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t5 -out_gz -threads 5
+	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t10 -out_gz -threads 10
+	
 
 install:
 	install -d $(DESTDIR)$(bindir)/bin
@@ -52,6 +62,8 @@ clean:
 	-rm -f pprinseqc
 	-rm -f Test*fastq
 	-rm -f Test*fasta
+	-rm -f Test*fastq.gz
+	-rm -f Test*fasta.gz
 	-rm -f *.o
 	
 cc:
