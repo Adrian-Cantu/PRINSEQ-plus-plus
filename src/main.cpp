@@ -70,6 +70,7 @@ pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
     int trim_tail_left=0;
     int trim_tail_right=0;
     int threads=5;
+    int out_gz=0;
 
     std::string line;
 
@@ -98,6 +99,7 @@ pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
         { "rm_header"       , no_argument       , &rm_header, 1 },
         { "trim_tail_left"  , required_argument , NULL     , 20 },
         { "trim_tail_right" , required_argument , NULL     , 21 },
+        { "out_gz"          , no_argument       , &out_gz  ,  1 },
 {0,0,0,0}
     };    
     
@@ -269,26 +271,72 @@ int main (int argc, char **argv)
 //    }
 //    std::cout << "bla" << line << "bla" << std::endl;
 ////////// open and name oupput files
-    ofstream bad_out_file_R1;
-    ofstream single_out_file_R1;
-    ofstream good_out_file_R1;
-    ofstream bad_out_file_R2;
-    ofstream single_out_file_R2;
-    ofstream good_out_file_R2;
-
-    if (out_format == 1 ) { out_ext = "fasta";}
+    ofstream *tmp_bad_out_file_R1;
+    ofstream *tmp_single_out_file_R1;
+    ofstream *tmp_good_out_file_R1;
+    ofstream *tmp_bad_out_file_R2;
+    ofstream *tmp_single_out_file_R2;
+    ofstream *tmp_good_out_file_R2;
     
+    ostream *bad_out_file_R1= NULL;
+    ostream *single_out_file_R1= NULL;
+    ostream *good_out_file_R1= NULL;
+    ostream *bad_out_file_R2= NULL;
+    ostream *single_out_file_R2= NULL;
+    ostream *good_out_file_R2= NULL;
+    
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_bad_R1_buf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_bad_R2_buf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_single_R1_buf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_single_R2_buf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_good_R1_buf;
+    boost::iostreams::filtering_streambuf<boost::iostreams::output> out_good_R2_buf;
+    
+    if (out_format == 1 ) { out_ext = "fasta";}
+    if (out_gz == 1 ) { out_ext = out_ext + ".gz"; }
     
     if (reverse_read_file) {
-        bad_out_file_R1.open(out_name  + "_bad_out_R1." + out_ext );
-        single_out_file_R1.open(out_name  + "_single_out_R1." + out_ext  );
-        good_out_file_R1.open(out_name  + "_good_out_R1." + out_ext);
-        bad_out_file_R2.open(out_name  + "_bad_out_R2." + out_ext );
-        single_out_file_R2.open(out_name  + "_single_out_R2." + out_ext);
-        good_out_file_R2.open(out_name + "_good_out_R2."  + out_ext);
+        tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out_R1." + out_ext );
+        tmp_single_out_file_R1= new std::ofstream(out_name  + "_single_out_R1." + out_ext  );
+        tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out_R1." + out_ext);
+        tmp_bad_out_file_R2= new std::ofstream(out_name  + "_bad_out_R2." + out_ext );
+        tmp_single_out_file_R2= new std::ofstream(out_name  + "_single_out_R2." + out_ext);
+        tmp_good_out_file_R2= new std::ofstream(out_name + "_good_out_R2."  + out_ext);
+        if (out_gz) {
+            out_bad_R1_buf.push(boost::iostreams::gzip_compressor());
+            out_bad_R2_buf.push(boost::iostreams::gzip_compressor());
+            out_single_R1_buf.push(boost::iostreams::gzip_compressor());
+            out_single_R2_buf.push(boost::iostreams::gzip_compressor());
+            out_good_R1_buf.push(boost::iostreams::gzip_compressor());
+            out_good_R2_buf.push(boost::iostreams::gzip_compressor());
+        }
+        out_bad_R1_buf.push(*tmp_bad_out_file_R1);
+        out_bad_R2_buf.push(*tmp_bad_out_file_R2);
+        out_single_R1_buf.push(*tmp_single_out_file_R1);
+        out_single_R2_buf.push(*tmp_single_out_file_R2);
+        out_good_R1_buf.push(*tmp_good_out_file_R1);
+        out_good_R2_buf.push(*tmp_good_out_file_R2);
+        
+        bad_out_file_R1= new std::ostream(&out_bad_R1_buf);
+        bad_out_file_R2= new std::ostream(&out_bad_R2_buf);
+        single_out_file_R1= new std::ostream(&out_single_R1_buf);
+        single_out_file_R2= new std::ostream(&out_single_R2_buf);
+        good_out_file_R1= new std::ostream(&out_good_R1_buf);
+        good_out_file_R2= new std::ostream(&out_good_R2_buf);
+        
+        
     } else {
-        bad_out_file_R1.open(out_name  + "_bad_out." + out_ext );
-        good_out_file_R1.open(out_name  + "_good_out." + out_ext);
+        tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out." + out_ext);
+        tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out." + out_ext);
+        if (out_gz) {
+            out_good_R1_buf.push(boost::iostreams::gzip_compressor());
+            out_bad_R1_buf.push(boost::iostreams::gzip_compressor());
+        }
+        out_good_R1_buf.push(*tmp_good_out_file_R1);
+        out_bad_R1_buf.push(*tmp_bad_out_file_R1);
+        
+        good_out_file_R1= new std::ostream(&out_good_R1_buf);
+        bad_out_file_R1= new std::ostream(&out_bad_R1_buf);
     }
     
 
@@ -297,11 +345,11 @@ int main (int argc, char **argv)
     pair_read read_rf(*inFile_f,*inFile_r);
     
     if (reverse_read_file) {
-        read_rf.set_outputs(bad_out_file_R1,single_out_file_R1,good_out_file_R1,
-            bad_out_file_R2,single_out_file_R2,good_out_file_R2);
+        read_rf.set_outputs(*bad_out_file_R1,*single_out_file_R1,*good_out_file_R1,
+            *bad_out_file_R2,*single_out_file_R2,*good_out_file_R2);
         read_rf.set_out_format(out_format);
     } else {
-        read_f.set_outputs(bad_out_file_R1,single_out_file_R1,good_out_file_R1);
+        read_f.set_outputs(*bad_out_file_R1,*bad_out_file_R1,*good_out_file_R1);
     }
     bloom_parameters parameters;
     bloom_filter *filter=NULL;
@@ -328,7 +376,7 @@ int main (int argc, char **argv)
         for (ii=0 ; ii<threads ; ii++){
        // v[ii].set_inputs(inFile_f);
             v2[ii].set_inputs(*inFile_f,*inFile_r);
-            v2[ii].set_outputs(bad_out_file_R1,single_out_file_R1,good_out_file_R1,bad_out_file_R2,single_out_file_R2,good_out_file_R2);
+            v2[ii].set_outputs(*bad_out_file_R1,*single_out_file_R1,*good_out_file_R1,*bad_out_file_R2,*single_out_file_R2,*good_out_file_R2);
             v2[ii].set_out_format(out_format);
             ttt2[ii].read= & v2[ii];
             ttt2[ii].filter= filter;
@@ -350,7 +398,7 @@ int main (int argc, char **argv)
     
         for (ii=0 ; ii<threads ; ii++){
        // v[ii].set_inputs(inFile_f);
-            v[ii].set_outputs(bad_out_file_R1,single_out_file_R1,good_out_file_R1);
+            v[ii].set_outputs(*bad_out_file_R1,*bad_out_file_R1,*good_out_file_R1);
             ttt[ii].read= & v[ii];
             ttt[ii].filter= filter;
             pthread_create(&tthreads[ii],NULL,do_single, (void *) &ttt[ii]); 

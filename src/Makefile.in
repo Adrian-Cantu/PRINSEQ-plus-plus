@@ -43,7 +43,7 @@ test: all
 	echo "*** ALL TEST PASSED***"
 	
 test_single: all
-	./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single
+	./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single -out_gz
 	
 
 install:
@@ -59,6 +59,8 @@ clean:
 	-rm -f pprinseqc
 	-rm -f Test*fastq
 	-rm -f Test*fasta
+	-rm -f Test*fastq.gz
+	-rm -f Test*fasta.gz
 	-rm -f *.o
 	
 cc:
