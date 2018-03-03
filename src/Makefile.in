@@ -43,7 +43,10 @@ test: all
 	echo "*** ALL TEST PASSED***"
 	
 test_single: all
-	./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single -out_gz
+	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t1 -out_gz -threads 1
+	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t2 -out_gz -threads 2
+	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t5 -out_gz -threads 5
+	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t10 -out_gz -threads 10
 	
 
 install:

@@ -100,6 +100,7 @@ pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
         { "trim_tail_left"  , required_argument , NULL     , 20 },
         { "trim_tail_right" , required_argument , NULL     , 21 },
         { "out_gz"          , no_argument       , &out_gz  ,  1 },
+        { "threads"         , required_argument , NULL     , 22 },
 {0,0,0,0}
     };    
     
@@ -198,6 +199,9 @@ int main (int argc, char **argv)
                 break;
             case 21: 
                 trim_tail_right=atoi(optarg);
+                break;
+            case 22: 
+                threads=atoi(optarg);
                 break;
             case 0:
                 // getopt set a variable
