@@ -34,6 +34,7 @@ using namespace std;
         
         void  single_read::set_inputs(istream &is) {
             file1.rdbuf(is.rdbuf());
+           //is.rdbuf(file1.rdbuf());
         }
 
         void single_read::set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file) {

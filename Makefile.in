@@ -21,7 +21,13 @@ all test install uninstall pprinseqc:
 clean : FORCE
 	cd src && $(MAKE) $@
 	-rm -rf autom4te.cache 
+	-rm -f config.h config.log aclocal.m4 config.log config.status install-sh config.guess config.sub
+
+cleandist : FORCE
+	cd src && $(MAKE) clean
+	-rm -rf autom4te.cache 
 	-rm -f config.h config.log aclocal.m4 config.log config.status configure install-sh Makefile config.guess config.sub
+
 
 dist : $(distdir).tar.gz
 

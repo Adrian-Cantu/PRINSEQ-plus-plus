@@ -344,17 +344,7 @@ int main (int argc, char **argv)
     }
     
 
-    single_read read_f(*inFile_f);
-    single_read read_r(*inFile_r);
-    pair_read read_rf(*inFile_f,*inFile_r);
-    
-    if (reverse_read_file) {
-        read_rf.set_outputs(*bad_out_file_R1,*single_out_file_R1,*good_out_file_R1,
-            *bad_out_file_R2,*single_out_file_R2,*good_out_file_R2);
-        read_rf.set_out_format(out_format);
-    } else {
-        read_f.set_outputs(*bad_out_file_R1,*bad_out_file_R1,*good_out_file_R1);
-    }
+
     bloom_parameters parameters;
     bloom_filter *filter=NULL;
     if (derep) {    
@@ -374,15 +364,15 @@ int main (int argc, char **argv)
     // main loop
     if (reverse_read_file) {
         ////////////////////////////////////////for pair end
-        vector<pair_read> v2(threads);
+        vector<pair_read*> v2(threads);
         vector<pthread_t> tthreads(threads);
         vector<arg_struct_pair> ttt2(threads);
         for (ii=0 ; ii<threads ; ii++){
        // v[ii].set_inputs(inFile_f);
-            v2[ii].set_inputs(*inFile_f,*inFile_r);
-            v2[ii].set_outputs(*bad_out_file_R1,*single_out_file_R1,*good_out_file_R1,*bad_out_file_R2,*single_out_file_R2,*good_out_file_R2);
-            v2[ii].set_out_format(out_format);
-            ttt2[ii].read= & v2[ii];
+            v2[ii] = new pair_read(*inFile_f,*inFile_r);
+            v2[ii]-> set_outputs(*bad_out_file_R1,*single_out_file_R1,*good_out_file_R1,*bad_out_file_R2,*single_out_file_R2,*good_out_file_R2);
+            v2[ii]-> set_out_format(out_format);
+            ttt2[ii].read= v2[ii];
             ttt2[ii].filter= filter;
             pthread_create(&tthreads[ii],NULL,do_pair, (void *) &ttt2[ii]); 
         }
