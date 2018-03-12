@@ -16,6 +16,8 @@ src/*.fastq
 !src/test_R.fastq
 config.guess
 config.sub
+html/*
+latex/*
 
 # Prerequisites
 *.d

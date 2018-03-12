@@ -20,7 +20,11 @@
 
 using namespace std;
 
-
+/** \brief This class store a single read in fastq format.
+ * 
+ * this is a bla bla
+ * 
+ */
 class single_read {
     public:
         single_read(istream &is);
