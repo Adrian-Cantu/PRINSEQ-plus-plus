@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#include "../config.h"
+
 #ifndef IOSTREAM
 #define IOSTREAM
 #include <iostream>
@@ -71,6 +73,7 @@ pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
     int trim_tail_right=0;
     int threads=5;
     int out_gz=0;
+    int help=0;
 
     std::string line;
 
@@ -101,6 +104,9 @@ pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
         { "trim_tail_right" , required_argument , NULL     , 21 },
         { "out_gz"          , no_argument       , &out_gz  ,  1 },
         { "threads"         , required_argument , NULL     , 22 },
+        { "h"               , no_argument       , &help    ,  1 },
+        { "help"            , no_argument       , &help    ,  1 },
+        
 {0,0,0,0}
     };    
     
@@ -116,6 +122,7 @@ struct arg_struct_pair {
 
 void* do_single (void * arguments);
 void* do_pair (void* arguments);
+void print_help(void);
 
 int main (int argc, char **argv)
 {
@@ -217,6 +224,11 @@ int main (int argc, char **argv)
             default:
                 abort ();
         }
+        
+    if (help) {
+        print_help();
+        return 0;
+    }
     
 /*    printf ("forward_read_file = %s ,reverse_read_file =%s\n ", forward_read_file, reverse_read_file);
     cout << "random string " << out_name << " out format " << out_format  << endl ;
@@ -479,4 +491,92 @@ void* do_pair (void * arguments) {
             pthread_mutex_unlock(& write_mutex);
         } 
     pthread_exit(NULL);
-}    
+}
+
+void print_help(void) {
+    std::string version = PACKAGE_VERSION;
+    std::string help_msn = R"*(
+        PRINSEQ++ )*" + version + R"*(
+        
+Option:
+    -h | -help
+        Print the help page; ignore other arguments.
+        
+    -v | -version
+        Print version; ignore other arguments.
+        
+    ***** INPUT OPTIONS *****
+    
+    -fastq <file>
+        Input file in FASTQ format. Can also read a compressed (.gz) file.
+        
+    -fastq2 <file>
+        Input file in FASTQ format for pair-end reads. Can also read a 
+        compressed (.gz) file.
+    
+    ***** OUTPUT OPTION *****
+    
+    -out_format <int>
+        Set output format. 0 FASTQ, 1 FASTA. [Default=0]
+        
+    -out_name <string>
+        For pair-end sequences, the output files are <string>_good_out_R1 and
+        <string>_good_out_R2 for pairs where both reads pass quality control,
+        <string>_single_out_R1 and <string>_single_out_R2 for read that passed
+        quality control but mate didn't. <string>_bad_out_R1 and <string>_bad_out_R2  
+        for reads that fail quality controls. [Default = random size 6 string] 
+    
+    -rm_header
+        Remove the header in the 3rd line of the fastq (+header -> +). This does
+        not change the header in the 1st line (@header).
+        
+    ***** FILTER OPTION ******
+        
+    -min_len <int>
+        Filter sequence shorter than min_len.
+    
+    -max_len <int>
+        Filter sequence longer than max_len.
+        
+    -min_gc <float>
+        Filter sequence with GC percent content below min_gc.
+    
+    -max_gc <float>
+        Filter sequence with GC percent content above min_gc.
+    
+    -min_qual_score <int>
+        Filter sequence with at least one base with quality score below 
+        min_qual_score.
+        
+    -min_qual_mean <int>
+        Filter sequence with quality score mean below min_qual_mean.
+        
+    -ns_max_n <int>
+        Filter sequence with more than ns_max_n Ns.
+   
+    -noiupac         
+        Filter sequence with characters other than A, C, G, T or N.
+
+    -derep           
+         
+        
+-lc_entropy      
+-lc_dust         
+-trim_qual_right 
+-trim_qual_left  
+-trim_qual_type  
+-trim_qual_rule  
+-trim_qual_window
+-trim_qual_step  
+        
+       
+-trim_tail_left  
+-trim_tail_right 
+-out_gz          
+-threads         
+            
+
+        )*";
+    std::cout << help_msn << std::endl;
+    
+}

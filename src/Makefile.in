@@ -15,51 +15,51 @@ VPATH = @srcdir@
 CXXFLAGS = -std=c++11 -Wall -O3 -pthread -lboost_filesystem -lboost_system  -lboost_iostreams -lz
 
 
-all: pprinseqc
+all: prinseq++
 
 
-comp: pprinseqc
+comp: prinseq++
 	time ./prinseq-lite.pl -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5000 -out_good Test_good -out_bad Test_bad -no_qual_header -ns_max_n 2
-	time ./pprinseqc -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5000 -ns_max_n 2
+	time ./prinseq++ -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5000 -ns_max_n 2
 
 
-compp: pprinseqc
+compp: prinseq++
 	time -v ./prinseq-lite.pl -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5 -out_good Test_good -out_bad Test_bad -no_qual_header -ns_max_n 2 
-	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5 -ns_max_n 2 -out_name Test_time_ 
+	time -v ./prinseq++ -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5 -ns_max_n 2 -out_name Test_time_ 
 
-pprinseqc: main.o reads.o
-	$(CXX)  main.o reads.o  $(CXXFLAGS) -o pprinseqc
+prinseq++: main.o reads.o
+	$(CXX)  main.o reads.o  $(CXXFLAGS) -o prinseq++
 
 main.o: main.cpp reads.h bloom_filter.hpp
 reads.o: reads.cpp reads.h 
 
 test: all
-	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -out_format 1 -out_name Test_1 && \
-	./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -trim_qual_right=25 -out_name Test_2 && \
-    ./pprinseqc -fastq test_F.fastq -fastq2 test_R.fastq -min_qual_mean 25 -ns_max_n 2 -out_name Test_3 && \
-    ./pprinseqc -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -out_format 1 -out_name Test_1Z && \
-	./pprinseqc -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -trim_qual_right=25 -out_name Test_2Z && \
-    ./pprinseqc -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -min_qual_mean 25 -ns_max_n 2 -out_name Test_3Z && \
+	./prinseq++ -fastq test_F.fastq -fastq2 test_R.fastq -out_format 1 -out_name Test_1 && \
+	./prinseq++ -fastq test_F.fastq -fastq2 test_R.fastq -trim_qual_right=25 -out_name Test_2 && \
+    ./prinseq++ -fastq test_F.fastq -fastq2 test_R.fastq -min_qual_mean 25 -ns_max_n 2 -out_name Test_3 && \
+    ./prinseq++ -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -out_format 1 -out_name Test_1Z && \
+	./prinseq++ -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -trim_qual_right=25 -out_name Test_2Z && \
+    ./prinseq++ -fastq test_F.fastq.gz -fastq2 test_R.fastq.gz -min_qual_mean 25 -ns_max_n 2 -out_name Test_3Z && \
 	echo "*** ALL TEST PASSED***"
 	
 test_single: all
-	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t1 -out_gz -threads 1
-	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t2 -out_gz -threads 2
-	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t5 -out_gz -threads 5
-	time -v ./pprinseqc -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t10 -out_gz -threads 10
+	time -v ./prinseq++ -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t1 -out_gz -threads 1
+	time -v ./prinseq++ -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t2 -out_gz -threads 2
+	time -v ./prinseq++ -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t5 -out_gz -threads 5
+	time -v ./prinseq++ -fastq stenotrophomonas_R1.fastq -min_len 5000 -derep -out_name Test_1_Single_t10 -out_gz -threads 10
 	
 
 install:
-	install -d $(DESTDIR)$(bindir)/bin
-	install -m 0775 pprinseqc $(DESTDIR)$(bindir)/bin
+	install -d $(DESTDIR)$(bindir)
+	install -m 0775 prinseq++ $(DESTDIR)$(bindir)
 
 uninstall:
-	-rm $(DESTDIR)$(bindir)/bin/pprinseqc
+	-rm $(DESTDIR)$(bindir)/prinseq++
 
 clear: clean
 
 clean:
-	-rm -f pprinseqc
+	-rm -f prinseq++
 	-rm -f Test*fastq
 	-rm -f Test*fasta
 	-rm -f Test*fastq.gz
