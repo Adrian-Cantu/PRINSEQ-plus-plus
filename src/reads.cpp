@@ -84,7 +84,7 @@ using namespace std;
                 //cout << regex_replace(seq_name,fastq_to_fasta, '>') << endl << seq_seq << endl;
                 string seq_name_copy=seq_name;
                 seq_name_copy[0]='>';
-                cout << seq_name_copy << endl << seq_seq << endl << seq_sep << endl << seq_qual << endl;
+                cout << seq_name_copy << endl << seq_seq << endl;
             }
             cout.rdbuf(back_stdout);
         }

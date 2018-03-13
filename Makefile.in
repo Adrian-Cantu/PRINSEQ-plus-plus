@@ -54,6 +54,7 @@ $(distdir): FORCE
 	cp $(srcdir)/src/test_R.fastq.gz $(distdir)/src
 	cp $(srcdir)/src/bloom_filter.hpp $(distdir)/src
 	cp $(srcdir)/src/README $(distdir)/src
+	cp $(srcdir)/Doxyfile $(distdir)/src
 
 FORCE:
 	-rm -f $(distdir).tar.gz >/dev/null 2>&1
