@@ -10,15 +10,19 @@ PRINSEQ++ is a C++ implementation of the prinseq-lite.pl program. It can be used
 5. pthread
 
 ## Download
-If you are just interested in compiling and using PRINSEQ++, download the latest [version](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.0/prinseq++-1.0.tar.gz).
-If you want to edit the source code, clone this repository
+If you are just interested in compiling and using PRINSEQ++, download the latest [version](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.0/prinseq-plus-plus-1.0.tar.gz). You can also download the [binary](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.0/prinseq-plus-plus.exe). 
+If you want to edit the source code, clone this repository.
 
 ## To install
-1. tar -xvf pprinseqc-0.9.1.tar.gz
-2. cd pprinseqc-0.9.1
+1. tar -xvf prinseq-plus-plus-1.0.tar.gz
+2. cd prinseq-plus-plus-1.0
 3. ./configure
 4. make
-4. sudo make install
+5. make test
+6. sudo make install
+
+## To check instalation
+1. prinseq++ -h
 
 ## To use the repository
 1. ./autogen.sh
@@ -29,7 +33,6 @@ If you want to edit the source code, clone this repository
 
 ## Usage
 
-Option:
     -h | -help
         Print the help page; ignore other arguments.
         
