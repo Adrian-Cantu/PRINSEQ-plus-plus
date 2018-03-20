@@ -18,6 +18,7 @@ config.guess
 config.sub
 html/*
 latex/*
+src/prinseq++
 
 # Prerequisites
 *.d
