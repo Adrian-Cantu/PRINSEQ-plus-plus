@@ -8,6 +8,11 @@ CXXFLAGS = -std=c++11 -Wall -fno-omit-frame-pointer -ggdb
 
 CXXFLAGS = -std=c++11 -Wall -pthread
 
+
+static link
+CXXFLAGS = -static -std=c++11 -Wall -O3 -pthread -lboost_filesystem -lboost_system  -lboost_iostreams -lz
+
+
 sudo sh -c " echo 0 > /proc/sys/kernel/kptr_restrict"
 
 sudo perf record -g ./pprinseqc -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5000 -ns_max_n 2

@@ -52,7 +52,7 @@ pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
     int max_len=0;
     float max_gc=100;
     float min_gc=0;
-    int opterr = 0;
+ //   int opterr = 0;
     int derep;
     float entropy_threshold=0.5 ;
     int lc_entropy=0;
@@ -74,6 +74,7 @@ pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
     int threads=5;
     int out_gz=0;
     int help=0;
+    int ver=0;
 
     std::string line;
 
@@ -104,9 +105,8 @@ pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
         { "trim_tail_right" , required_argument , NULL     , 21 },
         { "out_gz"          , no_argument       , &out_gz  ,  1 },
         { "threads"         , required_argument , NULL     , 22 },
-        { "h"               , no_argument       , &help    ,  1 },
         { "help"            , no_argument       , &help    ,  1 },
-        
+        { "version"         , no_argument       , &ver     ,  1 },  
 {0,0,0,0}
     };    
     
@@ -123,6 +123,7 @@ struct arg_struct_pair {
 void* do_single (void * arguments);
 void* do_pair (void* arguments);
 void print_help(void);
+void print_ver(void);
 
 int main (int argc, char **argv)
 {
@@ -229,6 +230,12 @@ int main (int argc, char **argv)
         print_help();
         return 0;
     }
+    
+    if (ver) {
+        print_ver();
+        return 0;
+    }
+    
     
 /*    printf ("forward_read_file = %s ,reverse_read_file =%s\n ", forward_read_file, reverse_read_file);
     cout << "random string " << out_name << " out format " << out_format  << endl ;
@@ -497,6 +504,13 @@ void print_help(void) {
     std::string version = PACKAGE_VERSION;
     std::string help_msn = R"*(
         PRINSEQ++ )*" + version + R"*(
+            
+PRINSEQ++ is a C++ implementation of the prinseq-lite.pl program. It can be used 
+to filter, reformat or trim genomic and metagenomic sequence data. It is 5X faster 
+than prinseq-lite.pl and uses less RAM thanks to the use of multi-threading 
+and the cboost libraries. It can read and write compressed (gzip) files, drastically 
+reducing the use of hard drive.
+
         
 Option:
     -h | -help
@@ -613,4 +627,10 @@ Option:
         )*";
     std::cout << help_msn << std::endl;
     
+}
+
+void print_ver(void) {
+    std::string version = PACKAGE_VERSION;
+    std::string help_msn = R"*(PRINSEQ++ )*" + version;
+    std::cout << help_msn << std::endl;
 }
