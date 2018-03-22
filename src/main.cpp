@@ -393,8 +393,13 @@ int main (int argc, char **argv)
             v2[ii]-> set_out_format(out_format);
             ttt2[ii].read= v2[ii];
             ttt2[ii].filter= filter;
-            pthread_create(&tthreads[ii],NULL,do_pair, (void *) &ttt2[ii]); 
+             
         }
+        
+        for (ii=0 ; ii<threads ; ii++){
+            pthread_create(&tthreads[ii],NULL,do_pair, (void *) &ttt2[ii]);
+        }
+        
         for (ii=0 ; ii<threads ; ii++){
             pthread_join(tthreads[ii],NULL);   
         }
@@ -414,8 +419,11 @@ int main (int argc, char **argv)
             v[ii].set_outputs(*bad_out_file_R1,*bad_out_file_R1,*good_out_file_R1);
             ttt[ii].read= & v[ii];
             ttt[ii].filter= filter;
-            pthread_create(&tthreads[ii],NULL,do_single, (void *) &ttt[ii]); 
+             
         }
+        for (ii=0 ; ii<threads ; ii++){
+            pthread_create(&tthreads[ii],NULL,do_single, (void *) &ttt[ii]);
+        }    
     
         for (ii=0 ; ii<threads ; ii++){
             pthread_join(tthreads[ii],NULL);   
