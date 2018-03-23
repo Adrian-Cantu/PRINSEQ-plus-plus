@@ -80,7 +80,7 @@ class pair_read {
         pair_read(istream &is1, istream &is2);
         pair_read(void);
         void set_inputs(istream &read_f,istream &read_r);
-        int read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2);
+        int read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2,pthread_mutex_t* read_mutex3);
         void print(void);
         void set_outputs(ostream& bad_out_file1, ostream& single_out_file1, ostream& good_out_file1,
                     ostream& bad_out_file2, ostream& single_out_file2, ostream& good_out_file2);

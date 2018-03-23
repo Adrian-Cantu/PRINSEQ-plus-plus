@@ -36,6 +36,7 @@ using namespace std;
 pthread_mutex_t write_mutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t read_mutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t read_mutex2=PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t read_mutex3=PTHREAD_MUTEX_INITIALIZER;
 
     char *forward_read_file = NULL;
     char *reverse_read_file = NULL;
@@ -478,7 +479,7 @@ void* do_pair (void * arguments) {
     struct arg_struct_pair *args = (arg_struct_pair*) arguments;
     pair_read * read=args->read;
     bloom_filter* filter=args->filter;
-    while(read->read_read(&read_mutex, &read_mutex2)) {
+    while(read->read_read(&read_mutex, &read_mutex2, &read_mutex3)) {
         //read_rf.read1->trim_qual_right("mean","lt",5,10,30);
             if (trim_tail_left) {read->trim_tail_left(trim_tail_left);}
             if (trim_tail_right) {read->trim_tail_right(trim_tail_right);}

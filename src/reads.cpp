@@ -413,8 +413,12 @@ void single_read::trim_tail_right(int num) {
         read2->set_inputs(read_r);
     }    
 
-    int pair_read::read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2) {
-        return read1->read_read(read_mutex_1) * read2->read_read(read_mutex_2);
+    int pair_read::read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2, pthread_mutex_t* read_mutex3) {
+        int status;        
+        pthread_mutex_lock(read_mutex3);
+        status = read1->read_read(read_mutex_1) * read2->read_read(read_mutex_2);
+        pthread_mutex_unlock(read_mutex3);
+        return status;
     }
 
 

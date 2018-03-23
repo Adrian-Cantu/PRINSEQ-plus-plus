@@ -1,12 +1,12 @@
 flag sets:
 
-CXXFLAGS = -std=c++11 -O3 -Wall -pg
-CXXFLAGS = -std=c++11 -O3 -Wall
-CXXFLAGS = -std=c++11 -O2 -Wall
-CXXFLAGS = -std=c++11 -Wall
-CXXFLAGS = -std=c++11 -Wall -fno-omit-frame-pointer -ggdb
+CXXFLAGS='-std=c++11 -O3 -Wall -pg'
+CXXFLAGS='-std=c++11 -O3 -Wall'
+CXXFLAGS='-std=c++11 -O2 -Wall'
+CXXFLAGS='-std=c++11 -Wall'
+CXXFLAGS='-std=c++11 -Wall -O3 -fno-omit-frame-pointer -ggdb -pthread -lboost_filesystem -lboost_system  -lboost_iostreams -lz'
 
-CXXFLAGS = -std=c++11 -Wall -pthread
+CXXFLAGS= -std=c++11 -Wall -pthread
 
 
 static link
