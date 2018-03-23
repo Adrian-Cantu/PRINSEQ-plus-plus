@@ -26,10 +26,12 @@
 using namespace std;
         single_read::single_read(istream &is): file1(is)  { 
             fastq_to_fasta.assign("^@");
+            kkmon = new ostream(nullptr);
         }
         
         single_read::single_read(void) : file1(cin){ // starndar input
             fastq_to_fasta.assign("^@");
+            kkmon = new ostream(nullptr);
         }
         
         void  single_read::set_inputs(istream &is) {
@@ -72,21 +74,20 @@ using namespace std;
 
         void single_read::print(int out_form) {
             if (read_status==2) {
-                cout.rdbuf(bad_out);
+                kkmon->rdbuf(bad_out);
             } else if (read_status==1) {
-                cout.rdbuf(single_out);
+                kkmon->rdbuf(single_out);
             } else if (read_status==0) {
-                cout.rdbuf(good_out);
+                kkmon->rdbuf(good_out);
             }
             if (out_form==0) {
-                cout << seq_name << endl << seq_seq << endl << seq_sep << endl << seq_qual << endl;
+                *kkmon << seq_name << endl << seq_seq << endl << seq_sep << endl << seq_qual << endl;
             } else if (out_form==1) {
-                //cout << regex_replace(seq_name,fastq_to_fasta, '>') << endl << seq_seq << endl;
                 string seq_name_copy=seq_name;
                 seq_name_copy[0]='>';
-                cout << seq_name_copy << endl << seq_seq << endl;
+                *kkmon << seq_name_copy << endl << seq_seq << endl;
             }
-            cout.rdbuf(back_stdout);
+            //cout.rdbuf(back_stdout);
         }
 
         void single_read::min_qual_score(int min_qual) {
@@ -412,8 +413,12 @@ void single_read::trim_tail_right(int num) {
         read2->set_inputs(read_r);
     }    
 
-    int pair_read::read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2) {
-        return read1->read_read(read_mutex_1) * read2->read_read(read_mutex_2);
+    int pair_read::read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2, pthread_mutex_t* read_mutex3) {
+        int status;        
+        pthread_mutex_lock(read_mutex3);
+        status = read1->read_read(read_mutex_1) * read2->read_read(read_mutex_2);
+        pthread_mutex_unlock(read_mutex3);
+        return status;
     }
 
 

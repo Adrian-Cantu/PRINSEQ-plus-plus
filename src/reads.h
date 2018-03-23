@@ -18,6 +18,8 @@
 #include <pthread.h>
 #endif
 
+
+
 using namespace std;
 
 /** \brief This class store a single read in fastq format.
@@ -57,16 +59,20 @@ class single_read {
         string seq_seq;
         string seq_sep;
         string seq_qual;
-
+        
+        std::ostream* kkmon;
+        //ostream out_stream(nullptr);
+        //std::stringstream kkmon();
     protected:
         regex fastq_to_fasta;
         int read_status=0; //0 good, 1 single ,2 bad
         istream& file1;
-
-        streambuf *back_stdout=cout.rdbuf();
-        streambuf *bad_out=cout.rdbuf();
-        streambuf *single_out=cout.rdbuf();
-        streambuf *good_out=cout.rdbuf();
+        //ofstream out_stream();
+        
+        streambuf *back_stdout=NULL;
+        streambuf *bad_out=NULL;
+        streambuf *single_out=NULL;
+        streambuf *good_out=NULL;
 };         
 
 class pair_read {
@@ -74,7 +80,7 @@ class pair_read {
         pair_read(istream &is1, istream &is2);
         pair_read(void);
         void set_inputs(istream &read_f,istream &read_r);
-        int read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2);
+        int read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2,pthread_mutex_t* read_mutex3);
         void print(void);
         void set_outputs(ostream& bad_out_file1, ostream& single_out_file1, ostream& good_out_file1,
                     ostream& bad_out_file2, ostream& single_out_file2, ostream& good_out_file2);
