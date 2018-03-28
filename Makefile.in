@@ -17,16 +17,21 @@ ACLOCAL_AMFLAGS = -I m4 --install
 
 all test install uninstall pprinseqc:
 	cd src && $(MAKE) $@
+	
+static:
+	cd src && $(MAKE) clean && $(MAKE) CXXFLAGS='-static -std=c++11 -Wall -O3 -pthread -lboost_filesystem -lboost_system  -lboost_iostreams -lz' && mv prinseq++ .. && $(MAKE) clean
+	tar cvzf  binary_$(distdir).tar.gz prinseq++
+	rm prinseq++
 
 clean : FORCE
 	cd src && $(MAKE) $@
-
+	-rm -rf $(distdir).tar.gz html latex binary_$(distdir).tar.gz prinseq++
 
 cleandist : FORCE
 	cd src && $(MAKE) clean
 	-rm -rf autom4te.cache 
 	-rm -f config.h config.log aclocal.m4 config.log config.status configure install-sh Makefile config.guess config.sub
-	-rm -rf $(distdir).tar.gz html latex 
+	-rm -rf $(distdir).tar.gz html latex binary_$(distdir).tar.gz prinseq++
 
 
 dist : $(distdir).tar.gz
