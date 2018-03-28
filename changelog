@@ -1,0 +1,5 @@
+1.1
+Fixed a race condition where pair_read::read_read could pull reads from the R1
+and R2 files in different order, making a fake pair.
+1.0
+launch version

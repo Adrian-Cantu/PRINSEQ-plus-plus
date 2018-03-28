@@ -26,6 +26,7 @@ cleandist : FORCE
 	cd src && $(MAKE) clean
 	-rm -rf autom4te.cache 
 	-rm -f config.h config.log aclocal.m4 config.log config.status configure install-sh Makefile config.guess config.sub
+	-rm -rf $(distdir).tar.gz html latex 
 
 
 dist : $(distdir).tar.gz
