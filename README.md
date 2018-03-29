@@ -16,8 +16,8 @@ You can also download the [binary](https://github.com/Adrian-Cantu/PRINSEQ-plus-
 If you want to edit the source code, clone this repository.
 
 ## To install
-1. tar -xvf prinseq-plus-plus-1.0.tar.gz
-2. cd prinseq-plus-plus-1.0
+1. tar -xvf prinseq-plus-plus-1.0.1.tar.gz
+2. cd prinseq-plus-plus-1.0.1
 3. ./configure
 4. make
 5. make test
