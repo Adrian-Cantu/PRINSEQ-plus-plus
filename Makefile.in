@@ -25,14 +25,17 @@ static:
 
 clean : FORCE
 	cd src && $(MAKE) $@
-	-rm -rf $(distdir).tar.gz html latex binary_$(distdir).tar.gz prinseq++
+	-rm -rf $(distdir).tar.gz html latex binary_$(distdir).tar.gz prinseq++ contigs.fasta
+	
+clear : clean	
 
 cleandist : FORCE
 	cd src && $(MAKE) clean
 	-rm -rf autom4te.cache 
 	-rm -f config.h config.log aclocal.m4 config.log config.status configure install-sh Makefile config.guess config.sub README.md
-	-rm -rf $(distdir).tar.gz html latex binary_$(distdir).tar.gz prinseq++
+	-rm -rf $(distdir).tar.gz html latex binary_$(distdir).tar.gz prinseq++ contigs.fasta
 
+cleardist : cleandist
 
 dist : $(distdir).tar.gz
 
@@ -84,6 +87,10 @@ exit 1; \
 	rm -rf $(distdir)
 	@echo "*** Package $(distdir).tar.gz is ready for distribution."
 
+doc: all
+	doxygen Doxyfile
+	cd latex && $(MAKE) && mv refman.pdf .. 
+
 Makefile: Makefile.in config.status 
 	./config.status $@
 	
@@ -94,4 +101,4 @@ config.status: configure
 	./config.status --recheck
 
 
-.PHONY: all clean dist FORCE check distcheck install uninstall static release
+.PHONY: all clean dist FORCE check distcheck install uninstall static release cleandist clear cleardist doc

@@ -22,9 +22,10 @@
 
 using namespace std;
 
-/** \brief This class store a single read in fastq format.
+/** \brief Most important class of PRINSEQ++, stores, filter and trim, reads.
  * 
- * this is a bla bla
+ * This class can get one dna read from a fastq files and store it. It can also 
+ * performs all trimming, filtering and printing operation.
  * 
  */
 class single_read {
@@ -60,9 +61,8 @@ class single_read {
         string seq_sep;
         string seq_qual;
         
-        std::ostream* kkmon;
-        //ostream out_stream(nullptr);
-        //std::stringstream kkmon();
+        std::ostream* out_stream;
+
     protected:
         regex fastq_to_fasta;
         int read_status=0; //0 good, 1 single ,2 bad
@@ -75,6 +75,12 @@ class single_read {
         streambuf *good_out=NULL;
 };         
 
+/** \brief Class containing two single_read
+ * 
+ * Most methods just call the homonymous method in both reads
+ * and then calls pair_read::auto_set_read_status
+ * 
+ */
 class pair_read {
     public:
         pair_read(istream &is1, istream &is2);

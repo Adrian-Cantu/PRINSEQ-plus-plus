@@ -1,3 +1,8 @@
+/** \brief  
+ * 
+ */
+
+
 #ifndef IOSTREAM
 #define IOSTREAM
 #include <iostream>
@@ -24,27 +29,40 @@
 #include <numeric>
 
 using namespace std;
-        single_read::single_read(istream &is): file1(is)  { 
-            fastq_to_fasta.assign("^@");
-            kkmon = new ostream(nullptr);
-        }
+single_read::single_read(istream &is): file1(is)  { 
+    fastq_to_fasta.assign("^@");
+    out_stream = new ostream(nullptr);
+}
         
-        single_read::single_read(void) : file1(cin){ // starndar input
-            fastq_to_fasta.assign("^@");
-            kkmon = new ostream(nullptr);
-        }
+single_read::single_read(void) : file1(cin){ // starndar input
+    fastq_to_fasta.assign("^@");
+    out_stream = new ostream(nullptr);
+}
         
-        void  single_read::set_inputs(istream &is) {
-            file1.rdbuf(is.rdbuf());
-           //is.rdbuf(file1.rdbuf());
-        }
+/** \brief Set or change inmput stream.
+ * 
+ * Mainlly used after the default constructor which set the the input stream
+ * to std::cin
+ * 
+ */
+void  single_read::set_inputs(istream &is) {
+    file1.rdbuf(is.rdbuf());
+}
 
-        void single_read::set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file) {
-            bad_out=bad_out_file.rdbuf();
-            single_out=single_out_file.rdbuf();
-            good_out=good_out_file.rdbuf();
-        }
+/** \brief Set output stream for good, single and bad read.
+ * 
+ * good read are ones that pass all filters, bad reads dont pass at least one filter.
+ * single reads are those that pass filters but mate didn't. Only used for pair end reads.
+ */ 
+void single_read::set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file) {
+    bad_out=bad_out_file.rdbuf();
+    single_out=single_out_file.rdbuf();
+    good_out=good_out_file.rdbuf();
+}
 
+/** \brief get a read from the input stream and reset read status
+ * 
+ */ 
         int single_read::read_read(pthread_mutex_t * read_mutex) {
         read_status=0;
         pthread_mutex_lock(read_mutex);
@@ -59,55 +77,79 @@ using namespace std;
                 return 0;
             }
         }
-
-        void single_read::ns_max_n(int ns_max_n) {
-            int hit_num=0;
-            for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
-                if ((seq_seq[i-1] == 'n') || (seq_seq[i-1] == 'N')) {
-                    hit_num++;
-                }    
-            }
-            if ( hit_num > ns_max_n ) {
-            single_read::set_read_status(2);
-            }
-        }
-
-        void single_read::print(int out_form) {
-            if (read_status==2) {
-                kkmon->rdbuf(bad_out);
-            } else if (read_status==1) {
-                kkmon->rdbuf(single_out);
-            } else if (read_status==0) {
-                kkmon->rdbuf(good_out);
-            }
-            if (out_form==0) {
-                *kkmon << seq_name << endl << seq_seq << endl << seq_sep << endl << seq_qual << endl;
-            } else if (out_form==1) {
-                string seq_name_copy=seq_name;
-                seq_name_copy[0]='>';
-                *kkmon << seq_name_copy << endl << seq_seq << endl;
-            }
-            //cout.rdbuf(back_stdout);
-        }
-
-        void single_read::min_qual_score(int min_qual) {
-            string temp_seq_qual=seq_qual;
-            int score;
-            int i;
-            for(i = seq_qual.size()-1; i >= 0; --i) {
-                score=int(seq_qual[i])-33;
-                if (score < min_qual) { single_read::set_read_status(2);}
-            }
+        
+/** \brief Filter out reads with more n's than \p ns_max_n
+ * 
+ */
+void single_read::ns_max_n(int ns_max_n) {
+    int hit_num=0;
+    for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
+        if ((seq_seq[i-1] == 'n') || (seq_seq[i-1] == 'N')) {
+            hit_num++;
         }    
+    }
+    if ( hit_num > ns_max_n ) {
+        single_read::set_read_status(2);
+    }
+}
 
-        int single_read::get_read_status(void) {
-            return read_status;
+/** \brief Print read to the apropiated output stream
+ * 
+ * Output stream are set by single_read::set_outputs. \p out_form define the
+ * output format, 0 for FASTQ and 1 for FASTA.
+ * 
+ */
+void single_read::print(int out_form) {
+    if (read_status==2) {
+        out_stream->rdbuf(bad_out);
+    } else if (read_status==1) {
+        out_stream->rdbuf(single_out);
+    } else if (read_status==0) {
+        out_stream->rdbuf(good_out);
+    }
+    if (out_form==0) {
+        *out_stream << seq_name << endl << seq_seq << endl << seq_sep << endl << seq_qual << endl;
+    } else if (out_form==1) {
+        string seq_name_copy=seq_name;
+        seq_name_copy[0]='>';
+        *out_stream << seq_name_copy << endl << seq_seq << endl;
+    }
+    //cout.rdbuf(back_stdout);
+}
+
+/** \brief filter out reads with at least one base quality below \p min_qual
+ * 
+ */
+void single_read::min_qual_score(int min_qual) {
+    string temp_seq_qual=seq_qual;
+    int score;
+    int i;
+    for(i = seq_qual.size()-1; i >= 0; --i) {
+        score=int(seq_qual[i])-33;
+        if (score < min_qual) { 
+            single_read::set_read_status(2);
+            break;
         }
+    }
+}    
 
-        void single_read::set_read_status(int status) {
-            if (status > read_status) {read_status=status;}
-        }
 
+int single_read::get_read_status(void) {
+    return read_status;
+}
+
+/** \brief Change the read status if \p status is worst
+ * 
+ * can ghange good to bad or single, and single to bad.
+ * 
+ */
+void single_read::set_read_status(int status) {
+    if (status > read_status) {read_status=status;}
+}
+
+/** \brief filter out reads with mean base quality below \p min_qual
+ * 
+ */
 void single_read::min_qual_mean(int min_qual) {
     int score;
     float average=0;
@@ -119,6 +161,9 @@ void single_read::min_qual_mean(int min_qual) {
     if (average < min_qual) { single_read::set_read_status(2);}
 }    
 
+/** \brief Filter out reads with iupac extended bases
+ * 
+ */
 void single_read::noiupac() {
     regex pattern("^[ACGTN]+$", regex::icase);
     if (!regex_search(seq_seq,pattern)) {
@@ -127,18 +172,27 @@ void single_read::noiupac() {
 }    
 
 
+/** \brief Filter out reads shorther than \p len
+ * 
+ */
 void single_read::min_len(unsigned int len) {
     if (seq_seq.size() < len) {
         single_read::set_read_status(2);
     }    
 }
 
+/** \brief Filter out reads longer than \p len
+ * 
+ */
 void single_read::max_len(unsigned int len) {
     if (seq_seq.size() > len) {
         single_read::set_read_status(2);
     } 
 }
 
+/** \brief Filter out reads with gc% higher than \p max_gc
+ * 
+ */
 void single_read::max_gc(float max_gc) {
     int hit_num=0;
     for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
@@ -147,12 +201,13 @@ void single_read::max_gc(float max_gc) {
             hit_num++;
         }    
     }
-//    cout << "max_gc: " << max_gc << " , percent : " <<
-//    hit_num <<" / " << seq_seq.size() << " = " <<
-//    100*(float)hit_num/seq_seq.size()<< endl;
     if (max_gc < 100*(float)hit_num/seq_seq.size()) { single_read::set_read_status(2);}
 }
 
+
+/** \brief Filter out reads with gc% lower than \p min_gc
+ * 
+ */
 void single_read::min_gc(float min_gc) {
     int hit_num=0;
     for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
@@ -164,6 +219,12 @@ void single_read::min_gc(float min_gc) {
     if (min_gc > 100*(float)hit_num/seq_seq.size()) { single_read::set_read_status(2);}
 }
 
+/** \brief Filter out reads with information lower than \p threshold
+ * 
+ * Uses the Shanon-Wiener entropy
+ * 
+ * \f[ CE=- \sum_{i=1}^{k}\left ( \frac{n_i}{l} \right )log_k\left ( \frac{n_i}{l} \right )  \f]
+ */
 void single_read::entropy(float threshold) {
     unsigned int j=0;
     std::string window;
