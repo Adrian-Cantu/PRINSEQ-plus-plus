@@ -43,7 +43,7 @@ class single_read {
         int get_read_status(void);
         void set_read_status(int status); 
         void noiupac(void);        
-        void min_len(unsigned int len); 
+        int min_len(unsigned int len); 
         void max_len(unsigned int len);
         void max_gc(float max_gc);
         void min_gc(float min_gc);
@@ -97,7 +97,7 @@ class pair_read {
         int max_n_p(int ns_max_p);
         void set_read_status(int match1, int match2);
         void noiupac(void);   
-        void min_len(unsigned int len); 
+        int min_len(unsigned int len); 
         void max_len(unsigned int len);
         void max_gc(float max_gc);
         void min_gc(float min_gc);

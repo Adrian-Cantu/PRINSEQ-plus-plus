@@ -28,6 +28,7 @@
 #include <algorithm> 
 #include <numeric>
 
+
 using namespace std;
 single_read::single_read(istream &is): file1(is)  { 
     fastq_to_fasta.assign("^@");
@@ -175,10 +176,13 @@ void single_read::noiupac() {
 /** \brief Filter out reads shorther than \p len
  * 
  */
-void single_read::min_len(unsigned int len) {
+int single_read::min_len(unsigned int len) {
     if (seq_seq.size() < len) {
         single_read::set_read_status(2);
-    }    
+        return 1;
+    } else {
+        return 0;
+    }   
 }
 
 /** \brief Filter out reads longer than \p len
@@ -520,10 +524,10 @@ void single_read::trim_tail_right(int num) {
     }    
 
 
-void pair_read::min_len(unsigned int len) {
-    read1->min_len(len);
-    read2->min_len(len);
+int pair_read::min_len(unsigned int len) {
+    int hit = read1->min_len(len) + read2->min_len(len);
     pair_read::auto_set_read_status();
+    return hit;
 }    
 
 

@@ -32,6 +32,8 @@ using namespace std;
 #include <boost/iostreams/filter/gzip.hpp>
 #include <boost/filesystem.hpp>
 
+#include "verbose.h"
+verbose* verbose_vec;
 
 pthread_mutex_t write_mutex=PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t read_mutex=PTHREAD_MUTEX_INITIALIZER;
@@ -114,11 +116,13 @@ pthread_mutex_t read_mutex3=PTHREAD_MUTEX_INITIALIZER;
 struct arg_struct {
     single_read * read;
     bloom_filter * filter;
+    int thread_id;
 };
 
 struct arg_struct_pair {
     pair_read * read;
     bloom_filter * filter;
+    int thread_id;
 };
 
 void* do_single (void * arguments);
@@ -382,6 +386,8 @@ int main (int argc, char **argv)
 
  
     // main loop
+    verbose_vec= new verbose(threads);
+    
     if (reverse_read_file) {
         ////////////////////////////////////////for pair end
         vector<pair_read*> v2(threads);
@@ -394,6 +400,7 @@ int main (int argc, char **argv)
             v2[ii]-> set_out_format(out_format);
             ttt2[ii].read= v2[ii];
             ttt2[ii].filter= filter;
+            ttt2[ii].thread_id=ii;
              
         }
         
@@ -420,6 +427,7 @@ int main (int argc, char **argv)
             v[ii].set_outputs(*bad_out_file_R1,*bad_out_file_R1,*good_out_file_R1);
             ttt[ii].read= & v[ii];
             ttt[ii].filter= filter;
+            ttt[ii].thread_id=ii;
              
         }
         for (ii=0 ; ii<threads ; ii++){
@@ -436,7 +444,8 @@ int main (int argc, char **argv)
 //        inFile_r->close(); 
         
     }  
-
+    verbose_vec->accumulate();
+    verbose_vec->print();
     return 0;
 }
 
@@ -479,6 +488,7 @@ void* do_pair (void * arguments) {
     struct arg_struct_pair *args = (arg_struct_pair*) arguments;
     pair_read * read=args->read;
     bloom_filter* filter=args->filter;
+    int id = args->thread_id;
     while(read->read_read(&read_mutex, &read_mutex2, &read_mutex3)) {
         //read_rf.read1->trim_qual_right("mean","lt",5,10,30);
             if (trim_tail_left) {read->trim_tail_left(trim_tail_left);}
@@ -489,7 +499,7 @@ void* do_pair (void * arguments) {
             if (min_qual_mean)  {read->min_qual_mean(min_qual_mean);}
             if (min_qual_score) { read->min_qual_score(min_qual_score);}
             if (noiupac) {read->noiupac();}
-            if (min_len) {read->min_len(min_len);}
+            if (min_len) {(*(verbose_vec->min_len))[id]= (*(verbose_vec->min_len))[id] + read->min_len(min_len);}
             if (max_len) {read->max_len(max_len);}
             if (max_gc < 100) {read->max_gc(max_gc);}
             if (min_gc > 0) {read->min_gc(min_gc);}
