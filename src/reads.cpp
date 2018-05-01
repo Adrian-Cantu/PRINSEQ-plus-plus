@@ -121,17 +121,19 @@ void single_read::print(int out_form) {
 /** \brief filter out reads with at least one base quality below \p min_qual
  * 
  */
-void single_read::min_qual_score(int min_qual) {
+int single_read::min_qual_score(int min_qual) {
     string temp_seq_qual=seq_qual;
     int score;
     int i;
+    if (read_status==2) {return 0;}
     for(i = seq_qual.size()-1; i >= 0; --i) {
         score=int(seq_qual[i])-33;
         if (score < min_qual) { 
             single_read::set_read_status(2);
-            break;
+            return 1;
         }
     }
+    return 0;
 }    
 
 
@@ -151,15 +153,20 @@ void single_read::set_read_status(int status) {
 /** \brief filter out reads with mean base quality below \p min_qual
  * 
  */
-void single_read::min_qual_mean(int min_qual) {
+int single_read::min_qual_mean(int min_qual) {
     int score;
     float average=0;
+    if (read_status==2) {return 0;}
     for(std::string::size_type i = seq_qual.size()-1; i > 0; --i) {
         score=int(seq_qual[i])-33;
         average= average + score;
         }
     average=average/seq_qual.size();
-    if (average < min_qual) { single_read::set_read_status(2);}
+    if (average < min_qual) { 
+        single_read::set_read_status(2);
+        return 1;
+    }
+    return 0;
 }    
 
 /** \brief Filter out reads with iupac extended bases
@@ -177,6 +184,7 @@ void single_read::noiupac() {
  * 
  */
 int single_read::min_len(unsigned int len) {
+    if (read_status==2) {return 0;}
     if (seq_seq.size() < len) {
         single_read::set_read_status(2);
         return 1;
@@ -229,7 +237,8 @@ void single_read::min_gc(float min_gc) {
  * 
  * \f[ CE=- \sum_{i=1}^{k}\left ( \frac{n_i}{l} \right )log_k\left ( \frac{n_i}{l} \right )  \f]
  */
-void single_read::entropy(float threshold) {
+int single_read::entropy(float threshold) {
+    if (read_status==2) {return 0;}
     unsigned int j=0;
     std::string window;
     vector<float> vals;
@@ -269,7 +278,9 @@ void single_read::entropy(float threshold) {
     double mean = 1.0 * std::accumulate(vals.begin(), vals.end(), 0.0) / vals.size();
     if (mean < threshold ) {
         single_read::set_read_status(2);
+        return 1;
     }
+    return 0;
 }
 
 void single_read::dust(float threshold) {
@@ -505,16 +516,16 @@ void single_read::trim_tail_right(int num) {
         pair_read::auto_set_read_status();
     }
 
-    void pair_read::min_qual_score(int min_qual) {
-        read1->min_qual_score(min_qual);
-        read2->min_qual_score(min_qual);
+    int pair_read::min_qual_score(int min_qual) {
+        int hit = read1->min_qual_score(min_qual) + read2->min_qual_score(min_qual);
         pair_read::auto_set_read_status();
+        return hit;
     }
 
-    void pair_read::min_qual_mean(int min_qual) {
-        read1->min_qual_mean(min_qual);
-        read2->min_qual_mean(min_qual);
+    int pair_read::min_qual_mean(int min_qual) {
+        int hit = read1->min_qual_mean(min_qual) + read2->min_qual_mean(min_qual);
         pair_read::auto_set_read_status();
+        return hit;
     }
 
     void pair_read::noiupac(void) {
@@ -554,10 +565,10 @@ void pair_read::min_gc(float min_gc) {
         out_form=format;
     }
 
-void pair_read::entropy(float threshold) {
-    read1->entropy(threshold);
-    read2->entropy(threshold);
+int pair_read::entropy(float threshold) {
+    int hit = read1->entropy(threshold) + read2->entropy(threshold);
     pair_read::auto_set_read_status();
+    return hit;
 }
 
 void pair_read::dust(float threshold) {

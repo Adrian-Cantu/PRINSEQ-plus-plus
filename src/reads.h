@@ -35,27 +35,34 @@ class single_read {
         void set_inputs(istream &is);
         void set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file);
         int read_read(pthread_mutex_t * read_mutex);
+        
+        //filter
         void ns_max_n(int ns_max_n);
       //  int max_n_p(int ns_max_p);
-        void print(int out_form);
-        void min_qual_score(int min_qual);
-        void min_qual_mean(int min_qual);
-        int get_read_status(void);
-        void set_read_status(int status); 
+        
+        int min_qual_score(int min_qual);
+        int min_qual_mean(int min_qual);
         void noiupac(void);        
         int min_len(unsigned int len); 
         void max_len(unsigned int len);
         void max_gc(float max_gc);
         void min_gc(float min_gc);
-        void entropy(float threshold); 
+        int entropy(float threshold); 
         void dust(float threshold);
+        
+        
         // type min* mean max sum // rule lt* gt eq 
         void trim_qual_right(string type, string rule, int step, int window_size, float threshold );  
         void trim_qual_left(string type, string rule, int step, int window_size, float threshold );
         void rm_header(void);
         void trim_tail_left(int num);
         void trim_tail_right(int num);
-
+        void print(int out_form);
+        
+        
+        int get_read_status(void);
+        void set_read_status(int status);
+        
         string seq_name;
         string seq_seq;
         string seq_sep;
@@ -91,8 +98,8 @@ class pair_read {
         void set_outputs(ostream& bad_out_file1, ostream& single_out_file1, ostream& good_out_file1,
                     ostream& bad_out_file2, ostream& single_out_file2, ostream& good_out_file2);
         void ns_max_n(int ns_max_n);
-        void min_qual_score(int min_qual);
-        void min_qual_mean(int min_qual);
+        int min_qual_score(int min_qual);
+        int min_qual_mean(int min_qual);
         void set_out_format(int format);
         int max_n_p(int ns_max_p);
         void set_read_status(int match1, int match2);
@@ -101,7 +108,7 @@ class pair_read {
         void max_len(unsigned int len);
         void max_gc(float max_gc);
         void min_gc(float min_gc);
-        void entropy(float threshold);
+        int entropy(float threshold);
         void dust(float threshold);
         void auto_set_read_status(void);
         // type min* mean max sum // rule lt* gt eq 

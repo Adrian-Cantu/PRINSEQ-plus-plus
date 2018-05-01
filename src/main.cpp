@@ -496,10 +496,10 @@ void* do_pair (void * arguments) {
             if (trim_qual_right) {read->trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
             if (trim_qual_left) {read->trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
             if (ns_max_n > -1 ) {read->ns_max_n(ns_max_n);}
-            if (min_qual_mean)  {read->min_qual_mean(min_qual_mean);}
+            if (min_qual_mean)  {(*(verbose_vec->min_qual_mean))[id] += read->min_qual_mean(min_qual_mean);}
             if (min_qual_score) { read->min_qual_score(min_qual_score);}
             if (noiupac) {read->noiupac();}
-            if (min_len) {(*(verbose_vec->min_len))[id]= (*(verbose_vec->min_len))[id] + read->min_len(min_len);}
+            if (min_len) {(*(verbose_vec->min_len))[id] += read->min_len(min_len);}
             if (max_len) {read->max_len(max_len);}
             if (max_gc < 100) {read->max_gc(max_gc);}
             if (min_gc > 0) {read->min_gc(min_gc);}
@@ -509,7 +509,7 @@ void* do_pair (void * arguments) {
                 filter->insert(read->read2->seq_seq);
             }
         
-            if (lc_entropy) {read->entropy(entropy_threshold);}
+            if (lc_entropy) {(*(verbose_vec->lc_entropy))[id] += read->entropy(entropy_threshold);}
             if (lc_dust) {read->dust(dust_threshold);}
             if (rm_header) {read->rm_header();}
             pthread_mutex_lock(& write_mutex);
