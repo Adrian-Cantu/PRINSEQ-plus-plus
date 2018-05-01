@@ -19,19 +19,20 @@ all: prinseq++
 
 
 comp: prinseq++
-	time ./prinseq-lite.pl -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5000 -out_good Test_good -out_bad Test_bad -no_qual_header -ns_max_n 2
-	time ./prinseq++ -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5000 -ns_max_n 2
+	time ./prinseq-lite.pl -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5000 -out_good Test_good -out_bad Test_bad -no_qual_header -ns_max_n 2 -lc_method entropy -lc_threshold 50 -min_gc 40 -max_gc  60
+	time ./prinseq++ -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5000 -ns_max_n 2 -lc_entropy -rm_header -out_name Test_time_ -min_gc 40 -max_gc  60
 
 
 compp: prinseq++
 	time -v ./prinseq-lite.pl -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5 -out_good Test_good -out_bad Test_bad -no_qual_header -ns_max_n 2 
 	time -v ./prinseq++ -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5 -ns_max_n 2 -out_name Test_time_ 
 
-prinseq++: main.o reads.o
-	$(CXX)  main.o reads.o  $(CXXFLAGS) -o prinseq++
+prinseq++: main.o reads.o verbose.o
+	$(CXX)  main.o reads.o verbose.o $(CXXFLAGS) -o prinseq++
 
-main.o: main.cpp reads.h bloom_filter.hpp
+main.o: main.cpp reads.h bloom_filter.hpp verbose.h
 reads.o: reads.cpp reads.h 
+verbose.o: verbose.cpp verbose.h
 
 test: all
 	./prinseq++ -fastq test_F.fastq -fastq2 test_R.fastq -out_format 1 -out_name Test_1 && \
