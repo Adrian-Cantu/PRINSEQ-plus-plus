@@ -61,7 +61,6 @@ void verbose::print(void){
     if (total_noiupac) { std::cout << total_noiupac <<" read removed by -noiupac" << std::endl;}
     if (total_derep) { std::cout << total_derep <<" read removed by -derep" << std::endl;}
     if (total_lc_entropy) {  std::cout << total_lc_entropy <<" read removed by -lc_entropy" << std::endl;}
-    
     if (total_lc_dust) { std::cout << total_lc_dust <<" read removed by -lc_dust" << std::endl;}
     if (total_trim_tail_left) { std::cout << total_trim_tail_left <<" read removed by -trim_tail_left" << std::endl;}
     if (total_trim_tail_right) { std::cout << total_trim_tail_right <<" read removed by -trim_tail_right" << std::endl;}

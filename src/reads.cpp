@@ -82,7 +82,8 @@ void single_read::set_outputs(ostream& bad_out_file, ostream& single_out_file, o
 /** \brief Filter out reads with more n's than \p ns_max_n
  * 
  */
-void single_read::ns_max_n(int ns_max_n) {
+int single_read::ns_max_n(int ns_max_n) {
+    if (read_status==2) {return 0;}
     int hit_num=0;
     for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
         if ((seq_seq[i-1] == 'n') || (seq_seq[i-1] == 'N')) {
@@ -91,7 +92,9 @@ void single_read::ns_max_n(int ns_max_n) {
     }
     if ( hit_num > ns_max_n ) {
         single_read::set_read_status(2);
+        return 1;
     }
+    return 0;
 }
 
 /** \brief Print read to the apropiated output stream
@@ -172,11 +175,14 @@ int single_read::min_qual_mean(int min_qual) {
 /** \brief Filter out reads with iupac extended bases
  * 
  */
-void single_read::noiupac() {
+int single_read::noiupac() {
+    if (read_status==2) {return 0;}
     regex pattern("^[ACGTN]+$", regex::icase);
     if (!regex_search(seq_seq,pattern)) {
         single_read::set_read_status(2);
+        return 1;
     }
+    return 0;
 }    
 
 
@@ -196,31 +202,40 @@ int single_read::min_len(unsigned int len) {
 /** \brief Filter out reads longer than \p len
  * 
  */
-void single_read::max_len(unsigned int len) {
+int single_read::max_len(unsigned int len) {
+    if (read_status==2) {return 0;}
     if (seq_seq.size() > len) {
         single_read::set_read_status(2);
-    } 
+        return 1;
+    }
+    return 0;
 }
 
 /** \brief Filter out reads with gc% higher than \p max_gc
  * 
  */
-void single_read::max_gc(float max_gc) {
+int single_read::max_gc(float max_gc) {
     int hit_num=0;
+    if (read_status==2) {return 0;}
     for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
         if ((seq_seq[i-1] == 'G') || (seq_seq[i-1] == 'C')
          || (seq_seq[i-1] == 'g') || (seq_seq[i-1] == 'c')) {
             hit_num++;
         }    
     }
-    if (max_gc < 100*(float)hit_num/seq_seq.size()) { single_read::set_read_status(2);}
+    if (max_gc < 100*(float)hit_num/seq_seq.size()) { 
+        single_read::set_read_status(2);
+        return 1;
+    }
+    return 0;
 }
 
 
 /** \brief Filter out reads with gc% lower than \p min_gc
  * 
  */
-void single_read::min_gc(float min_gc) {
+int single_read::min_gc(float min_gc) {
+    if (read_status==2) {return 0;}
     int hit_num=0;
     for( std::string::size_type i = seq_qual.size(); i > 0; --i) {
         if ((seq_seq[i-1] == 'G') || (seq_seq[i-1] == 'C')
@@ -228,7 +243,11 @@ void single_read::min_gc(float min_gc) {
             hit_num++;
         }    
     }
-    if (min_gc > 100*(float)hit_num/seq_seq.size()) { single_read::set_read_status(2);}
+    if (min_gc > 100*(float)hit_num/seq_seq.size()) { 
+        single_read::set_read_status(2);
+        return 1;
+    }
+    return 0;
 }
 
 /** \brief Filter out reads with information lower than \p threshold
@@ -283,7 +302,8 @@ int single_read::entropy(float threshold) {
     return 0;
 }
 
-void single_read::dust(float threshold) {
+int single_read::dust(float threshold) {
+    if (read_status==2) {return 0;}
     unsigned int j=0;
     std::string window;
     vector<float> vals;
@@ -327,11 +347,14 @@ void single_read::dust(float threshold) {
 //    cout << "total entropy is " << mean << endl ;
     if (mean > threshold ) {
         single_read::set_read_status(2);
-    }    
+        return 1;
+    }
+    return 0;
 }
 
  // type min* mean max sum // rule lt* gt eq 
-void single_read::trim_qual_right(string type, string rule, int step, int window_size, float threshold ) {
+int single_read::trim_qual_right(string type, string rule, int step, int window_size, float threshold ) {
+    if (read_status==2) {return 0;}
     string window;
     string copy_seq=seq_seq;
     string copy_qual=seq_qual;
@@ -370,16 +393,19 @@ void single_read::trim_qual_right(string type, string rule, int step, int window
     }
     if (copy_qual.size() == 0) {
         single_read::set_read_status(2);
+        return 1;
     } else {
         seq_qual=copy_qual;
         seq_seq=copy_seq;
+        return 0;
     }
 //    std::cout << seq_seq << std::endl << std::endl;
 }
 
 
  // type min* mean max sum // rule lt* gt eq 
-void single_read::trim_qual_left(string type, string rule, int step, int window_size, float threshold ) {
+int single_read::trim_qual_left(string type, string rule, int step, int window_size, float threshold ) {
+    if (read_status==2) {return 0;}
     string window;
     string copy_seq=seq_seq;
     string copy_qual=seq_qual;
@@ -418,9 +444,11 @@ void single_read::trim_qual_left(string type, string rule, int step, int window_
     }
     if (copy_qual.size() == 0) {
         single_read::set_read_status(2);
+        return 1;
     } else {
         seq_qual=copy_qual;
         seq_seq=copy_seq;
+        return 0;
     }
 //    std::cout << seq_seq << std::endl << std::endl;
 }
@@ -429,7 +457,8 @@ void single_read::rm_header(void) {
     seq_sep="+";
 }
 
-void single_read::trim_tail_left(int num) {
+int single_read::trim_tail_left(int num) {
+    if (read_status==2) {return 0;}
     int sum=0;
     int temp_size = seq_seq.size();
     for(int i = 0; i < temp_size; i++) {
@@ -441,13 +470,16 @@ void single_read::trim_tail_left(int num) {
     }
     if (sum == temp_size ) {
         single_read::set_read_status(2);
+        return 1;
     } else if (sum >= num) {
         seq_seq.erase(0,sum);
         seq_qual.erase(0,sum);
     }
+    return 0;
 }
 
-void single_read::trim_tail_right(int num) {
+int single_read::trim_tail_right(int num) {
+    if (read_status==2) {return 0;}
     int sum=0;
     int temp_size = seq_seq.size();
     for(int i = temp_size -1; i >= 0; i--) {
@@ -459,10 +491,12 @@ void single_read::trim_tail_right(int num) {
     }
     if (sum == temp_size ) {
         single_read::set_read_status(2);
+        return 1;
     } else if (sum >= num) {
         seq_seq.erase(temp_size-sum,temp_size);
         seq_qual.erase(temp_size-sum,temp_size);
     }
+    return 0;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -510,10 +544,10 @@ void single_read::trim_tail_right(int num) {
         read2->set_outputs(bad_out_file2, single_out_file2, good_out_file2);
     }
 
-    void pair_read::ns_max_n(int ns_max_n) {
-        read1->ns_max_n(ns_max_n);
-        read2->ns_max_n(ns_max_n);
+    int pair_read::ns_max_n(int ns_max_n) {
+        int hit = read1->ns_max_n(ns_max_n) + read2->ns_max_n(ns_max_n);
         pair_read::auto_set_read_status();
+        return hit;
     }
 
     int pair_read::min_qual_score(int min_qual) {
@@ -528,10 +562,10 @@ void single_read::trim_tail_right(int num) {
         return hit;
     }
 
-    void pair_read::noiupac(void) {
-        read1->noiupac();
-        read2->noiupac();
+    int pair_read::noiupac(void) {
+        int hit = read1->noiupac() + read2->noiupac();
         pair_read::auto_set_read_status();
+        return hit;
     }    
 
 
@@ -542,28 +576,28 @@ int pair_read::min_len(unsigned int len) {
 }    
 
 
-void pair_read::max_len(unsigned int len) {
-    read1->max_len(len);
-    read2->max_len(len);
+int pair_read::max_len(unsigned int len) {
+    int hit = read1->max_len(len) + read2->max_len(len);
     pair_read::auto_set_read_status();
+    return hit;
 }    
 
 
-void pair_read::max_gc(float max_gc) {
-    read1->max_gc(max_gc);
-    read2->max_gc(max_gc);
+int pair_read::max_gc(float max_gc) {
+    int hit = read1->max_gc(max_gc) + read2->max_gc(max_gc);
     pair_read::auto_set_read_status();
+    return hit;
 }
 
-void pair_read::min_gc(float min_gc) {
-    read1->min_gc(min_gc);
-    read2->min_gc(min_gc);
+int pair_read::min_gc(float min_gc) {
+    int hit = read1->min_gc(min_gc) + read2->min_gc(min_gc);
     pair_read::auto_set_read_status();
+    return hit;
 }
 
-    void pair_read::set_out_format(int format) {
-        out_form=format;
-    }
+void pair_read::set_out_format(int format) {
+    out_form=format;
+}
 
 int pair_read::entropy(float threshold) {
     int hit = read1->entropy(threshold) + read2->entropy(threshold);
@@ -571,22 +605,22 @@ int pair_read::entropy(float threshold) {
     return hit;
 }
 
-void pair_read::dust(float threshold) {
-    read1->dust(threshold);
-    read2->dust(threshold);
+int pair_read::dust(float threshold) {
+    int hit = read1->dust(threshold) + read2->dust(threshold);
     pair_read::auto_set_read_status();
+    return hit;
 }
 
-void pair_read::trim_tail_left(int num) {
-    read1->trim_tail_left(num);
-    read2->trim_tail_left(num);
+int pair_read::trim_tail_left(int num) {
+    int hit = read1->trim_tail_left(num) + read2->trim_tail_left(num);
     pair_read::auto_set_read_status();
+    return hit;
 }    
 
-void pair_read::trim_tail_right(int num) {
-    read1->trim_tail_right(num);
-    read2->trim_tail_right(num);
+int pair_read::trim_tail_right(int num) {
+    int hit = read1->trim_tail_right(num) + read2->trim_tail_right(num);
     pair_read::auto_set_read_status();
+    return hit;
 }    
 
 void pair_read::rm_header(void) {
@@ -618,16 +652,16 @@ void pair_read::rm_header(void) {
         }
     }
 
-void pair_read::trim_qual_right(string type, string rule, int step, int window_size, float threshold ) {
-    read1->trim_qual_right(type, rule, step, window_size, threshold);
-    read2->trim_qual_right(type, rule, step, window_size, threshold);
+int pair_read::trim_qual_right(string type, string rule, int step, int window_size, float threshold ) {
+    int hit = read1->trim_qual_right(type, rule, step, window_size, threshold) + read2->trim_qual_right(type, rule, step, window_size, threshold);
     pair_read::auto_set_read_status();
+    return hit;
 } 
 
-void pair_read::trim_qual_left(string type, string rule, int step, int window_size, float threshold ) {
-    read1->trim_qual_left(type, rule, step, window_size, threshold);
-    read2->trim_qual_left(type, rule, step, window_size, threshold);
+int pair_read::trim_qual_left(string type, string rule, int step, int window_size, float threshold ) {
+    int hit = read1->trim_qual_left(type, rule, step, window_size, threshold) + read2->trim_qual_left(type, rule, step, window_size, threshold);
     pair_read::auto_set_read_status();
+    return hit;
 } 
 
 

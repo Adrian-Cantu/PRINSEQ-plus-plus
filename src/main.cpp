@@ -491,18 +491,18 @@ void* do_pair (void * arguments) {
     int id = args->thread_id;
     while(read->read_read(&read_mutex, &read_mutex2, &read_mutex3)) {
         //read_rf.read1->trim_qual_right("mean","lt",5,10,30);
-            if (trim_tail_left) {read->trim_tail_left(trim_tail_left);}
-            if (trim_tail_right) {read->trim_tail_right(trim_tail_right);}
-            if (trim_qual_right) {read->trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
-            if (trim_qual_left) {read->trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
-            if (ns_max_n > -1 ) {read->ns_max_n(ns_max_n);}
+            if (trim_tail_left) {(*(verbose_vec->trim_tail_left))[id] += read->trim_tail_left(trim_tail_left);}
+            if (trim_tail_right) {(*(verbose_vec->trim_tail_right))[id] += read->trim_tail_right(trim_tail_right);}
+            if (trim_qual_right) {(*(verbose_vec->trim_qual_right))[id] += read->trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
+            if (trim_qual_left) {(*(verbose_vec->trim_qual_left))[id] += read->trim_qual_left("mean","lt",trim_qual_step,trim_qual_window,trim_qual_left_threshold);}
+            if (ns_max_n > -1 ) {(*(verbose_vec->ns_max_n))[id] += read->ns_max_n(ns_max_n);}
             if (min_qual_mean)  {(*(verbose_vec->min_qual_mean))[id] += read->min_qual_mean(min_qual_mean);}
-            if (min_qual_score) { read->min_qual_score(min_qual_score);}
-            if (noiupac) {read->noiupac();}
+            if (min_qual_score) {(*(verbose_vec->min_qual_score))[id] += read->min_qual_score(min_qual_score);}
+            if (noiupac) {(*(verbose_vec->noiupac))[id] += read->noiupac();}
             if (min_len) {(*(verbose_vec->min_len))[id] += read->min_len(min_len);}
-            if (max_len) {read->max_len(max_len);}
-            if (max_gc < 100) {read->max_gc(max_gc);}
-            if (min_gc > 0) {read->min_gc(min_gc);}
+            if (max_len) {(*(verbose_vec->max_len))[id] += read->max_len(max_len);}
+            if (max_gc < 100) {(*(verbose_vec->max_cg))[id] += read->max_gc(max_gc);}
+            if (min_gc > 0) {(*(verbose_vec->min_cg))[id] += read->min_gc(min_gc);}
             if (derep) {
                 read->set_read_status(filter->contains(read->read1->seq_seq),filter->contains(read->read2->seq_seq));
                 filter->insert(read->read1->seq_seq);
@@ -510,7 +510,7 @@ void* do_pair (void * arguments) {
             }
         
             if (lc_entropy) {(*(verbose_vec->lc_entropy))[id] += read->entropy(entropy_threshold);}
-            if (lc_dust) {read->dust(dust_threshold);}
+            if (lc_dust) {(*(verbose_vec->lc_dust))[id] += read->dust(dust_threshold);}
             if (rm_header) {read->rm_header();}
             pthread_mutex_lock(& write_mutex);
             read->print();
