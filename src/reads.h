@@ -34,7 +34,7 @@ class single_read {
         single_read(void);
         void set_inputs(istream &is);
         void set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file);
-        int read_read(pthread_mutex_t * read_mutex);
+        int read_read(pthread_mutex_t * read_mutex, int format);
         
         //filter
         int ns_max_n(int ns_max_n);
@@ -93,7 +93,7 @@ class pair_read {
         pair_read(istream &is1, istream &is2);
         pair_read(void);
         void set_inputs(istream &read_f,istream &read_r);
-        int read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2,pthread_mutex_t* read_mutex3);
+        int read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2,pthread_mutex_t* read_mutex3, int format);
         void print(void);
         void set_outputs(ostream& bad_out_file1, ostream& single_out_file1, ostream& good_out_file1,
                     ostream& bad_out_file2, ostream& single_out_file2, ostream& good_out_file2);

@@ -64,21 +64,54 @@ void single_read::set_outputs(ostream& bad_out_file, ostream& single_out_file, o
 /** \brief get a read from the input stream and reset read status
  * 
  */ 
-        int single_read::read_read(pthread_mutex_t * read_mutex) {
-        read_status=0;
+int single_read::read_read(pthread_mutex_t * read_mutex,int format) {
+    read_status=0;
+    string fasta_sequence="";
+    string temp_fasta="";
+    std::string token;
+    seq_name="";
+    seq_seq="";
+    if (format==1) {
         pthread_mutex_lock(read_mutex);
-            if (getline(file1,seq_name, '\n')) {
-                getline(file1, seq_seq, '\n');
-                getline(file1, seq_sep, '\n');
-                getline(file1, seq_qual, '\n');
-                pthread_mutex_unlock(read_mutex);
-                return 1;
+        LOOP: if (getline(file1,temp_fasta, '>')) {
+            if (temp_fasta.empty()) { goto LOOP;}
+            if (temp_fasta.back() != '\n') {
+                fasta_sequence.append(temp_fasta);
+                fasta_sequence.push_back('>');
+                goto LOOP;
             } else {
-                pthread_mutex_unlock(read_mutex);
-                return 0;
+                fasta_sequence.append(temp_fasta);
             }
+            stringstream fasta_stream(fasta_sequence);
+            getline(fasta_stream,seq_name);
+            seq_name.insert(0,">");
+            while (getline(fasta_stream,temp_fasta)) {
+                seq_seq.append(temp_fasta);
+            }
+            seq_sep='+';
+            seq_qual= string(seq_seq.size(),'A');
+            pthread_mutex_unlock(read_mutex);
+            return 1;
+        } else {
+            pthread_mutex_unlock(read_mutex);
+            return 0;
         }
         
+    } else {
+        pthread_mutex_lock(read_mutex);
+        if (getline(file1,seq_name, '\n')) {
+            getline(file1, seq_seq, '\n');
+            getline(file1, seq_sep, '\n');
+            getline(file1, seq_qual, '\n');
+            pthread_mutex_unlock(read_mutex);
+            return 1;
+        } else {
+            pthread_mutex_unlock(read_mutex);
+            return 0;
+        }
+    }
+}
+
 /** \brief Filter out reads with more n's than \p ns_max_n
  * 
  */
@@ -523,10 +556,10 @@ int single_read::trim_tail_right(int num) {
         read2->set_inputs(read_r);
     }    
 
-    int pair_read::read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2, pthread_mutex_t* read_mutex3) {
+    int pair_read::read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2, pthread_mutex_t* read_mutex3, int format) {
         int status;        
         pthread_mutex_lock(read_mutex3);
-        status = read1->read_read(read_mutex_1) * read2->read_read(read_mutex_2);
+        status = read1->read_read(read_mutex_1, format) * read2->read_read(read_mutex_2, format );
         pthread_mutex_unlock(read_mutex3);
         return status;
     }
