@@ -69,13 +69,22 @@ int single_read::read_read(pthread_mutex_t * read_mutex,int format) {
     string fasta_sequence="";
     string temp_fasta="";
     std::string token;
+    int ff=0;
     seq_name="";
     seq_seq="";
     if (format==1) {
         pthread_mutex_lock(read_mutex);
         LOOP: if (getline(file1,temp_fasta, '>')) {
-            if (temp_fasta.empty()) { goto LOOP;}
-            if (temp_fasta.back() != '\n') {
+            if (temp_fasta.empty() && (!fasta_sequence.empty() || ff)) {  // thid deals with >> on some part of the identifier
+                fasta_sequence.push_back('>');
+                goto LOOP;
+            }
+            if (temp_fasta.empty() && fasta_sequence.empty()) { 
+                ff++; 
+                goto LOOP;
+            } // del mainly with the first sequence id
+
+            if (temp_fasta.back() != '\n') { // deals with > in the id other than the one at the start of the line
                 fasta_sequence.append(temp_fasta);
                 fasta_sequence.push_back('>');
                 goto LOOP;
@@ -84,7 +93,7 @@ int single_read::read_read(pthread_mutex_t * read_mutex,int format) {
             }
             stringstream fasta_stream(fasta_sequence);
             getline(fasta_stream,seq_name);
-            seq_name.insert(0,">");
+            seq_name.insert(0,"@");
             while (getline(fasta_stream,temp_fasta)) {
                 seq_seq.append(temp_fasta);
             }
