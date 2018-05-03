@@ -113,7 +113,6 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
         { "help"            , no_argument       , &help    ,  1 },
         { "version"         , no_argument       , &ver     ,  1 },
         { "FASTA"           , no_argument       , &fasta_in,  1 },
-        { "version"         , no_argument       , &ver     ,  1 },  
 {0,0,0,0}
     };    
     
@@ -564,7 +563,10 @@ Option:
         Input file in FASTQ format for pair-end reads. Can also read a 
         compressed (.gz) file.
         
-    
+    -FASTA
+        Input is in fasta format (no quality). Note that the output format is 
+        still fastq by default. Quality will be treated as 31 (A) for all bases.
+
     ***** OUTPUT OPTION *****
     
     -out_format <int>

@@ -54,6 +54,10 @@ If you want to edit the source code, clone this repository.
         Input file in FASTQ format for pair-end reads. Can also read a 
         compressed (.gz) file.
         
+   -FASTA 
+        Input is in fasta format (no quality). Note that the output format is 
+        still fastq by default. Quality will be treated as 31 (A) for all bases.
+        
     
     ***** OUTPUT OPTION *****
     
