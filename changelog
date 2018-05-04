@@ -1,3 +1,6 @@
+1.1
+Added verbose options and an options to read fasta files. Speed up run time 
+by only performing filters on good reads.
 1.0.1
 Fixed a race condition where pair_read::read_read could pull reads from the R1
 and R2 files in different order, making a fake pair.
