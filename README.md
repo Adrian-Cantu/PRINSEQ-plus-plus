@@ -4,11 +4,10 @@ Chan chan
 PRINSEQ++ is a C++ implementation of the prinseq-lite.pl program. It can be used to filter, reformat or trim genomic and metagenomic sequence data. It is 5X faster than prinseq-lite.pl and uses less RAM thanks to the use of multi-threading and the cboost libraries. It can read and write compressed (gzip) files, drastically reducing the use of hard drive.
 
 ## Requierments
-1. automake
-2. g++
-3. make
-4. boost-devel
-5. pthread
+1. g++
+2. make
+3. boost-devel ( "sudo apt-get install libboost-all-dev" in Ubuntu) 
+4. pthread
 
 ## Download
 If you are just interested in compiling and using PRINSEQ++, download the latest [version](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.0.1/prinseq-plus-plus-1.0.1.tar.gz).
@@ -58,7 +57,13 @@ If you want to edit the source code, clone this repository.
         Input is in fasta format (no quality). Note that the output format is 
         still fastq by default. Quality will be treated as 31 (A) for all bases.
         
-    
+   -VERBOSE <int>
+        Format of the report of filtered reads, VERBOSE=1 prints information only
+        on the filters that removed sequences. VERBOSE=2 prints numbers for filters 
+        in order (min_len, max_len, min_cg, max_cg, min_qual_score, min_qual_mean,
+        ns_max_n, noiupac, derep, lc_entropy, lc_dust, trim_tail_left, trim_tail_right, 
+        trim_qual_left, trim_qual_right) to compare stats of diferent files.
+        
     ***** OUTPUT OPTION *****
     
     -out_format <int>

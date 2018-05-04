@@ -80,6 +80,7 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
     int help=0;
     int ver=0;
     int fasta_in=0;
+    int verbosity=1;
 
     std::string line;
 
@@ -113,6 +114,7 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
         { "help"            , no_argument       , &help    ,  1 },
         { "version"         , no_argument       , &ver     ,  1 },
         { "FASTA"           , no_argument       , &fasta_in,  1 },
+        { "VERBOSE"         , required_argument , NULL     , 23 },
 {0,0,0,0}
     };    
     
@@ -219,6 +221,9 @@ int main (int argc, char **argv)
             case 22: 
                 threads=atoi(optarg);
                 break;
+            case 23:
+                verbosity=atoi(optarg);
+                break;
             case 0:
                 // getopt set a variable
                 break;
@@ -231,10 +236,14 @@ int main (int argc, char **argv)
                     fprintf (stderr, "Unknown option character `\\x%x'.\n", optopt);
                 return 1;
             default:
-                abort ();
+                print_help();
+                return 0;
+                break;
         }
         
-    if (help) {
+        
+        
+    if (help || (c == -1) ) {
         print_help();
         return 0;
     }
@@ -389,7 +398,7 @@ int main (int argc, char **argv)
 
  
     // main loop
-    verbose_vec= new verbose(threads);
+    verbose_vec= new verbose(threads,verbosity);
     
     if (reverse_read_file) {
         ////////////////////////////////////////for pair end
@@ -553,6 +562,13 @@ Option:
     -threads 
         Nuber of threads to use. Note that if more than one thread is used, output
         sequences might not be in the same order as input sequences. (Default=1)
+    
+    -VERBOSE <int>
+        Format of the report of filtered reads, VERBOSE=1 prints information only
+        on the filters that removed sequences. VERBOSE=2 prints numbers for filters 
+        in order (min_len, max_len, min_cg, max_cg, min_qual_score, min_qual_mean,
+        ns_max_n, noiupac, derep, lc_entropy, lc_dust, trim_tail_left, trim_tail_right, 
+        trim_qual_left, trim_qual_right) to compare stats of diferent files.
     
     ***** INPUT OPTIONS *****
     
