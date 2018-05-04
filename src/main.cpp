@@ -569,6 +569,8 @@ Option:
         in order (min_len, max_len, min_cg, max_cg, min_qual_score, min_qual_mean,
         ns_max_n, noiupac, derep, lc_entropy, lc_dust, trim_tail_left, trim_tail_right, 
         trim_qual_left, trim_qual_right) to compare stats of diferent files.
+        VERBOSE=0 prints nothing.
+        (Default=1)
     
     ***** INPUT OPTIONS *****
     
