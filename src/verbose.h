@@ -22,7 +22,7 @@
 
 class verbose {
     public:
-    verbose(int k);
+    verbose(int k,int verb);
     verbose(void);
     
     void accumulate(void);
@@ -61,5 +61,6 @@ class verbose {
     std::vector<int>* trim_qual_right;
     
     int threads;
+    int verbosity;
 };
     

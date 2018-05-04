@@ -12,7 +12,7 @@
 //#include <numeric>
 #include "verbose.h"
 
-verbose::verbose(int k) : threads(k) {
+verbose::verbose(int k, int verb) : threads(k), verbosity(verb)  {
     min_len=new std::vector<int>(threads,0);
     max_len=new std::vector<int>(threads,0);
     min_cg=new std::vector<int>(threads,0);
@@ -51,19 +51,37 @@ void verbose::accumulate(void) {
 }
 
 void verbose::print(void){
-    if (total_min_len) { std::cout << total_min_len <<" read removed by -min_len" << std::endl;}
-    if (total_max_len) { std::cout << total_max_len <<" read removed by -max_len" << std::endl;}
-    if (total_min_cg) { std::cout << total_min_cg <<" read removed by -min_cg" << std::endl;}
-    if (total_max_cg) { std::cout << total_max_cg <<" read removed by -max_cg" << std::endl;}
-    if (total_min_qual_score) { std::cout << total_min_qual_score <<" read removed by -min_qual_score" << std::endl;}
-    if (total_min_qual_mean) { std::cout << total_min_qual_mean <<" read removed by -min_qual_mean" << std::endl;}
-    if (total_ns_max_n) { std::cout << total_ns_max_n <<" read removed by -ns_max_n" << std::endl;}
-    if (total_noiupac) { std::cout << total_noiupac <<" read removed by -noiupac" << std::endl;}
-    if (total_derep) { std::cout << total_derep <<" read removed by -derep" << std::endl;}
-    if (total_lc_entropy) {  std::cout << total_lc_entropy <<" read removed by -lc_entropy" << std::endl;}
-    if (total_lc_dust) { std::cout << total_lc_dust <<" read removed by -lc_dust" << std::endl;}
-    if (total_trim_tail_left) { std::cout << total_trim_tail_left <<" read removed by -trim_tail_left" << std::endl;}
-    if (total_trim_tail_right) { std::cout << total_trim_tail_right <<" read removed by -trim_tail_right" << std::endl;}
-    if (total_trim_qual_left) { std::cout << total_trim_qual_left <<" read removed by -trim_qual_left" << std::endl;}
-    if (total_trim_qual_right) { std::cout << total_trim_qual_right <<" read removed by -trim_qual_right" << std::endl;}
+    if (verbosity == 1 ) {
+        if (total_min_len) { std::cout << total_min_len <<" reads removed by -min_len" << std::endl;}
+        if (total_max_len) { std::cout << total_max_len <<" reads removed by -max_len" << std::endl;}
+        if (total_min_cg) { std::cout << total_min_cg <<" reads removed by -min_cg" << std::endl;}
+        if (total_max_cg) { std::cout << total_max_cg <<" reads removed by -max_cg" << std::endl;}
+        if (total_min_qual_score) { std::cout << total_min_qual_score <<" reads removed by -min_qual_score" << std::endl;}
+        if (total_min_qual_mean) { std::cout << total_min_qual_mean <<" reads removed by -min_qual_mean" << std::endl;}
+        if (total_ns_max_n) { std::cout << total_ns_max_n <<" reads removed by -ns_max_n" << std::endl;}
+        if (total_noiupac) { std::cout << total_noiupac <<" reads removed by -noiupac" << std::endl;}
+        if (total_derep) { std::cout << total_derep <<" reads removed by -derep" << std::endl;}
+        if (total_lc_entropy) {  std::cout << total_lc_entropy <<" reads removed by -lc_entropy" << std::endl;}
+        if (total_lc_dust) { std::cout << total_lc_dust <<" reads removed by -lc_dust" << std::endl;}
+        if (total_trim_tail_left) { std::cout << total_trim_tail_left <<" reads removed by -trim_tail_left" << std::endl;}
+        if (total_trim_tail_right) { std::cout << total_trim_tail_right <<" reads removed by -trim_tail_right" << std::endl;}
+        if (total_trim_qual_left) { std::cout << total_trim_qual_left <<" reads removed by -trim_qual_left" << std::endl;}
+        if (total_trim_qual_right) { std::cout << total_trim_qual_right <<" reads removed by -trim_qual_right" << std::endl;}
+    } else if (verbosity==2) {
+        std::cout << total_min_len        << std::endl;
+        std::cout << total_max_len        << std::endl;
+        std::cout << total_min_cg         << std::endl;
+        std::cout << total_max_cg         << std::endl;
+        std::cout << total_min_qual_score << std::endl;
+        std::cout << total_min_qual_mean  << std::endl;
+        std::cout << total_ns_max_n       << std::endl;
+        std::cout << total_noiupac        << std::endl;
+        std::cout << total_derep          << std::endl;
+        std::cout << total_lc_entropy     << std::endl;
+        std::cout << total_lc_dust        << std::endl;
+        std::cout << total_trim_tail_left << std::endl;
+        std::cout << total_trim_tail_right<< std::endl;
+        std::cout << total_trim_qual_left << std::endl;
+        std::cout << total_trim_qual_right<< std::endl;
+    }
 }

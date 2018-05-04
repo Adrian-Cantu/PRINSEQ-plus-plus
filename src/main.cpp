@@ -79,6 +79,8 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
     int out_gz=0;
     int help=0;
     int ver=0;
+    int fasta_in=0;
+    int verbosity=1;
 
     std::string line;
 
@@ -110,7 +112,9 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
         { "out_gz"          , no_argument       , &out_gz  ,  1 },
         { "threads"         , required_argument , NULL     , 22 },
         { "help"            , no_argument       , &help    ,  1 },
-        { "version"         , no_argument       , &ver     ,  1 },  
+        { "version"         , no_argument       , &ver     ,  1 },
+        { "FASTA"           , no_argument       , &fasta_in,  1 },
+        { "VERBOSE"         , required_argument , NULL     , 23 },
 {0,0,0,0}
     };    
     
@@ -217,6 +221,9 @@ int main (int argc, char **argv)
             case 22: 
                 threads=atoi(optarg);
                 break;
+            case 23:
+                verbosity=atoi(optarg);
+                break;
             case 0:
                 // getopt set a variable
                 break;
@@ -229,10 +236,14 @@ int main (int argc, char **argv)
                     fprintf (stderr, "Unknown option character `\\x%x'.\n", optopt);
                 return 1;
             default:
-                abort ();
+                print_help();
+                return 0;
+                break;
         }
         
-    if (help) {
+        
+        
+    if (help || (c == -1) ) {
         print_help();
         return 0;
     }
@@ -387,7 +398,7 @@ int main (int argc, char **argv)
 
  
     // main loop
-    verbose_vec= new verbose(threads);
+    verbose_vec= new verbose(threads,verbosity);
     
     if (reverse_read_file) {
         ////////////////////////////////////////for pair end
@@ -456,7 +467,7 @@ void* do_single (void * arguments) {
     bloom_filter* filter=args->filter;
     int id = args->thread_id;
     int derep_1;
-    while( read->read_read( &read_mutex)) {
+    while( read->read_read( &read_mutex,fasta_in)) {
         if (trim_tail_left) {(*(verbose_vec->trim_tail_left))[id] += read->trim_tail_left(trim_tail_left);}
         if (trim_tail_right) {(*(verbose_vec->trim_tail_right))[id] += read->trim_tail_right(trim_tail_right);}
         if (trim_qual_right) {(*(verbose_vec->trim_qual_right))[id] += read->trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
@@ -492,9 +503,9 @@ void* do_pair (void * arguments) {
     struct arg_struct_pair *args = (arg_struct_pair*) arguments;
     pair_read * read=args->read;
     bloom_filter* filter=args->filter;
+    while(read->read_read(&read_mutex, &read_mutex2, &read_mutex3,fasta_in)) {
     int id = args->thread_id;
     int derep_1, derep_2;
-    while(read->read_read(&read_mutex, &read_mutex2, &read_mutex3)) {
         //read_rf.read1->trim_qual_right("mean","lt",5,10,30);
             if (trim_tail_left) {(*(verbose_vec->trim_tail_left))[id] += read->trim_tail_left(trim_tail_left);}
             if (trim_tail_right) {(*(verbose_vec->trim_tail_right))[id] += read->trim_tail_right(trim_tail_right);}
@@ -552,6 +563,15 @@ Option:
         Nuber of threads to use. Note that if more than one thread is used, output
         sequences might not be in the same order as input sequences. (Default=1)
     
+    -VERBOSE <int>
+        Format of the report of filtered reads, VERBOSE=1 prints information only
+        on the filters that removed sequences. VERBOSE=2 prints numbers for filters 
+        in order (min_len, max_len, min_cg, max_cg, min_qual_score, min_qual_mean,
+        ns_max_n, noiupac, derep, lc_entropy, lc_dust, trim_tail_left, trim_tail_right, 
+        trim_qual_left, trim_qual_right) to compare stats of diferent files.
+        VERBOSE=0 prints nothing.
+        (Default=1)
+    
     ***** INPUT OPTIONS *****
     
     -fastq <file>
@@ -561,7 +581,10 @@ Option:
         Input file in FASTQ format for pair-end reads. Can also read a 
         compressed (.gz) file.
         
-    
+    -FASTA
+        Input is in fasta format (no quality). Note that the output format is 
+        still fastq by default. Quality will be treated as 31 (A) for all bases.
+
     ***** OUTPUT OPTION *****
     
     -out_format <int>
