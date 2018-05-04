@@ -75,7 +75,7 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
     int rm_header=0;
     int trim_tail_left=0;
     int trim_tail_right=0;
-    int threads=5;
+    int threads=1;
     int out_gz=0;
     int help=0;
     int ver=0;
@@ -137,6 +137,11 @@ void print_ver(void);
 
 int main (int argc, char **argv)
 {
+    // If no argument are given (the name of the program is always the first argument)
+    if (argc==1) {
+        print_help();
+        return 0;
+    }
 
     // Readin inout from the command line
     while ((c = getopt_long_only(argc, argv, "",longopts, NULL)) != -1)
@@ -243,7 +248,7 @@ int main (int argc, char **argv)
         
         
         
-    if (help || (c == -1) ) {
+    if (help) {
         print_help();
         return 0;
     }
