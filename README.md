@@ -10,13 +10,13 @@ PRINSEQ++ is a C++ implementation of the prinseq-lite.pl program. It can be used
 4. pthread
 
 ## Download
-If you are just interested in compiling and using PRINSEQ++, download the latest [version](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v@PACKAGE_VERSION@/prinseq-plus-plus-@PACKAGE_VERSION@.tar.gz).
-You can also download the [binary](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v@PACKAGE_VERSION@/binary_prinseq-plus-plus-@PACKAGE_VERSION@.tar.gz). 
+If you are just interested in compiling and using PRINSEQ++, download the latest [version](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.1/prinseq-plus-plus-1.1.tar.gz).
+You can also download the [binary](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.1/binary_prinseq-plus-plus-1.1.tar.gz). 
 If you want to edit the source code, clone this repository.
 
 ## To install
-1. tar -xvf prinseq-plus-plus-@PACKAGE_VERSION@.tar.gz
-2. cd prinseq-plus-plus-@PACKAGE_VERSION@
+1. tar -xvf prinseq-plus-plus-1.1.tar.gz
+2. cd prinseq-plus-plus-1.1
 3. ./configure
 4. make
 5. make test

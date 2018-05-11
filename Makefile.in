@@ -52,6 +52,8 @@ $(distdir): FORCE
 	cp $(srcdir)/Makefile.in $(distdir)
 	cp $(srcdir)/config.sub $(distdir)
 	cp $(srcdir)/config.guess $(distdir)
+	cp $(srcdir)/README.md $(distdir)
+	cp $(srcdir)/README.md.in $(distdir)
 	cp $(srcdir)/src/Makefile.in $(distdir)/src
 	cp $(srcdir)/src/main.cpp $(distdir)/src
 	cp $(srcdir)/src/reads.cpp $(distdir)/src
@@ -61,15 +63,16 @@ $(distdir): FORCE
 	cp $(srcdir)/src/test_F.fastq.gz $(distdir)/src
 	cp $(srcdir)/src/test_R.fastq.gz $(distdir)/src
 	cp $(srcdir)/src/bloom_filter.hpp $(distdir)/src
-	cp $(srcdir)/src/README $(distdir)/src
 	cp $(srcdir)/Doxyfile $(distdir)/src
-
+	cp $(srcdir)/src/verbose.h $(distdir)/src
+	cp $(srcdir)/src/verbose.cpp $(distdir)/src
+	
 FORCE:
 	-rm -f $(distdir).tar.gz >/dev/null 2>&1
 	-rm -rf $(distdir) >/dev/null 2>&1
 	
 release: distcheck static
-	hub release create -a $(distdir).tar.gz -a binary_$(distdir).tar.gz -m "v$version" "v$version"
+	hub release create -a $(distdir).tar.gz -a binary_$(distdir).tar.gz -m "v@PACKAGE_VERSION@" "v@PACKAGE_VERSION@"
 
 distcheck: $(distdir).tar.gz
 	gzip -cd $(distdir).tar.gz | tar xvf -
