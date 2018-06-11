@@ -16,9 +16,11 @@ AC_CONFIG_HEADERS([config.h])
 AC_PROG_CXX
 AC_PROG_INSTALL
 AX_BOOST_BASE([1.41], [], AC_MSG_ERROR([Could not find a useful version of boost]))
+AX_BOOST_SYSTEM
 AX_BOOST_FILESYSTEM
 AX_BOOST_IOSTREAMS
 AX_CHECK_ZLIB
+AX_PTHREAD
 
 # Checks for libraries.
 
