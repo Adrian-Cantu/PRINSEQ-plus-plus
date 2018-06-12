@@ -83,7 +83,14 @@ If you want to edit the source code, clone this repository.
         not change the header in the 1st line (@header).
         
     -out_gz 
-        Write the output to a compressed file (WARNING this can be really SLOW)
+        Write the output to a compressed file (WARNING this can be really SLOW,
+        will be fixed in a future release)
+        
+    -out_good  , -out_single , -out_bad,
+    -out_good2 , -out_single2, -out_bad2
+        Rename the output files idividually, this overwrites the names given by
+        -out_name only for the selected files. File extension won't be added 
+        automatically. (TIP: if you don't need a file, set its name to /dev/null)
         
     ***** FILTER OPTION ******
         
