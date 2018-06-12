@@ -398,6 +398,37 @@ int main (int argc, char **argv)
         } else {
             tmp_good_out_file_R2= new std::ofstream(out_name + "_good_out_R2."  + out_ext);
         }
+        // correct for files with same name
+        if (!out_bad_1_name.empty()) {
+            if (out_bad_1_name==out_single_1_name ) {tmp_single_out_file_R1 = tmp_bad_out_file_R1;}
+            if (out_bad_1_name==out_good_1_name ) {tmp_good_out_file_R1 = tmp_bad_out_file_R1;}
+            if (out_bad_1_name==out_bad_2_name ) {tmp_bad_out_file_R2 = tmp_bad_out_file_R1;}
+            if (out_bad_1_name==out_single_2_name ) {tmp_single_out_file_R2 = tmp_bad_out_file_R1;}
+            if (out_bad_1_name==out_good_2_name ) {tmp_good_out_file_R2 = tmp_bad_out_file_R1;}
+        }
+        
+        if (!out_single_1_name.empty()) {
+            if (out_single_1_name==out_good_1_name ) {tmp_good_out_file_R1 = tmp_single_out_file_R1;}
+            if (out_single_1_name==out_bad_2_name ) {tmp_bad_out_file_R2 = tmp_single_out_file_R1;}
+            if (out_single_1_name==out_single_2_name ) {tmp_single_out_file_R2 = tmp_single_out_file_R1;}
+            if (out_single_1_name==out_good_2_name ) {tmp_good_out_file_R2 = tmp_single_out_file_R1;}
+        }
+        
+        if (!out_good_1_name.empty()) {
+            if (out_good_1_name == out_bad_2_name) {tmp_bad_out_file_R2 = tmp_good_out_file_R1;}
+            if (out_good_1_name == out_single_2_name) {tmp_single_out_file_R2 = tmp_good_out_file_R1;}
+            if (out_good_1_name == out_good_2_name) {tmp_good_out_file_R2 = tmp_good_out_file_R1;}
+        }
+        
+        if (!out_bad_2_name.empty()) {
+            if (out_bad_2_name == out_single_2_name) { tmp_single_out_file_R2 = tmp_bad_out_file_R2;}
+            if (out_bad_2_name == out_good_2_name) { tmp_good_out_file_R2 = tmp_bad_out_file_R2;}
+        }
+        
+        if (!out_single_2_name.empty()) {
+            if (out_single_2_name == out_good_2_name) { tmp_good_out_file_R2 = tmp_single_out_file_R2;}
+        }
+        
         if (out_gz) { //add a compressor to the output
             out_bad_R1_buf.push(boost::iostreams::gzip_compressor());
             out_bad_R2_buf.push(boost::iostreams::gzip_compressor());
@@ -432,6 +463,8 @@ int main (int argc, char **argv)
         } else {
             tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out." + out_ext );
         }
+        
+        if ((out_bad_1_name==out_good_1_name) && !out_good_1_name.empty() ) {tmp_bad_out_file_R1 = tmp_good_out_file_R1;}
         if (out_gz) {
             out_good_R1_buf.push(boost::iostreams::gzip_compressor());
             out_bad_R1_buf.push(boost::iostreams::gzip_compressor());
