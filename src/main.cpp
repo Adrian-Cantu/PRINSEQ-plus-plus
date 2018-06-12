@@ -83,6 +83,9 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
     int verbosity=1;
 
     std::string line;
+    
+    std::string out_good_1_name, out_good_2_name, out_single_1_name, 
+        out_single_2_name, out_bad_1_name,out_bad_2_name; 
 
     struct option longopts[] = {
         { "fastq"           , required_argument , NULL     ,  1 },
@@ -115,6 +118,12 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
         { "version"         , no_argument       , &ver     ,  1 },
         { "FASTA"           , no_argument       , &fasta_in,  1 },
         { "VERBOSE"         , required_argument , NULL     , 23 },
+        { "out_good"      , required_argument , NULL     , 24 },
+        { "out_good2"      , required_argument , NULL     , 25 },
+        { "out_single"    , required_argument , NULL     , 26 },
+        { "out_single2"    , required_argument , NULL     , 27 },
+        { "out_bad"       , required_argument , NULL     , 28 },
+        { "out_bad2"       , required_argument , NULL     , 29 },
 {0,0,0,0}
     };    
     
@@ -229,6 +238,24 @@ int main (int argc, char **argv)
             case 23:
                 verbosity=atoi(optarg);
                 break;
+            case 24:
+                out_good_1_name=optarg;
+                break;
+            case 25:
+                out_good_2_name=optarg;
+                break;
+            case 26:
+                out_single_1_name=optarg;
+                break;
+            case 27:
+                out_single_2_name=optarg;
+                break;
+            case 28:
+                out_bad_1_name=optarg;
+                break;
+            case 29:
+                out_bad_2_name=optarg;
+                break;
             case 0:
                 // getopt set a variable
                 break;
@@ -340,14 +367,38 @@ int main (int argc, char **argv)
     if (out_format == 1 ) { out_ext = "fasta";}
     if (out_gz == 1 ) { out_ext = out_ext + ".gz"; }
     
-    if (reverse_read_file) {
-        tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out_R1." + out_ext );
-        tmp_single_out_file_R1= new std::ofstream(out_name  + "_single_out_R1." + out_ext  );
-        tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out_R1." + out_ext);
-        tmp_bad_out_file_R2= new std::ofstream(out_name  + "_bad_out_R2." + out_ext );
-        tmp_single_out_file_R2= new std::ofstream(out_name  + "_single_out_R2." + out_ext);
-        tmp_good_out_file_R2= new std::ofstream(out_name + "_good_out_R2."  + out_ext);
-        if (out_gz) {
+    if (reverse_read_file) { //set output names
+        if (!out_bad_1_name.empty()){
+            tmp_bad_out_file_R1= new std::ofstream(out_bad_1_name);
+        } else {
+            tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out_R1." + out_ext );
+        }
+        if (!out_single_1_name.empty()) {
+            tmp_single_out_file_R1= new std::ofstream(out_single_1_name);
+        } else {
+            tmp_single_out_file_R1= new std::ofstream(out_name  + "_single_out_R1." + out_ext  );
+        }
+        if (!out_good_1_name.empty()) {
+            tmp_good_out_file_R1= new std::ofstream(out_good_1_name);
+        } else {
+            tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out_R1." + out_ext);
+        }
+        if (!out_bad_2_name.empty()) {
+            tmp_bad_out_file_R2= new std::ofstream(out_bad_2_name);
+        } else {
+            tmp_bad_out_file_R2= new std::ofstream(out_name  + "_bad_out_R2." + out_ext );
+        } 
+        if (!out_single_2_name.empty()) {
+            tmp_single_out_file_R2= new std::ofstream(out_single_2_name);
+        } else {
+            tmp_single_out_file_R2= new std::ofstream(out_name  + "_single_out_R2." + out_ext);
+        }
+        if (!out_good_2_name.empty()) {
+            tmp_good_out_file_R2= new std::ofstream(out_good_2_name);
+        } else {
+            tmp_good_out_file_R2= new std::ofstream(out_name + "_good_out_R2."  + out_ext);
+        }
+        if (out_gz) { //add a compressor to the output
             out_bad_R1_buf.push(boost::iostreams::gzip_compressor());
             out_bad_R2_buf.push(boost::iostreams::gzip_compressor());
             out_single_R1_buf.push(boost::iostreams::gzip_compressor());
@@ -371,8 +422,16 @@ int main (int argc, char **argv)
         
         
     } else {
-        tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out." + out_ext);
-        tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out." + out_ext);
+        if (!out_good_1_name.empty()) {
+            tmp_good_out_file_R1= new std::ofstream(out_good_1_name);
+        } else {
+            tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out." + out_ext);
+        }
+        if (!out_bad_1_name.empty()){
+            tmp_bad_out_file_R1= new std::ofstream(out_bad_1_name);
+        } else {
+            tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out." + out_ext );
+        }
         if (out_gz) {
             out_good_R1_buf.push(boost::iostreams::gzip_compressor());
             out_bad_R1_buf.push(boost::iostreams::gzip_compressor());
