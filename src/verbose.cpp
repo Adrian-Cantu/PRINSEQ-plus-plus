@@ -5,6 +5,10 @@
 #include <math.h>
 #endif
 
+#ifndef NUMERIC
+#define NUMERIC
+#include <numeric>
+#endif
 
 //#include "reads.h"
 //#include <unordered_map>

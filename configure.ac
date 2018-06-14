@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([PRINSEQ++], [1.1], [garbanyo@gmail.com] ,[prinseq-plus-plus], [https://github.com/Adrian-Cantu/PRINSEQ-plus-plus])
+AC_INIT([PRINSEQ++], [1.2-devel], [garbanyo@gmail.com] ,[prinseq-plus-plus], [https://github.com/Adrian-Cantu/PRINSEQ-plus-plus])
 ##AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_LANG([C++])

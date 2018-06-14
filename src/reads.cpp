@@ -26,7 +26,11 @@
 #include "reads.h"
 #include <unordered_map>
 #include <algorithm> 
+
+#ifndef NUMERIC
+#define NUMERIC
 #include <numeric>
+#endif
 
 
 using namespace std;
