@@ -30,12 +30,11 @@ using namespace std;
  */
 class single_read {
     public:
-        single_read(istream &is);
+        single_read(istream &is, int mode);
         single_read(void);
         void set_inputs(istream &is);
         void set_outputs(ostream& bad_out_file, ostream& single_out_file, ostream& good_out_file);
         int read_read(pthread_mutex_t * read_mutex, int format);
-        
         //filter
         int ns_max_n(int ns_max_n);
       //  int max_n_p(int ns_max_p);
@@ -59,7 +58,7 @@ class single_read {
         int trim_tail_right(int num);
         void print(int out_form);
         
-        
+        int qual_mode;
         int get_read_status(void);
         void set_read_status(int status);
         
@@ -90,7 +89,7 @@ class single_read {
  */
 class pair_read {
     public:
-        pair_read(istream &is1, istream &is2);
+        pair_read(istream &is1, istream &is2, int mode);
         pair_read(void);
         void set_inputs(istream &read_f,istream &read_r);
         int read_read(pthread_mutex_t* read_mutex_1, pthread_mutex_t* read_mutex_2,pthread_mutex_t* read_mutex3, int format);

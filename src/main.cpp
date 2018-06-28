@@ -81,6 +81,7 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
     int ver=0;
     int fasta_in=0;
     int verbosity=1;
+    int read_mode=33;
 
     std::string line;
     
@@ -118,12 +119,13 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
         { "version"         , no_argument       , &ver     ,  1 },
         { "FASTA"           , no_argument       , &fasta_in,  1 },
         { "VERBOSE"         , required_argument , NULL     , 23 },
-        { "out_good"      , required_argument , NULL     , 24 },
-        { "out_good2"      , required_argument , NULL     , 25 },
-        { "out_single"    , required_argument , NULL     , 26 },
-        { "out_single2"    , required_argument , NULL     , 27 },
-        { "out_bad"       , required_argument , NULL     , 28 },
-        { "out_bad2"       , required_argument , NULL     , 29 },
+        { "out_good"        , required_argument , NULL     , 24 },
+        { "out_good2"       , required_argument , NULL     , 25 },
+        { "out_single"      , required_argument , NULL     , 26 },
+        { "out_single2"     , required_argument , NULL     , 27 },
+        { "out_bad"         , required_argument , NULL     , 28 },
+        { "out_bad2"        , required_argument , NULL     , 29 },
+        { "phred64"         , no_argument       , &read_mode, 64},
 {0,0,0,0}
     };    
     
@@ -504,7 +506,7 @@ int main (int argc, char **argv)
         vector<arg_struct_pair> ttt2(threads);
         for (ii=0 ; ii<threads ; ii++){
        // v[ii].set_inputs(inFile_f);
-            v2[ii] = new pair_read(*inFile_f,*inFile_r);
+            v2[ii] = new pair_read(*inFile_f,*inFile_r, read_mode);
             v2[ii]-> set_outputs(*bad_out_file_R1,*single_out_file_R1,*good_out_file_R1,*bad_out_file_R2,*single_out_file_R2,*good_out_file_R2);
             v2[ii]-> set_out_format(out_format);
             ttt2[ii].read= v2[ii];
@@ -523,7 +525,7 @@ int main (int argc, char **argv)
     /////////////////////////////////////////// for single end    
     } else {
              //////////// pthreads magic
-        vector<single_read> v(threads,*inFile_f);
+        vector<single_read*> v(threads);
         vector<pthread_t> tthreads(threads);
         vector<arg_struct> ttt(threads);
        // declare structure for the thread
@@ -532,8 +534,9 @@ int main (int argc, char **argv)
     
         for (ii=0 ; ii<threads ; ii++){
        // v[ii].set_inputs(inFile_f);
-            v[ii].set_outputs(*bad_out_file_R1,*bad_out_file_R1,*good_out_file_R1);
-            ttt[ii].read= & v[ii];
+            v[ii] = new single_read(*inFile_f,read_mode);
+            v[ii]->set_outputs(*bad_out_file_R1,*bad_out_file_R1,*good_out_file_R1);
+            ttt[ii].read= v[ii];
             ttt[ii].filter= filter;
             ttt[ii].thread_id=ii;
              
