@@ -224,7 +224,7 @@ int single_read::min_qual_mean(int min_qual) {
  */
 int single_read::noiupac() {
     if (read_status==2) {return 0;}
-    regex pattern("^[ACGTN]+$", regex::icase);
+    regex pattern("^[ACGTUN]+$", regex::icase);
     if (!regex_search(seq_seq,pattern)) {
         single_read::set_read_status(2);
         return 1;
