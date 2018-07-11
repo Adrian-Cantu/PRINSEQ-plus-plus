@@ -56,6 +56,8 @@ class single_read {
         void rm_header(void);
         int trim_tail_left(int num);
         int trim_tail_right(int num);
+        int trim_left(int num);
+        int trim_right(int num);
         void print(int out_form);
         
         int qual_mode;
@@ -116,6 +118,8 @@ class pair_read {
         void rm_header(void);
         int trim_tail_left(int num);
         int trim_tail_right(int num);
+        int trim_left(int num);
+        int trim_right(int num);
         
         
         single_read* read1;

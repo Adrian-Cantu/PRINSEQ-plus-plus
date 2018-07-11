@@ -546,6 +546,32 @@ int single_read::trim_tail_right(int num) {
     return 0;
 }
 
+int single_read::trim_right(int num) {
+    if (read_status==2) { return 0;}
+    int temp_size = seq_seq.size();
+    if (num >= temp_size) {
+        single_read::set_read_status(2);
+        return 1;
+    } else {
+        seq_seq.erase(temp_size-num,num);
+        seq_qual.erase(temp_size-num,num);
+    }
+    return 0;
+}
+
+int single_read::trim_left(int num) {
+    if (read_status==2) { return 0;}
+    int temp_size = seq_seq.size();
+    if (num >= temp_size) {
+        single_read::set_read_status(2);
+        return 1;
+    } else {
+        seq_seq.erase(0,num);
+        seq_qual.erase(0,num);
+    }
+    return 0;
+}   
+
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -669,7 +695,19 @@ int pair_read::trim_tail_right(int num) {
     int hit = read1->trim_tail_right(num) + read2->trim_tail_right(num);
     pair_read::auto_set_read_status();
     return hit;
-}    
+}
+
+int pair_read::trim_left(int num) {
+    int hit = read1->trim_left(num) + read2->trim_left(num);
+    pair_read::auto_set_read_status();
+    return hit;
+}  
+
+int pair_read::trim_right(int num) {
+    int hit = read1->trim_right(num) + read2->trim_right(num);
+    pair_read::auto_set_read_status();
+    return hit;
+}
 
 void pair_read::rm_header(void) {
     read1->rm_header();

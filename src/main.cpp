@@ -82,6 +82,8 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
     int fasta_in=0;
     int verbosity=1;
     int read_mode=33;
+    int trim_right;
+    int trim_left;
 
     std::string line;
     
@@ -126,6 +128,8 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
         { "out_bad"         , required_argument , NULL     , 28 },
         { "out_bad2"        , required_argument , NULL     , 29 },
         { "phred64"         , no_argument       , &read_mode, 64},
+        { "trim_right"      , required_argument , NULL     , 30},
+        { "trim_left "      , required_argument , NULL     , 31}, 
 {0,0,0,0}
     };    
     
@@ -257,6 +261,12 @@ int main (int argc, char **argv)
                 break;
             case 29:
                 out_bad_2_name=optarg;
+                break;
+            case 30:
+                trim_left=atoi(optarg);
+                break;
+            case 31: 
+                trim_right=atoi(optarg);
                 break;
             case 0:
                 // getopt set a variable
@@ -568,6 +578,8 @@ void* do_single (void * arguments) {
     int id = args->thread_id;
     int derep_1;
     while( read->read_read( &read_mutex,fasta_in)) {
+        if (trim_left) {(*(verbose_vec->trim_left))[id] += read->trim_left(trim_left);}
+        if (trim_right) {(*(verbose_vec->trim_right))[id] += read->trim_right(trim_right);}
         if (trim_tail_left) {(*(verbose_vec->trim_tail_left))[id] += read->trim_tail_left(trim_tail_left);}
         if (trim_tail_right) {(*(verbose_vec->trim_tail_right))[id] += read->trim_tail_right(trim_tail_right);}
         if (trim_qual_right) {(*(verbose_vec->trim_qual_right))[id] += read->trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
@@ -607,6 +619,8 @@ void* do_pair (void * arguments) {
     int id = args->thread_id;
     int derep_1, derep_2;
         //read_rf.read1->trim_qual_right("mean","lt",5,10,30);
+            if (trim_left ){(*(verbose_vec->trim_left))[id] += read-> trim_left(trim_left);
+            if (trim_right){(*(verbose_vec->trim_right))[id] += read-> trim_right(trim_right);
             if (trim_tail_left) {(*(verbose_vec->trim_tail_left))[id] += read->trim_tail_left(trim_tail_left);}
             if (trim_tail_right) {(*(verbose_vec->trim_tail_right))[id] += read->trim_tail_right(trim_tail_right);}
             if (trim_qual_right) {(*(verbose_vec->trim_qual_right))[id] += read->trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}

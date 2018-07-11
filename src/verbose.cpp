@@ -32,6 +32,8 @@ verbose::verbose(int k, int verb) : threads(k), verbosity(verb)  {
     trim_tail_right= new std::vector<int>(threads,0);
     trim_qual_left= new std::vector<int>(threads,0);
     trim_qual_right= new std::vector<int>(threads,0);
+    trim_left= new std::vector<int>(threads,0);
+    trim_right= new std::vector<int>(threads,0);
 }
 
 void verbose::accumulate(void) {
@@ -51,7 +53,8 @@ void verbose::accumulate(void) {
     total_trim_tail_right=std::accumulate((*trim_tail_right).begin(), (*trim_tail_right).end(), 0);
     total_trim_qual_left=std::accumulate((*trim_qual_left).begin(), (*trim_qual_left).end(), 0);
     total_trim_qual_right=std::accumulate((*trim_qual_right).begin(), (*trim_qual_right).end(), 0);
-    
+    total_trim_left=std::accumulate((*trim_left).begin(), (*trim_left).end(), 0);
+    total_trim_right=std::accumulate((*trim_right).begin(), (*trim_right).end(), 0);    
 }
 
 void verbose::print(void){
@@ -71,6 +74,8 @@ void verbose::print(void){
         if (total_trim_tail_right) { std::cout << total_trim_tail_right <<" reads removed by -trim_tail_right" << std::endl;}
         if (total_trim_qual_left) { std::cout << total_trim_qual_left <<" reads removed by -trim_qual_left" << std::endl;}
         if (total_trim_qual_right) { std::cout << total_trim_qual_right <<" reads removed by -trim_qual_right" << std::endl;}
+        if (total_trim_left) { std::cout << total_trim_left <<" reads removed by -trim_left" << std::endl;}
+        if (total_trim_right) { std::cout << total_trim_right <<" reads removed by -trim_right" << std::endl;}
     } else if (verbosity==2) {
         std::cout << total_min_len        << std::endl;
         std::cout << total_max_len        << std::endl;
@@ -87,5 +92,7 @@ void verbose::print(void){
         std::cout << total_trim_tail_right<< std::endl;
         std::cout << total_trim_qual_left << std::endl;
         std::cout << total_trim_qual_right<< std::endl;
+        std::cout << total_trim_left << std::endl;
+        std::cout << total_trim_right<< std::endl;
     }
 }

@@ -42,7 +42,9 @@ class verbose {
     int total_trim_tail_left;
     int total_trim_tail_right;
     int total_trim_qual_left;
-    int total_trim_qual_right;    
+    int total_trim_qual_right;
+    int total_trim_right;
+    int total_trim_left;
     
     std::vector<int>* min_len;
     std::vector<int>* max_len;
@@ -59,6 +61,8 @@ class verbose {
     std::vector<int>* trim_tail_right;
     std::vector<int>* trim_qual_left;
     std::vector<int>* trim_qual_right;
+    std::vector<int>* trim_right;
+    std::vector<int>* trim_left;
     
     int threads;
     int verbosity;
