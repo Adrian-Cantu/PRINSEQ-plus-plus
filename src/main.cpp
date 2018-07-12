@@ -698,6 +698,9 @@ Option:
     -FASTA
         Input is in fasta format (no quality). Note that the output format is 
         still fastq by default. Quality will be treated as 31 (A) for all bases.
+        
+    -phred64
+        Input quality is in phred64 format. This is for older Illumina/Solexa reads.
 
     ***** OUTPUT OPTION *****
     
@@ -764,6 +767,12 @@ Option:
         
     ***** TRIM OPTIONS *****
 
+    -trim_left <integer>
+        Trim <integer> bases from the left (5'->3').
+        
+    -trim_right <integer>
+        Trim <integer> bases from the right (3'->5').
+    
     -trim_tail_left <integer>
         Trim poly-A/T tail with a minimum length of <integer> at the
         5'-end.
