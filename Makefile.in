@@ -72,7 +72,7 @@ FORCE:
 	-rm -rf $(distdir) >/dev/null 2>&1
 	
 release: distcheck static
-	hub release create -a $(distdir).tar.gz -a binary_$(distdir).tar.gz -m "v$version" "v$version"
+	hub release create -a $(distdir).tar.gz -a binary_$(distdir).tar.gz -m "v@PACKAGE_VERSION@" "v@PACKAGE_VERSION@"
 
 distcheck: $(distdir).tar.gz
 	gzip -cd $(distdir).tar.gz | tar xvf -

@@ -26,11 +26,15 @@
 #include "reads.h"
 #include <unordered_map>
 #include <algorithm> 
+
+#ifndef NUMERIC
+#define NUMERIC
 #include <numeric>
+#endif
 
 
 using namespace std;
-single_read::single_read(istream &is): file1(is)  { 
+single_read::single_read(istream &is, int mode): file1(is) , qual_mode(mode)  { 
     fastq_to_fasta.assign("^@");
     out_stream = new ostream(nullptr);
 }
@@ -38,6 +42,7 @@ single_read::single_read(istream &is): file1(is)  {
 single_read::single_read(void) : file1(cin){ // starndar input
     fastq_to_fasta.assign("^@");
     out_stream = new ostream(nullptr);
+    qual_mode=33;
 }
         
 /** \brief Set or change inmput stream.
@@ -172,7 +177,7 @@ int single_read::min_qual_score(int min_qual) {
     int i;
     if (read_status==2) {return 0;}
     for(i = seq_qual.size()-1; i >= 0; --i) {
-        score=int(seq_qual[i])-33;
+        score=int(seq_qual[i])-qual_mode;
         if (score < min_qual) { 
             single_read::set_read_status(2);
             return 1;
@@ -203,7 +208,7 @@ int single_read::min_qual_mean(int min_qual) {
     float average=0;
     if (read_status==2) {return 0;}
     for(std::string::size_type i = seq_qual.size()-1; i > 0; --i) {
-        score=int(seq_qual[i])-33;
+        score=int(seq_qual[i])-qual_mode;
         average= average + score;
         }
     average=average/seq_qual.size();
@@ -219,7 +224,7 @@ int single_read::min_qual_mean(int min_qual) {
  */
 int single_read::noiupac() {
     if (read_status==2) {return 0;}
-    regex pattern("^[ACGTN]+$", regex::icase);
+    regex pattern("^[ACGTUN]+$", regex::icase);
     if (!regex_search(seq_seq,pattern)) {
         single_read::set_read_status(2);
         return 1;
@@ -410,7 +415,7 @@ int single_read::trim_qual_right(string type, string rule, int step, int window_
         int score;
         vector<float> vals;
         for(int i = window.size()-1; i >= 0; --i) {
-                score=int(window[i])-33;
+                score=int(window[i])-qual_mode;
                 vals.push_back(score);
         }
         float compare;
@@ -461,7 +466,7 @@ int single_read::trim_qual_left(string type, string rule, int step, int window_s
         int score;
         vector<float> vals;
         for(int i = window.size()-1; i >= 0; --i) {
-                score=int(window[i])-33;
+                score=int(window[i])-qual_mode;
                 vals.push_back(score);
         }
         float compare;
@@ -541,21 +546,48 @@ int single_read::trim_tail_right(int num) {
     return 0;
 }
 
+int single_read::trim_right(int num) {
+    if (read_status==2) { return 0;}
+    int temp_size = seq_seq.size();
+    if (num >= temp_size) {
+        single_read::set_read_status(2);
+        return 1;
+    } else {
+        seq_seq.erase(temp_size-num,num);
+        seq_qual.erase(temp_size-num,num);
+    }
+    return 0;
+}
+
+int single_read::trim_left(int num) {
+    if (read_status==2) { return 0;}
+    int temp_size = seq_seq.size();
+    if (num >= temp_size) {
+        single_read::set_read_status(2);
+        return 1;
+    } else {
+        seq_seq.erase(0,num);
+        seq_qual.erase(0,num);
+    }
+    return 0;
+}   
+
+
 //////////////////////////////////////////////////////////////////////////////
 
 
 
 /////////////////////////////////////////////////////////////////////////////
 
-        pair_read::pair_read(istream &is1, istream &is2): file1(is1),file2(is2)  {
+        pair_read::pair_read(istream &is1, istream &is2, int mode): file1(is1),file2(is2)  {
 
-        read1= new single_read(file1);
-        read2= new single_read(file2);
+        read1= new single_read(file1,mode);
+        read2= new single_read(file2,mode);
     }
     
     pair_read::pair_read(void):file1(cin),file2(cin) {
-        read1= new single_read(file1);
-        read2= new single_read(file2);
+        read1= new single_read(file1,33);
+        read2= new single_read(file2,33);
     }    
     
     void  pair_read::set_inputs(istream &read_f,istream &read_r) {
@@ -663,7 +695,19 @@ int pair_read::trim_tail_right(int num) {
     int hit = read1->trim_tail_right(num) + read2->trim_tail_right(num);
     pair_read::auto_set_read_status();
     return hit;
-}    
+}
+
+int pair_read::trim_left(int num) {
+    int hit = read1->trim_left(num) + read2->trim_left(num);
+    pair_read::auto_set_read_status();
+    return hit;
+}  
+
+int pair_read::trim_right(int num) {
+    int hit = read1->trim_right(num) + read2->trim_right(num);
+    pair_read::auto_set_read_status();
+    return hit;
+}
 
 void pair_read::rm_header(void) {
     read1->rm_header();

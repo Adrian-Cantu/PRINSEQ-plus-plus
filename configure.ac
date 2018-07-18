@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([PRINSEQ++], [1.1], [garbanyo@gmail.com] ,[prinseq-plus-plus], [https://github.com/Adrian-Cantu/PRINSEQ-plus-plus])
+AC_INIT([PRINSEQ++], [1.2-devel], [garbanyo@gmail.com] ,[prinseq-plus-plus], [https://github.com/Adrian-Cantu/PRINSEQ-plus-plus])
 ##AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([src/main.cpp])
 AC_LANG([C++])
@@ -16,9 +16,11 @@ AC_CONFIG_HEADERS([config.h])
 AC_PROG_CXX
 AC_PROG_INSTALL
 AX_BOOST_BASE([1.41], [], AC_MSG_ERROR([Could not find a useful version of boost]))
+AX_BOOST_SYSTEM
 AX_BOOST_FILESYSTEM
 AX_BOOST_IOSTREAMS
 AX_CHECK_ZLIB
+AX_PTHREAD
 
 # Checks for libraries.
 

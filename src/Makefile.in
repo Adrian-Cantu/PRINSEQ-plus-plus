@@ -11,11 +11,27 @@ bindir = @bindir@
 # VPATH-related substitution variables
 srcdir = @srcdir@
 VPATH = @srcdir@
-
-CXXFLAGS = -std=c++11 -Wall -O3 -pthread -lboost_filesystem -lboost_system  -lboost_iostreams -lz
+CXX=@CXX@
+CXXFLAGS=@CXXFLAGS@ @PTHREAD_CFLAGS@
+LIBS=@LIBS@ @BOOST_SYSTEM_LIB@  @BOOST_FILESYSTEM_LIB@ @BOOST_IOSTREAMS_LIB@ @PTHREAD_LIBS@
+# CXXFLAGS = -std=c++11 -Wall -O3 -pthread -lboost_filesystem -lboost_system  -lboost_iostreams -lz
 
 
 all: prinseq++
+
+echo:
+	echo @CXX@
+	echo @CXXFLAGS@
+	echo @LIBS@
+	echo @CPPFLAGS@
+	echo @LDFLAGS@
+	echo @BOOST_FILESYSTEM_LIB@
+	echo @BOOST_IOSTREAMS_LIB@
+	echo @BOOST_CPPFLAGS@
+	echo @BOOSTLIBDIR@
+	echo @BOOST_LDFLAGS@
+	echo @BOOST_SYSTEM_LIB@
+	echo @PTHREAD_CFLAGS@
 
 
 comp: prinseq++
@@ -28,7 +44,7 @@ compp: prinseq++
 	time -v ./prinseq++ -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5 -ns_max_n 2 -out_name Test_time_ 
 
 prinseq++: main.o reads.o verbose.o
-	$(CXX)  main.o reads.o verbose.o $(CXXFLAGS) -o prinseq++
+	$(CXX)  main.o reads.o verbose.o $(CXXFLAGS) $(LIBS) -o prinseq++
 
 main.o: main.cpp reads.h bloom_filter.hpp verbose.h
 reads.o: reads.cpp reads.h 
