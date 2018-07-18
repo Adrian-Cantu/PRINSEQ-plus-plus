@@ -81,8 +81,14 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
     int ver=0;
     int fasta_in=0;
     int verbosity=1;
+    int read_mode=33;
+    int trim_right;
+    int trim_left;
 
     std::string line;
+    
+    std::string out_good_1_name, out_good_2_name, out_single_1_name, 
+        out_single_2_name, out_bad_1_name,out_bad_2_name; 
 
     struct option longopts[] = {
         { "fastq"           , required_argument , NULL     ,  1 },
@@ -115,6 +121,15 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
         { "version"         , no_argument       , &ver     ,  1 },
         { "FASTA"           , no_argument       , &fasta_in,  1 },
         { "VERBOSE"         , required_argument , NULL     , 23 },
+        { "out_good"        , required_argument , NULL     , 24 },
+        { "out_good2"       , required_argument , NULL     , 25 },
+        { "out_single"      , required_argument , NULL     , 26 },
+        { "out_single2"     , required_argument , NULL     , 27 },
+        { "out_bad"         , required_argument , NULL     , 28 },
+        { "out_bad2"        , required_argument , NULL     , 29 },
+        { "phred64"         , no_argument       , &read_mode, 64},
+        { "trim_left "      , required_argument , NULL     , 30},
+        { "trim_right"      , required_argument , NULL     , 31},
 {0,0,0,0}
     };    
     
@@ -229,6 +244,30 @@ int main (int argc, char **argv)
             case 23:
                 verbosity=atoi(optarg);
                 break;
+            case 24:
+                out_good_1_name=optarg;
+                break;
+            case 25:
+                out_good_2_name=optarg;
+                break;
+            case 26:
+                out_single_1_name=optarg;
+                break;
+            case 27:
+                out_single_2_name=optarg;
+                break;
+            case 28:
+                out_bad_1_name=optarg;
+                break;
+            case 29:
+                out_bad_2_name=optarg;
+                break;
+            case 30:
+                trim_left=atoi(optarg);
+                break;
+            case 31: 
+                trim_right=atoi(optarg);
+                break;
             case 0:
                 // getopt set a variable
                 break;
@@ -340,14 +379,69 @@ int main (int argc, char **argv)
     if (out_format == 1 ) { out_ext = "fasta";}
     if (out_gz == 1 ) { out_ext = out_ext + ".gz"; }
     
-    if (reverse_read_file) {
-        tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out_R1." + out_ext );
-        tmp_single_out_file_R1= new std::ofstream(out_name  + "_single_out_R1." + out_ext  );
-        tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out_R1." + out_ext);
-        tmp_bad_out_file_R2= new std::ofstream(out_name  + "_bad_out_R2." + out_ext );
-        tmp_single_out_file_R2= new std::ofstream(out_name  + "_single_out_R2." + out_ext);
-        tmp_good_out_file_R2= new std::ofstream(out_name + "_good_out_R2."  + out_ext);
-        if (out_gz) {
+    if (reverse_read_file) { //set output names
+        if (!out_bad_1_name.empty()){
+            tmp_bad_out_file_R1= new std::ofstream(out_bad_1_name);
+        } else {
+            tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out_R1." + out_ext );
+        }
+        if (!out_single_1_name.empty()) {
+            tmp_single_out_file_R1= new std::ofstream(out_single_1_name);
+        } else {
+            tmp_single_out_file_R1= new std::ofstream(out_name  + "_single_out_R1." + out_ext  );
+        }
+        if (!out_good_1_name.empty()) {
+            tmp_good_out_file_R1= new std::ofstream(out_good_1_name);
+        } else {
+            tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out_R1." + out_ext);
+        }
+        if (!out_bad_2_name.empty()) {
+            tmp_bad_out_file_R2= new std::ofstream(out_bad_2_name);
+        } else {
+            tmp_bad_out_file_R2= new std::ofstream(out_name  + "_bad_out_R2." + out_ext );
+        } 
+        if (!out_single_2_name.empty()) {
+            tmp_single_out_file_R2= new std::ofstream(out_single_2_name);
+        } else {
+            tmp_single_out_file_R2= new std::ofstream(out_name  + "_single_out_R2." + out_ext);
+        }
+        if (!out_good_2_name.empty()) {
+            tmp_good_out_file_R2= new std::ofstream(out_good_2_name);
+        } else {
+            tmp_good_out_file_R2= new std::ofstream(out_name + "_good_out_R2."  + out_ext);
+        }
+        // correct for files with same name
+        if (!out_bad_1_name.empty()) {
+            if (out_bad_1_name==out_single_1_name ) {tmp_single_out_file_R1 = tmp_bad_out_file_R1;}
+            if (out_bad_1_name==out_good_1_name ) {tmp_good_out_file_R1 = tmp_bad_out_file_R1;}
+            if (out_bad_1_name==out_bad_2_name ) {tmp_bad_out_file_R2 = tmp_bad_out_file_R1;}
+            if (out_bad_1_name==out_single_2_name ) {tmp_single_out_file_R2 = tmp_bad_out_file_R1;}
+            if (out_bad_1_name==out_good_2_name ) {tmp_good_out_file_R2 = tmp_bad_out_file_R1;}
+        }
+        
+        if (!out_single_1_name.empty()) {
+            if (out_single_1_name==out_good_1_name ) {tmp_good_out_file_R1 = tmp_single_out_file_R1;}
+            if (out_single_1_name==out_bad_2_name ) {tmp_bad_out_file_R2 = tmp_single_out_file_R1;}
+            if (out_single_1_name==out_single_2_name ) {tmp_single_out_file_R2 = tmp_single_out_file_R1;}
+            if (out_single_1_name==out_good_2_name ) {tmp_good_out_file_R2 = tmp_single_out_file_R1;}
+        }
+        
+        if (!out_good_1_name.empty()) {
+            if (out_good_1_name == out_bad_2_name) {tmp_bad_out_file_R2 = tmp_good_out_file_R1;}
+            if (out_good_1_name == out_single_2_name) {tmp_single_out_file_R2 = tmp_good_out_file_R1;}
+            if (out_good_1_name == out_good_2_name) {tmp_good_out_file_R2 = tmp_good_out_file_R1;}
+        }
+        
+        if (!out_bad_2_name.empty()) {
+            if (out_bad_2_name == out_single_2_name) { tmp_single_out_file_R2 = tmp_bad_out_file_R2;}
+            if (out_bad_2_name == out_good_2_name) { tmp_good_out_file_R2 = tmp_bad_out_file_R2;}
+        }
+        
+        if (!out_single_2_name.empty()) {
+            if (out_single_2_name == out_good_2_name) { tmp_good_out_file_R2 = tmp_single_out_file_R2;}
+        }
+        
+        if (out_gz) { //add a compressor to the output
             out_bad_R1_buf.push(boost::iostreams::gzip_compressor());
             out_bad_R2_buf.push(boost::iostreams::gzip_compressor());
             out_single_R1_buf.push(boost::iostreams::gzip_compressor());
@@ -371,8 +465,18 @@ int main (int argc, char **argv)
         
         
     } else {
-        tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out." + out_ext);
-        tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out." + out_ext);
+        if (!out_good_1_name.empty()) {
+            tmp_good_out_file_R1= new std::ofstream(out_good_1_name);
+        } else {
+            tmp_good_out_file_R1= new std::ofstream(out_name  + "_good_out." + out_ext);
+        }
+        if (!out_bad_1_name.empty()){
+            tmp_bad_out_file_R1= new std::ofstream(out_bad_1_name);
+        } else {
+            tmp_bad_out_file_R1= new std::ofstream(out_name  + "_bad_out." + out_ext );
+        }
+        
+        if ((out_bad_1_name==out_good_1_name) && !out_good_1_name.empty() ) {tmp_bad_out_file_R1 = tmp_good_out_file_R1;}
         if (out_gz) {
             out_good_R1_buf.push(boost::iostreams::gzip_compressor());
             out_bad_R1_buf.push(boost::iostreams::gzip_compressor());
@@ -412,7 +516,7 @@ int main (int argc, char **argv)
         vector<arg_struct_pair> ttt2(threads);
         for (ii=0 ; ii<threads ; ii++){
        // v[ii].set_inputs(inFile_f);
-            v2[ii] = new pair_read(*inFile_f,*inFile_r);
+            v2[ii] = new pair_read(*inFile_f,*inFile_r, read_mode);
             v2[ii]-> set_outputs(*bad_out_file_R1,*single_out_file_R1,*good_out_file_R1,*bad_out_file_R2,*single_out_file_R2,*good_out_file_R2);
             v2[ii]-> set_out_format(out_format);
             ttt2[ii].read= v2[ii];
@@ -431,7 +535,7 @@ int main (int argc, char **argv)
     /////////////////////////////////////////// for single end    
     } else {
              //////////// pthreads magic
-        vector<single_read> v(threads,*inFile_f);
+        vector<single_read*> v(threads);
         vector<pthread_t> tthreads(threads);
         vector<arg_struct> ttt(threads);
        // declare structure for the thread
@@ -440,8 +544,9 @@ int main (int argc, char **argv)
     
         for (ii=0 ; ii<threads ; ii++){
        // v[ii].set_inputs(inFile_f);
-            v[ii].set_outputs(*bad_out_file_R1,*bad_out_file_R1,*good_out_file_R1);
-            ttt[ii].read= & v[ii];
+            v[ii] = new single_read(*inFile_f,read_mode);
+            v[ii]->set_outputs(*bad_out_file_R1,*bad_out_file_R1,*good_out_file_R1);
+            ttt[ii].read= v[ii];
             ttt[ii].filter= filter;
             ttt[ii].thread_id=ii;
              
@@ -473,6 +578,8 @@ void* do_single (void * arguments) {
     int id = args->thread_id;
     int derep_1;
     while( read->read_read( &read_mutex,fasta_in)) {
+        if (trim_left) {(*(verbose_vec->trim_left))[id] += read->trim_left(trim_left);}
+        if (trim_right) {(*(verbose_vec->trim_right))[id] += read->trim_right(trim_right);}
         if (trim_tail_left) {(*(verbose_vec->trim_tail_left))[id] += read->trim_tail_left(trim_tail_left);}
         if (trim_tail_right) {(*(verbose_vec->trim_tail_right))[id] += read->trim_tail_right(trim_tail_right);}
         if (trim_qual_right) {(*(verbose_vec->trim_qual_right))[id] += read->trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
@@ -512,6 +619,8 @@ void* do_pair (void * arguments) {
     int id = args->thread_id;
     int derep_1, derep_2;
         //read_rf.read1->trim_qual_right("mean","lt",5,10,30);
+            if (trim_left ){(*(verbose_vec->trim_left))[id] += read-> trim_left(trim_left);}
+            if (trim_right){(*(verbose_vec->trim_right))[id] += read-> trim_right(trim_right);}
             if (trim_tail_left) {(*(verbose_vec->trim_tail_left))[id] += read->trim_tail_left(trim_tail_left);}
             if (trim_tail_right) {(*(verbose_vec->trim_tail_right))[id] += read->trim_tail_right(trim_tail_right);}
             if (trim_qual_right) {(*(verbose_vec->trim_qual_right))[id] += read->trim_qual_right("mean","lt",trim_qual_step,trim_qual_window,trim_qual_right_threshold);}
@@ -573,7 +682,7 @@ Option:
         on the filters that removed sequences. VERBOSE=2 prints numbers for filters 
         in order (min_len, max_len, min_cg, max_cg, min_qual_score, min_qual_mean,
         ns_max_n, noiupac, derep, lc_entropy, lc_dust, trim_tail_left, trim_tail_right, 
-        trim_qual_left, trim_qual_right) to compare stats of diferent files.
+        trim_qual_left, trim_qual_right, trim_left, trim_right) to compare stats of diferent files.
         VERBOSE=0 prints nothing.
         (Default=1)
     
@@ -589,6 +698,9 @@ Option:
     -FASTA
         Input is in fasta format (no quality). Note that the output format is 
         still fastq by default. Quality will be treated as 31 (A) for all bases.
+        
+    -phred64
+        Input quality is in phred64 format. This is for older Illumina/Solexa reads.
 
     ***** OUTPUT OPTION *****
     
@@ -608,6 +720,12 @@ Option:
         
     -out_gz 
         Write the output to a compressed file (WARNING this can be really SLOW)
+        
+    -out_good  , -out_single , -out_bad,
+    -out_good2 , -out_single2, -out_bad2
+        Rename the output files idividually, this overwrites the names given by
+        -out_name only for the selected files. File extension won't be added 
+        automatically. (TIP: if you don't need a file, set its name to /dev/null)
         
     ***** FILTER OPTION ******
         
@@ -649,6 +767,12 @@ Option:
         
     ***** TRIM OPTIONS *****
 
+    -trim_left <integer>
+        Trim <integer> bases from the left (5'->3').
+        
+    -trim_right <integer>
+        Trim <integer> bases from the right (3'->5').
+    
     -trim_tail_left <integer>
         Trim poly-A/T tail with a minimum length of <integer> at the
         5'-end.

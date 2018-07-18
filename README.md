@@ -10,13 +10,13 @@ PRINSEQ++ is a C++ implementation of the prinseq-lite.pl program. It can be used
 4. pthread
 
 ## Download
-If you are just interested in compiling and using PRINSEQ++, download the latest [version](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.1/prinseq-plus-plus-1.1.tar.gz).
-You can also download the [binary](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.1/binary_prinseq-plus-plus-1.1.tar.gz). 
+If you are just interested in compiling and using PRINSEQ++, download the latest [version](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.2/prinseq-plus-plus-1.2.tar.gz).
+You can also download the [binary](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.2/binary_prinseq-plus-plus-1.2.tar.gz). 
 If you want to edit the source code, clone this repository.
 
 ## To install
-1. tar -xvf prinseq-plus-plus-1.1.tar.gz
-2. cd prinseq-plus-plus-1.1
+1. tar -xvf prinseq-plus-plus-1.2.tar.gz
+2. cd prinseq-plus-plus-1.2
 3. ./configure
 4. make
 5. make test
@@ -49,7 +49,7 @@ If you want to edit the source code, clone this repository.
         on the filters that removed sequences. VERBOSE=2 prints numbers for filters 
         in order (min_len, max_len, min_cg, max_cg, min_qual_score, min_qual_mean,
         ns_max_n, noiupac, derep, lc_entropy, lc_dust, trim_tail_left, trim_tail_right, 
-        trim_qual_left, trim_qual_right) to compare stats of diferent files.
+        trim_qual_left, trim_qual_right, trim_left, trim_right) to compare stats of diferent files.
         VERBOSE=0 prints nothing.
         (Default=1)    
     
@@ -65,6 +65,9 @@ If you want to edit the source code, clone this repository.
     -FASTA 
         Input is in fasta format (no quality). Note that the output format is 
         still fastq by default. Quality will be treated as 31 (A) for all bases.
+        
+    -phred64
+        Input quality is in phred64 format. This is for older Illumina/Solexa reads.
         
     ***** OUTPUT OPTION *****
     
@@ -83,7 +86,14 @@ If you want to edit the source code, clone this repository.
         not change the header in the 1st line (@header).
         
     -out_gz 
-        Write the output to a compressed file (WARNING this can be really SLOW)
+        Write the output to a compressed file (WARNING this can be really SLOW,
+        will be fixed in a future release)
+        
+    -out_good  , -out_single , -out_bad,
+    -out_good2 , -out_single2, -out_bad2
+        Rename the output files idividually, this overwrites the names given by
+        -out_name only for the selected files. File extension won't be added 
+        automatically. (TIP: if you don't need a file, set its name to /dev/null)
         
     ***** FILTER OPTION ******
         
@@ -124,7 +134,13 @@ If you want to edit the source code, clone this repository.
         the 0-1 interval. (Default=0.5)
         
     ***** TRIM OPTIONS *****
-
+    
+    -trim_left <integer>
+        Trim <integer> bases from the left (5'->3').
+        
+    -trim_right <integer>
+        Trim <integer> bases from the right (3'->5').
+    
     -trim_tail_left <integer>
         Trim poly-A/T tail with a minimum length of <integer> at the
         5'-end.
