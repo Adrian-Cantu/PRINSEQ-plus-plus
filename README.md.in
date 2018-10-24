@@ -125,6 +125,11 @@ If you want to edit the source code, clone this repository.
     -derep
         Filter duplicated sequences. This only remove exact duplicates.
         
+    -pair_derep
+        Filter duplicated pairs. This only remove read pairs that are both 
+        identical to some other pair. -derep implies -pair_derep and -pair_derep
+        is equivalent to -derep on single end sequences.
+        
     -lc_entropy=[float]
         Filter sequences with entropy lower than [float]. [float] should be in
         the 0-1 interval. (Default=0.5)
