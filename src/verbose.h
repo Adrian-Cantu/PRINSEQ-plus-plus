@@ -45,6 +45,7 @@ class verbose {
     int total_trim_qual_right;
     int total_trim_right;
     int total_trim_left;
+    int total_pair_derep;
     
     std::vector<int>* min_len;
     std::vector<int>* max_len;
@@ -63,6 +64,7 @@ class verbose {
     std::vector<int>* trim_qual_right;
     std::vector<int>* trim_right;
     std::vector<int>* trim_left;
+    std::vector<int>* pair_derep;
     
     int threads;
     int verbosity;

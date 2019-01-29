@@ -58,6 +58,7 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
     float min_gc=0;
  //   int opterr = 0;
     int derep;
+    int pair_derep;
     float entropy_threshold=0.5 ;
     int lc_entropy=0;
     float dust_threshold=0.5 ;
@@ -91,45 +92,46 @@ pthread_mutex_t read_mutex4=PTHREAD_MUTEX_INITIALIZER; //derep filter
         out_single_2_name, out_bad_1_name,out_bad_2_name; 
 
     struct option longopts[] = {
-        { "fastq"           , required_argument , NULL     ,  1 },
-        { "fastq2"          , required_argument , NULL     ,  2 },
-        { "out_format"      , required_argument , NULL     ,  3 },
-        { "min_qual_score"  , required_argument , NULL     ,  4 },
-        { "ns_max_n"        , required_argument , NULL     ,  5 },
-        { "min_qual_mean"   , required_argument , NULL     ,  6 },
-        { "noiupac"         , no_argument       , &noiupac ,  1 },
-        { "derep"           , no_argument       , &derep   ,  1 },
-        { "min_len"         , required_argument , NULL     ,  7 },
-        { "max_len"         , required_argument , NULL     ,  8 },
-        { "max_gc"          , required_argument , NULL     ,  9 },
-        { "min_gc"          , required_argument , NULL     , 10 },
-        { "lc_entropy"      , optional_argument , NULL     , 11 },
-        { "lc_dust"         , optional_argument , NULL     , 12 },
-        { "trim_qual_right" , optional_argument , NULL     , 13 },
-        { "trim_qual_left"  , optional_argument , NULL     , 14 },
-        { "trim_qual_type"  , required_argument , NULL     , 15 },
-        { "trim_qual_rule"  , required_argument , NULL     , 16 },
-        { "trim_qual_window", required_argument , NULL     , 17 },
-        { "trim_qual_step"  , required_argument , NULL     , 18 },
-        { "out_name"        , required_argument , NULL     , 19 },
-        { "rm_header"       , no_argument       , &rm_header, 1 },
-        { "trim_tail_left"  , required_argument , NULL     , 20 },
-        { "trim_tail_right" , required_argument , NULL     , 21 },
-        { "out_gz"          , no_argument       , &out_gz  ,  1 },
-        { "threads"         , required_argument , NULL     , 22 },
-        { "help"            , no_argument       , &help    ,  1 },
-        { "version"         , no_argument       , &ver     ,  1 },
-        { "FASTA"           , no_argument       , &fasta_in,  1 },
-        { "VERBOSE"         , required_argument , NULL     , 23 },
-        { "out_good"        , required_argument , NULL     , 24 },
-        { "out_good2"       , required_argument , NULL     , 25 },
-        { "out_single"      , required_argument , NULL     , 26 },
-        { "out_single2"     , required_argument , NULL     , 27 },
-        { "out_bad"         , required_argument , NULL     , 28 },
-        { "out_bad2"        , required_argument , NULL     , 29 },
-        { "phred64"         , no_argument       , &read_mode, 64},
-        { "trim_left "      , required_argument , NULL     , 30},
-        { "trim_right"      , required_argument , NULL     , 31},
+        { "fastq"           , required_argument , NULL         ,  1 },
+        { "fastq2"          , required_argument , NULL         ,  2 },
+        { "out_format"      , required_argument , NULL         ,  3 },
+        { "min_qual_score"  , required_argument , NULL         ,  4 },
+        { "ns_max_n"        , required_argument , NULL         ,  5 },
+        { "min_qual_mean"   , required_argument , NULL         ,  6 },
+        { "noiupac"         , no_argument       , &noiupac     ,  1 },
+        { "derep"           , no_argument       , &derep       ,  1 },
+        { "min_len"         , required_argument , NULL         ,  7 },
+        { "max_len"         , required_argument , NULL         ,  8 },
+        { "max_gc"          , required_argument , NULL         ,  9 },
+        { "min_gc"          , required_argument , NULL         , 10 },
+        { "lc_entropy"      , optional_argument , NULL         , 11 },
+        { "lc_dust"         , optional_argument , NULL         , 12 },
+        { "trim_qual_right" , optional_argument , NULL         , 13 },
+        { "trim_qual_left"  , optional_argument , NULL         , 14 },
+        { "trim_qual_type"  , required_argument , NULL         , 15 },
+        { "trim_qual_rule"  , required_argument , NULL         , 16 },
+        { "trim_qual_window", required_argument , NULL         , 17 },
+        { "trim_qual_step"  , required_argument , NULL         , 18 },
+        { "out_name"        , required_argument , NULL         , 19 },
+        { "rm_header"       , no_argument       , &rm_header   ,  1 },
+        { "trim_tail_left"  , required_argument , NULL         , 20 },
+        { "trim_tail_right" , required_argument , NULL         , 21 },
+        { "out_gz"          , no_argument       , &out_gz      ,  1 },
+        { "threads"         , required_argument , NULL         , 22 },
+        { "help"            , no_argument       , &help        ,  1 },
+        { "version"         , no_argument       , &ver         ,  1 },
+        { "FASTA"           , no_argument       , &fasta_in    ,  1 },
+        { "VERBOSE"         , required_argument , NULL         , 23 },
+        { "out_good"        , required_argument , NULL         , 24 },
+        { "out_good2"       , required_argument , NULL         , 25 },
+        { "out_single"      , required_argument , NULL         , 26 },
+        { "out_single2"     , required_argument , NULL         , 27 },
+        { "out_bad"         , required_argument , NULL         , 28 },
+        { "out_bad2"        , required_argument , NULL         , 29 },
+        { "phred64"         , no_argument       , &read_mode   , 64 },
+        { "trim_left "      , required_argument , NULL         , 30 },
+        { "trim_right"      , required_argument , NULL         , 31 },
+        { "pair_derep"      , noiupac           , &pair_derep  ,  1 },
 {0,0,0,0}
     };    
     
@@ -492,9 +494,9 @@ int main (int argc, char **argv)
 
     bloom_parameters parameters;
     bloom_filter *filter=NULL;
-    if (derep) {    
+    if (derep || pair_derep) {    
         parameters.projected_element_count = 10000000;
-        parameters.false_positive_probability = 0.000001; // 1 in 10000
+        parameters.false_positive_probability = 0.000001; // 1 in 1000000
         parameters.random_seed = 0xA5A5A5A5;
         if (!parameters) {
             std::cout << "Error - Invalid set of bloom filter parameters!" << std::endl;
@@ -510,6 +512,7 @@ int main (int argc, char **argv)
     verbose_vec= new verbose(threads,verbosity);
     
     if (reverse_read_file) {
+        if (pair_derep && derep) {pair_derep=0;} 
         ////////////////////////////////////////for pair end
         vector<pair_read*> v2(threads);
         vector<pthread_t> tthreads(threads);
@@ -535,6 +538,7 @@ int main (int argc, char **argv)
     /////////////////////////////////////////// for single end    
     } else {
              //////////// pthreads magic
+        if(pair_derep) {derep=1;}
         vector<single_read*> v(threads);
         vector<pthread_t> tthreads(threads);
         vector<arg_struct> ttt(threads);
@@ -643,7 +647,11 @@ void* do_pair (void * arguments) {
                 filter->insert(read->read2->seq_seq);
                 pthread_mutex_unlock(& read_mutex4);
             }
-        
+            if (pair_derep) {
+                pthread_mutex_lock(& read_mutex4);
+                derep_1=filter->contains(read->read1->seq_seq + "#-#-#" + read->read2->seq_seq);
+                if(derep_1) {(*(verbose_vec->pair_derep))[id] += (2*derep_1)
+            }
             if (lc_entropy) {(*(verbose_vec->lc_entropy))[id] += read->entropy(entropy_threshold);}
             if (lc_dust) {(*(verbose_vec->lc_dust))[id] += read->dust(dust_threshold);}
             if (rm_header) {read->rm_header();}
