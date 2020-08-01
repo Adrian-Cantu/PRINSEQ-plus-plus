@@ -1,3 +1,7 @@
+1.2.1
+- Added the `#define BOOST_BIND_GLOBAL_PLACEHOLDERS` option to main.cpp to
+overcome a known limitation with boost using placeholders and stomping over
+the std placeholders.
 1.2
 - Added -trim_left, -trim_right to trim reads unconditionally
 - Added the -phred64 option for old files
