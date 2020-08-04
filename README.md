@@ -1,12 +1,11 @@
 ![Prinseq++](prinseq_logo.png)
 
-Chan chan 
 PRINSEQ++ is a C++ implementation of the prinseq-lite.pl program. It can be used to filter, reformat or trim genomic and metagenomic sequence data. It is 5X faster than prinseq-lite.pl and uses less RAM thanks to the use of multi-threading and the cboost libraries. It can read and write compressed (gzip) files, drastically reducing the use of hard drive.
 
 ## Install from Conda
 You can install from [Conda](https://anaconda.org/bioconda/prinseq-plus-plus) either in its own channel:
 ```
-conda create -n prinseq-plus-plus -c bioconda prinseq-plus-plus
+conda create -n prinseq-plus-plus -c conda-forge -c bioconda prinseq-plus-plus
 conda activate prinseq-plus-plus
 prinseq++ -h
 ```
@@ -14,7 +13,7 @@ prinseq++ -h
 or adding it to another channel:
 
 ```
-conda install -c bioconda prinseq-plus-plus
+conda install -c bioconda -c conda-forge prinseq-plus-plus
 ```
 
 See [below](#install-from-source) to install prinseq++ from source if you don't want to use conda.
