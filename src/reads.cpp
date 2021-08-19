@@ -7,7 +7,7 @@
 #define IOSTREAM
 #include <iostream>
 #endif
-
+#include <sstream>
 #ifndef REGEX
 #define REGEX
 #include <regex>
