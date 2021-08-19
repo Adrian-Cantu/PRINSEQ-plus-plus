@@ -44,7 +44,8 @@ compp: prinseq++
 	time -v ./prinseq++ -fastq stenotrophomonas_R1.fastq -fastq2 stenotrophomonas_R2.fastq -min_len 5 -ns_max_n 2 -out_name Test_time_ 
 
 prinseq++: main.o reads.o verbose.o
-	$(CXX)  main.o reads.o verbose.o $(CXXFLAGS) $(LIBS) -o prinseq++
+	$(CXX)  main.o reads.o verbose.o $(CXXFLAGS) $(LDFLAGS) $(LIBS) -o prinseq++
+	# $(CXX)  main.o reads.o verbose.o $(CXXFLAGS) $(LIBS) -o prinseq++
 
 main.o: main.cpp reads.h bloom_filter.hpp verbose.h
 reads.o: reads.cpp reads.h 
