@@ -1,3 +1,7 @@
+1.2.3
+- Clarify error message for missing boost libraries.
+1.2.2
+- Added to conda
 1.2.1
 - Added the `#define BOOST_BIND_GLOBAL_PLACEHOLDERS` option to main.cpp to
 overcome a known limitation with boost using placeholders and stomping over
