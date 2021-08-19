@@ -2,21 +2,34 @@
 
 PRINSEQ++ is a C++ implementation of the prinseq-lite.pl program. It can be used to filter, reformat or trim genomic and metagenomic sequence data. It is 5X faster than prinseq-lite.pl and uses less RAM thanks to the use of multi-threading and the cboost libraries. It can read and write compressed (gzip) files, drastically reducing the use of hard drive.
 
-## Install from Conda
-You can install from [Conda](https://anaconda.org/bioconda/prinseq-plus-plus) either in its own channel:
-```
-conda create -n prinseq-plus-plus -c conda-forge -c bioconda prinseq-plus-plus
-conda activate prinseq-plus-plus
-prinseq++ -h
-```
+## Requierments
+1. g++
+2. make
+3. boost-devel ( "sudo apt-get install libboost-all-dev" in Ubuntu) 
+4. pthread
 
-or adding it to another channel:
+## Download
+If you are just interested in compiling and using PRINSEQ++, download the latest [version](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.2.4/prinseq-plus-plus-1.2.4.tar.gz).
+You can also download the [binary](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.2.4/binary_prinseq-plus-plus-1.2.4.tar.gz). 
+If you want to edit the source code, clone this repository.
 
-```
-conda install -c bioconda -c conda-forge prinseq-plus-plus
-```
+## To install
+1. tar -xvf prinseq-plus-plus-1.2.4.tar.gz
+2. cd prinseq-plus-plus-1.2.4
+3. ./configure
+4. make
+5. make test
+6. sudo make install
 
-See [below](#install-from-source) to install prinseq++ from source if you don't want to use conda.
+## To check instalation
+1. prinseq++ -h
+
+## To use the repository
+1. ./autogen.sh
+2. ./configure
+3. make
+4. make test 
+
 
 ## Usage
 
@@ -64,7 +77,7 @@ See [below](#install-from-source) to install prinseq++ from source if you don't 
         For pair-end sequences, the output files are <string>_good_out_R1 and
         <string>_good_out_R2 for pairs where both reads pass quality control,
         <string>_single_out_R1 and <string>_single_out_R2 for read that passed
-        quality control but mate did not. <string>_bad_out_R1 and <string>_bad_out_R2  
+        quality control but mate didn't. <string>_bad_out_R1 and <string>_bad_out_R2  
         for reads that fail quality controls. [Default = random size 6 string] 
     
     -rm_header
@@ -81,7 +94,7 @@ See [below](#install-from-source) to install prinseq++ from source if you don't 
         -out_name only for the selected files. File extension won't be added 
         automatically. (TIP: if you don't need a file, set its name to /dev/null)
         
-    ***** FILTER OPTIONS ******
+    ***** FILTER OPTION ******
         
     -min_len <int>
         Filter sequence shorter than min_len.
@@ -159,56 +172,3 @@ See [below](#install-from-source) to install prinseq++ from source if you don't 
     -trim_qual_type <string>
         Type of quality score calculation to use. Allowed options are min,
         mean, max and sum. [default= min]
-
-
-
-
-## Alternate installations
-
-If you don't want to use conda, there are several other ways that you can install `prinseq++`. Try one of these and post an issue if you get stuck.
-
-### General requirements to install from source
-1. g++
-2. make
-3. boost-devel ( "sudo apt-get install libboost-all-dev" in Ubuntu) 
-4. pthread
-
-### Download
-If you are just interested in compiling and using PRINSEQ++, download the latest [version](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.2/prinseq-plus-plus-1.2.tar.gz).
-You can also download the [binary](https://github.com/Adrian-Cantu/PRINSEQ-plus-plus/releases/download/v1.2/binary_prinseq-plus-plus-1.2.tar.gz). 
-If you want to edit the source code, clone this repository.
-
-_Note:_ The current version is 1.2.3 but the differences are minor changes to enable the conda installation on different environments.
-
-### To install
-
-```bash
-tar -xvf prinseq-plus-plus-1.2.tar.gz
-cd prinseq-plus-plus-1.2
-./configure
-make
-make test
-sudo make install
-```
-
-
-### To install `prinseq++` from this Git repository
-
-```bash
-git clone https://github.com/Adrian-Cantu/PRINSEQ-plus-plus.git
-cd PRINSEQ-plus-plus
-./autogen.sh
-./configure
-make
-make test 
-```
-
-### To check any instalation
-
-```
-prinseq++ -h
-```
-
-## Contributors
-
-`Prinseq++` was written by Adrian Cantu, with contributions from Jeff Sadural and Katelyn McNair. Rob Edwards helped here and there.
