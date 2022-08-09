@@ -19,8 +19,8 @@
 verbose::verbose(int k, int verb) : threads(k), verbosity(verb)  {
     min_len=new std::vector<int>(threads,0);
     max_len=new std::vector<int>(threads,0);
-    min_cg=new std::vector<int>(threads,0);
-    max_cg=new std::vector<int>(threads,0);
+    min_gc=new std::vector<int>(threads,0);
+    max_gc=new std::vector<int>(threads,0);
     min_qual_score = new std::vector<int>(threads,0);
     min_qual_mean= new std::vector<int>(threads,0);
     ns_max_n= new std::vector<int>(threads,0);
@@ -39,8 +39,8 @@ verbose::verbose(int k, int verb) : threads(k), verbosity(verb)  {
 void verbose::accumulate(void) {
     total_min_len=std::accumulate((*min_len).begin(), (*min_len).end(), 0);
     total_max_len=std::accumulate((*max_len).begin(), (*max_len).end(), 0);
-    total_min_cg=std::accumulate((*min_cg).begin(), (*min_cg).end(), 0);
-    total_max_cg=std::accumulate((*max_cg).begin(), (*max_cg).end(), 0);
+    total_min_gc=std::accumulate((*min_gc).begin(), (*min_gc).end(), 0);
+    total_max_gc=std::accumulate((*max_gc).begin(), (*max_gc).end(), 0);
     total_min_qual_score=std::accumulate((*min_qual_score).begin(), (*min_qual_score).end(), 0);
     total_min_qual_mean=std::accumulate((*min_qual_mean).begin(),(*min_qual_mean).end(),0);
     total_ns_max_n=std::accumulate((*ns_max_n).begin(), (*ns_max_n).end(), 0);
@@ -61,8 +61,8 @@ void verbose::print(void){
     if (verbosity == 1 ) {
         if (total_min_len) { std::cout << total_min_len <<" reads removed by -min_len" << std::endl;}
         if (total_max_len) { std::cout << total_max_len <<" reads removed by -max_len" << std::endl;}
-        if (total_min_cg) { std::cout << total_min_cg <<" reads removed by -min_cg" << std::endl;}
-        if (total_max_cg) { std::cout << total_max_cg <<" reads removed by -max_cg" << std::endl;}
+        if (total_min_gc) { std::cout << total_min_gc <<" reads removed by -min_gc" << std::endl;}
+        if (total_max_gc) { std::cout << total_max_gc <<" reads removed by -max_gc" << std::endl;}
         if (total_min_qual_score) { std::cout << total_min_qual_score <<" reads removed by -min_qual_score" << std::endl;}
         if (total_min_qual_mean) { std::cout << total_min_qual_mean <<" reads removed by -min_qual_mean" << std::endl;}
         if (total_ns_max_n) { std::cout << total_ns_max_n <<" reads removed by -ns_max_n" << std::endl;}
@@ -79,8 +79,8 @@ void verbose::print(void){
     } else if (verbosity==2) {
         std::cout << total_min_len        << std::endl;
         std::cout << total_max_len        << std::endl;
-        std::cout << total_min_cg         << std::endl;
-        std::cout << total_max_cg         << std::endl;
+        std::cout << total_min_gc         << std::endl;
+        std::cout << total_max_gc         << std::endl;
         std::cout << total_min_qual_score << std::endl;
         std::cout << total_min_qual_mean  << std::endl;
         std::cout << total_ns_max_n       << std::endl;

@@ -30,8 +30,8 @@ class verbose {
     
     int total_min_len;
     int total_max_len;
-    int total_min_cg;
-    int total_max_cg;
+    int total_min_gc;
+    int total_max_gc;
     int total_min_qual_score;
     int total_min_qual_mean;
     int total_ns_max_n;
@@ -48,8 +48,8 @@ class verbose {
     
     std::vector<int>* min_len;
     std::vector<int>* max_len;
-    std::vector<int>* min_cg;
-    std::vector<int>* max_cg;
+    std::vector<int>* min_gc;
+    std::vector<int>* max_gc;
     std::vector<int>* min_qual_score;
     std::vector<int>* min_qual_mean;
     std::vector<int>* ns_max_n;

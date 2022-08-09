@@ -35,7 +35,7 @@ See [below](#install-from-source) to install prinseq++ from source if you don't 
     -VERBOSE <int>
         Format of the report of filtered reads, VERBOSE=1 prints information only
         on the filters that removed sequences. VERBOSE=2 prints numbers for filters 
-        in order (min_len, max_len, min_cg, max_cg, min_qual_score, min_qual_mean,
+        in order (min_len, max_len, min_gc, max_gc, min_qual_score, min_qual_mean,
         ns_max_n, noiupac, derep, lc_entropy, lc_dust, trim_tail_left, trim_tail_right, 
         trim_qual_left, trim_qual_right, trim_left, trim_right) to compare stats of diferent files.
         VERBOSE=0 prints nothing.

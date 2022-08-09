@@ -592,8 +592,8 @@ void* do_single (void * arguments) {
         if (noiupac) {(*(verbose_vec->noiupac))[id] += read->noiupac();}
         if (min_len) {(*(verbose_vec->min_len))[id] += read->min_len(min_len);}
         if (max_len) {(*(verbose_vec->max_len))[id] += read->max_len(max_len);}
-        if (max_gc < 100) {(*(verbose_vec->max_cg))[id] += read->max_gc(max_gc);}
-        if (min_gc > 0) {(*(verbose_vec->min_cg))[id] += read->min_gc(min_gc);}
+        if (max_gc < 100) {(*(verbose_vec->max_gc))[id] += read->max_gc(max_gc);}
+        if (min_gc > 0) {(*(verbose_vec->min_gc))[id] += read->min_gc(min_gc);}
         if (derep) {
             pthread_mutex_lock(& read_mutex4);
             derep_1=filter->contains(read->seq_seq);
@@ -633,8 +633,8 @@ void* do_pair (void * arguments) {
             if (noiupac) {(*(verbose_vec->noiupac))[id] += read->noiupac();}
             if (min_len) {(*(verbose_vec->min_len))[id] += read->min_len(min_len);}
             if (max_len) {(*(verbose_vec->max_len))[id] += read->max_len(max_len);}
-            if (max_gc < 100) {(*(verbose_vec->max_cg))[id] += read->max_gc(max_gc);}
-            if (min_gc > 0) {(*(verbose_vec->min_cg))[id] += read->min_gc(min_gc);}
+            if (max_gc < 100) {(*(verbose_vec->max_gc))[id] += read->max_gc(max_gc);}
+            if (min_gc > 0) {(*(verbose_vec->min_gc))[id] += read->min_gc(min_gc);}
             if (derep) {
                 pthread_mutex_lock(& read_mutex4);
                 derep_1=filter->contains(read->read1->seq_seq);
@@ -682,7 +682,7 @@ Option:
     -VERBOSE <int>
         Format of the report of filtered reads, VERBOSE=1 prints information only
         on the filters that removed sequences. VERBOSE=2 prints numbers for filters 
-        in order (min_len, max_len, min_cg, max_cg, min_qual_score, min_qual_mean,
+        in order (min_len, max_len, min_gc, max_gc, min_qual_score, min_qual_mean,
         ns_max_n, noiupac, derep, lc_entropy, lc_dust, trim_tail_left, trim_tail_right, 
         trim_qual_left, trim_qual_right, trim_left, trim_right) to compare stats of diferent files.
         VERBOSE=0 prints nothing.
