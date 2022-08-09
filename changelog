@@ -1,3 +1,5 @@
+1.2.5
+- Correct typo in log file GC filter stats reporting
 1.2.3
 - Clarify error message for missing boost libraries.
 1.2.2
@@ -10,12 +12,12 @@ the std placeholders.
 - Added -trim_left, -trim_right to trim reads unconditionally
 - Added the -phred64 option for old files
 - Added -out_good  , -out_single , -out_bad, -out_good2 , -out_single2, -out_bad2
-    in case you want to manually name output files. unused options default to the default
-    filename. You can even send two output streams to the same file.
+in case you want to manually name output files. unused options default to the default
+filename. You can even send two output streams to the same file.
 - fixed a bug were -noiupac was filtering RNA sequences. (those containing 'U')
-    
+
 1.1
-Added verbose options and an options to read fasta files. Speed up run time 
+Added verbose options and an options to read fasta files. Speed up run time
 by only performing filters on good reads.
 1.0.1
 Fixed a race condition where pair_read::read_read could pull reads from the R1
